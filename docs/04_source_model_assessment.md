@@ -11,11 +11,11 @@ Capture the starting state **before redesigning anything**. The goal is to under
 - [x] Power BI Project saved in PBIP/TMDL format
 - [x] PBIP project committed under `model/nightmare-data-model/`
 - [x] course dataset excluded from Git and documented as local-only source data
-- [ ] local workbook source repointed to `<repository-root>/local-data/dataset.xlsx`
-- [ ] source model refreshed successfully after repointing
+- [x] local workbook source repointed to `<repository-root>/local-data/dataset.xlsx`
+- [x] source model refreshed successfully after repointing
 - [ ] before-state Model View screenshot stored as project evidence
 
-The semantic-model TMDL currently exposes a machine-specific `File.Contents(...)` path inherited from the initial local import. Before structural work starts, the local Power BI project should point to the repository-local ignored workbook path documented in `local-data/README.md`.
+The committed TMDL now points to the repository-local ignored workbook location on the current development machine (`C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx`). This path is intentionally local/machine-specific; the workbook itself remains excluded from Git.
 
 ## Assessment table
 
@@ -52,7 +52,7 @@ For the model as a whole:
 - [ ] initial business meaning for each table
 - [ ] initial grain hypothesis for each fact-like table
 - [ ] candidate Fact / Dimension / Bridge classification
-- [ ] before-state model screenshot
+- [ ] before-state model screenshot stored in `screenshots/before/`
 - [ ] relationship/cardinality risk list
 - [ ] duplicate-key/data-quality risk list
 - [ ] baseline metrics recorded in `tests/baseline_metrics.md`
