@@ -3,23 +3,19 @@
 **Transcript range:** 01:41:28–02:08:57  
 **Source:** Data with Baraa — Data Modeling in Power BI Full Course transcript
 
-## 1. Why multiple facts are difficult
+## 1. First rule: understand grain and business event
 
-The course calls multiple-fact modeling one of the most confusing areas because several tempting solutions can produce wrong numbers:
+The course treats multiple-fact modeling as high risk because apparently convenient joins, merges or appends can create wrong numbers.
 
-- directly relate two facts because they share a column;
-- merge them without checking grain;
-- append them because the shapes look similar.
+Before combining facts, state for each table:
 
-The first rule is therefore the same as in the Grain lesson:
+```text
+What business event does it represent?
+What does one row represent?
+What measures are recorded at that grain?
+```
 
-> Before combining facts, state the grain of each fact and understand the business event each table represents.
-
-The course then evaluates several scenarios.
-
----
-
-## 2. Scenario A — Same grain, same event, same structure
+## 2. Same event + same grain + same/compatible structure → Append
 
 Example:
 
@@ -28,362 +24,197 @@ fact_sales_us
 fact_sales_eu
 ```
 
-Both tables represent:
-
-```text
-one row = one order
-```
-
-They also contain the same type of event and the same structure. The only reason for separation is source-side partitioning such as region, country, year or operational management.
-
-### Correct pattern: Append
-
-A relationship between the tables is unnecessary because they represent the same thing. A merge is also inappropriate when the rows do not match one-to-one by key.
-
-The source recommends stacking the rows:
+If both represent the same Sales event at the same grain and have compatible columns, they are partitions of the same fact concept.
 
 ```text
 fact_sales_us
       +
 fact_sales_eu
-      ↓ append
- fact_sales
+      ↓ APPEND
+  fact_sales
 ```
 
-### Preserve source information
-
-Appending can lose information that was encoded only in the original table name. The course therefore recommends adding a source attribute before/while appending.
-
-Example:
-
-```text
-source = US
-source = EU
-```
+If the original table name contains useful provenance such as region/source, preserve it as a column before or during append.
 
 Decision rule:
 
 ```text
-Same grain
-+ same event
-+ same structure
+same event + same grain + compatible shape
 → APPEND
 ```
 
----
+## 3. Same grain + one-to-one complementary data → Merge when justified
 
-## 3. Scenario B — Same grain, different attributes/events, one-to-one correspondence
-
-Example:
+If two tables describe the same row-level business entity/event and can be matched one-to-one, but contain complementary measures/attributes, keeping them separate can add unnecessary model complexity.
 
 ```text
-fact_sales
-fact_revenue
+Fact A: order_id + sales
+Fact B: order_id + revenue
+              ↓ MERGE
+order_id + sales + revenue
 ```
 
-Both have:
-
-```text
-one row = one order
-```
-
-but they contain different measures or event attributes.
-
-The source notes that a one-to-one relationship is possible, but if both facts have the same grain and can be matched row-for-row, keeping them separated adds unnecessary complexity.
-
-### Avoid appending unlike measures into one generic amount column
-
-Appending tables that are not actually identical can produce a structure such as:
-
-```text
-order_id | measure_type | amount
-```
-
-where one row's `amount` means Sales and another row's `amount` means Revenue.
-
-A careless aggregation over `amount` then mixes different business meanings.
-
-### Preferred pattern: Merge side by side
-
-The course prefers:
-
-```text
-order_id | customer | sales | revenue
-```
-
-This keeps each measure semantically separate and makes aggregation safer.
+The course warns against appending semantically different measures into one ambiguous generic `amount` column.
 
 Decision rule:
 
 ```text
-Same grain
-+ compatible one-to-one rows
-+ different columns / measures
-→ MERGE into one fact
+same grain + compatible 1:1 rows + complementary columns
+→ MERGE side by side when justified
 ```
 
----
-
-## 4. Scenario C — Different grain, different event
+## 4. Different grain / different event → keep facts separate
 
 Example:
 
 ```text
-fact_sales
-one row = one order / detailed sales event
-
-fact_budget
-one row = one product-month budget plan
+fact_sales   → detailed actual sales
+fact_budget  → product-month budget plan
 ```
 
-The two facts describe different processes and different levels of detail.
+These facts describe different processes and levels of detail. They should not be blindly appended, merged or directly related through a repeating key.
 
-The business may still ask for a comparison such as:
+## 5. Fan-out risk
 
-```text
-Actual Sales vs Budget by Product
-```
-
-This is where the course strongly warns against both merging and direct relationships.
-
-## 5. Why merging different-grain facts fails
-
-Suppose both facts contain `product_id`. It may look possible to merge on Product.
-
-But one Product can appear many times in Sales and many times in Budget.
-
-The effective matching is many-to-many:
+Merging facts on a non-unique key such as `product_id` can create many-to-many row multiplication:
 
 ```text
-fact_sales  *  ↔  *  fact_budget
-```
-
-A merge can multiply rows and duplicate measures. A budget amount can be repeated once for every matching sales row, creating inflated totals.
-
-This is the **fan-out** problem demonstrated in the course.
-
-```text
-Many matching rows on left
-× many matching rows on right
+many Sales rows
+× many Budget rows
 → duplicated combined rows
-→ inflated aggregates
+→ inflated measures
 ```
 
-## 6. Why a direct fact-to-fact relationship also fails
+This is the fan-out problem.
 
-Keeping the two facts separate but connecting them directly through `product_id` still creates a many-to-many relationship.
+## 6. Avoid direct fact-to-fact many-to-many relationships
 
-Two problems appear in the course example:
+Avoid:
 
-### 6.1 Incorrect totals / fan-out behavior
+```text
+fact_sales * ───── * fact_budget
+```
 
-The many-to-many relationship can propagate measure context in ways that duplicate values.
+A direct relationship between repeating keys does not create a clean analytical context and can lead to incorrect filtering or incomplete domains.
 
-### 6.2 Incomplete analytical domain
+## 7. Shared / conformed dimension pattern
 
-If the visual axis comes from one fact, it only contains entities present in that fact.
-
-Example:
-
-- a future product may have Budget but no Sales yet;
-- another product may have Sales but no Budget.
-
-If the report uses Product values from `fact_sales`, products existing only in Budget disappear from the visual.
-
-A fact table should not be used as the master descriptive list for a shared business entity.
-
-## 7. Shared / Bridge / Conformed Dimension
-
-The course solves different-grain fact comparison by introducing a separate dimension containing the full business domain.
-
-For Product:
+The course solves the different-fact problem through shared dimensions:
 
 ```mermaid
 flowchart LR
-    P[dim_product] --> S[fact_sales]
-    P --> B[fact_budget]
+    P[dim_product] -->|1:*| S[fact_sales]
+    P -->|1:*| B[fact_budget]
 ```
 
-The transcript uses terms such as **shared dimension**, **bridge dimension**, and **conform/conformed dimension** in this context.
+The shared dimension contains the complete Product domain and filters each fact independently.
 
-The dimension has one unique row per Product and connects to both facts through one-to-many relationships.
+This gives:
 
-This gives two benefits:
+- correct dimension-driven filtering;
+- no direct fact-to-fact dependency;
+- products that exist in only one fact still remain available in the shared analytical domain.
 
-1. **Completeness:** the dimension contains the full set of products, including products that currently exist in only one fact.
-2. **Correct aggregation:** each fact remains at its native grain and is filtered independently by the common dimension.
+The course uses terminology such as shared/bridge/conformed dimension in this context.
 
-## 8. Building visuals from shared dimensions
-
-The course recommends starting the grouping/axis from the shared dimension and then taking measures from the separate facts.
+## 8. Build multi-fact visuals from shared dimensions
 
 ```text
-Axis / grouping → dim_product
-Measure 1       → fact_sales
-Measure 2       → fact_budget
+Grouping / axis → shared dimension
+Measure A       → Fact A
+Measure B       → Fact B
 ```
 
-This is different from using Product directly from either fact.
+Do not use one fact table as the master descriptive list for another fact.
 
-The general pattern is:
+## 9. Compare facts only at a grain both understand
+
+A measure can be shown at the grain where it was recorded or at a more aggregated level. It cannot truthfully be pushed to a lower/finer grain that does not exist in the source.
+
+Examples:
 
 ```text
-Shared business context from dimension
-+ measures from facts
+Sales = daily
+Budget = monthly
+→ aggregate Sales to Month
+→ compare at Month
 ```
-
-## 9. Validate multi-fact visuals
-
-The course demonstrates a practical validation technique:
-
-1. Build one combined visual using the shared dimension and both measures.
-2. Build a separate visual for Fact A only.
-3. Build a separate visual for Fact B only.
-4. Compare totals between the dedicated and combined views.
 
 ```text
-Combined result
-must preserve
-Fact A standalone total
-and
-Fact B standalone total
+Sales = Product grain
+Budget = Category grain
+→ compare at Category
+→ do not invent Product-level Budget
 ```
 
-This is an early form of metric reconciliation.
+The common comparison grain is the lowest/final level both facts can validly support.
 
-## 10. Multiple shared dimensions
+## 10. Validation pattern
 
-Two facts can share more than one dimension.
+To validate a combined multi-fact visual:
 
-The transcript extends the Sales/Budget example with Date:
-
-```mermaid
-flowchart LR
-    P[dim_product] --> S[fact_sales]
-    P --> B[fact_budget]
-    D[dim_date] --> S
-    D --> B
-```
-
-This allows comparisons by multiple common dimensions as long as the grain constraints are respected.
-
-## 11. Comparing facts with different dimensional detail
-
-The most advanced scenario in the lesson occurs when two facts share only a **higher-level** dimension.
-
-Example:
+1. calculate/view Fact A independently;
+2. calculate/view Fact B independently;
+3. build the shared-dimension visual containing both measures;
+4. verify that each fact's totals remain consistent.
 
 ```text
-Sales recorded by Product
-Budget recorded only by Category
+Combined model totals
+must reconcile to
+standalone Fact A + standalone Fact B baselines
 ```
 
-The business asks:
-
-```text
-Sales vs Budget by Product
-```
-
-But Budget does not exist at Product grain.
-
-The course gives a strict rule:
-
-> A measure can be shown at the grain where it was recorded or at a higher/more summarized level — not at a lower/more detailed level that does not exist in the source.
-
-Therefore:
-
-```text
-Budget at Category grain
-→ valid at Category
-→ valid at higher summary / total
-→ not valid at Product detail
-```
-
-A tool cannot truthfully invent Product-level budget values when the budget was never recorded by Product.
-
-## 12. Highest common grain for comparison
-
-When two facts have different grains, compare them at the highest level that both understand.
-
-Example:
-
-```text
-Sales: day-level dates
-Budget: month-level dates
-```
-
-A daily visual cannot meaningfully align Budget with Sales because Budget is only monthly.
-
-The correct comparison is rolled up to Month:
-
-```text
-Sales → aggregate to month
-Budget → already month
-→ compare side by side
-```
-
-Likewise:
-
-```text
-Sales by Product
-Budget by Category
-→ compare at Category, not Product
-```
-
-## 13. Complete decision framework from the transcript
+## 11. Decision framework
 
 ```text
 TWO FACT TABLES
       │
-      ├─ Same grain + same event + same structure?
+      ├─ Same event + same grain + compatible shape?
       │      └─ APPEND
-      │         Preserve source metadata if needed
       │
-      ├─ Same grain + one-to-one rows + different measures/shape?
-      │      └─ MERGE side by side
+      ├─ Same grain + one-to-one complementary data?
+      │      └─ MERGE when justified
       │
-      └─ Different grain / different event / different shape?
-             ├─ Do NOT append
-             ├─ Do NOT merge
-             ├─ Do NOT connect facts directly
-             └─ Keep separate + connect through shared dimension(s)
+      └─ Different grain / event?
+             ├─ keep separate
+             ├─ no direct fact-to-fact relationship
+             └─ connect through shared dimensions
 ```
 
 For reporting:
 
 ```text
-Compare measures only at a level both facts understand.
+Compare only at a grain both facts understand.
 ```
 
-## 14. Failure modes from this lesson
+## 12. Failure modes
 
-- relating two facts directly because they share a column name;
-- merging many-to-many facts and creating row multiplication;
-- appending different measures into one ambiguous amount column;
-- using one fact's descriptive key values as the report axis for multiple facts;
-- losing source provenance when appending partitioned facts;
-- forcing a measure below the grain at which it was recorded;
-- comparing daily Sales to monthly Budget at day level;
-- checking only grand totals and ignoring breakdown-level correctness.
+- relating facts directly because they share a key name;
+- merging many-to-many facts and multiplying rows;
+- appending semantically different measures into a generic amount field;
+- using one fact's keys/descriptions as the axis for multiple facts;
+- losing source provenance during append;
+- forcing a measure below the grain where it was recorded;
+- comparing daily Sales with monthly Budget at Day level;
+- checking only grand totals and ignoring breakdown-level reconciliation.
 
-## Active Recall
+## Active Recall checkpoint — 2026-09-01
 
-1. When should two facts be appended?
-2. Why should source information often be preserved during append?
-3. When does the course recommend merging two facts?
-4. Why can appending Sales and Revenue into a generic `amount` column be dangerous?
-5. What happens when different-grain facts are merged on a non-unique shared key?
-6. Why is a direct fact-to-fact many-to-many relationship problematic?
-7. What problem does a shared/conformed dimension solve?
-8. Why should the visual axis come from the shared dimension rather than one fact?
-9. How can you validate that a combined multi-fact visual has not changed the totals?
-10. What is the rule for showing a measure at a lower grain than where it was recorded?
-11. If Sales are daily and Budget is monthly, at what level should they be compared?
-12. If Sales exist by Product but Budget only by Category, what is the lowest valid comparison level?
+**Status: completed.**
+
+Correctly recalled:
+
+- same event + same grain + compatible structure → Append;
+- same grain + complementary one-to-one data → Merge when justified;
+- different grain/event → keep facts separate and use shared dimensions;
+- direct fact-to-fact relationships through repeated keys should be avoided;
+- comparisons occur at a common valid grain;
+- daily Sales can be aggregated to Month for comparison with monthly Budget;
+- monthly Budget cannot be treated as daily without an explicit allocation assumption.
 
 ## Learning status
 
 - Theory documentation: ✅
-- Lesson watched/studied: ⬜
-- Active Recall checkpoint: ⬜
-- Capstone implementation evidence: ⬜
+- Lesson watched/studied: ✅
+- Active Recall checkpoint: ✅
+- Capstone implementation evidence: ⬜ not started
