@@ -330,6 +330,15 @@ The important principle is:
 One clear active filter path is preferable to multiple competing paths.
 ```
 
+A key distinction from the Active Recall checkpoint:
+
+```text
+Bidirectional filtering = filter can travel both directions across a relationship
+Ambiguity               = multiple active filter paths exist
+```
+
+Bidirectional filtering can contribute to ambiguity, but they are not the same concept.
+
 ## 15. Active and inactive relationships
 
 An **active relationship** participates automatically in normal filter propagation.
@@ -349,9 +358,23 @@ Inactive relationships are not necessarily mistakes. They can be useful when:
 - one dimension needs to play multiple roles against the same fact;
 - a calculation intentionally needs an alternative relationship path.
 
-The later role-playing-dimension section demonstrates this more explicitly.
+An inactive relationship is **not defined by `1:1` cardinality**, is not inherently broken, and is not the same thing as snowflaking a dimension.
 
-## 16. Filter-direction discipline
+## 16. Role-playing date relationship example
+
+If a sales fact contains both `order_date` and `ship_date`, a single unique date dimension can participate in two valid `1:*` relationships:
+
+```text
+dim_date[date] 1 ─── * fact_sales[order_date]   ACTIVE
+
+dim_date[date] 1 - - * fact_sales[ship_date]    INACTIVE
+```
+
+The date remains on the `1` side because each date appears once in `dim_date`. The fact remains on the `*` side because the same date can occur on many sales rows.
+
+Multiple date roles therefore do **not** imply many-to-many cardinality.
+
+## 17. Filter-direction discipline
 
 A healthy star schema from the course generally looks like this:
 
@@ -371,7 +394,7 @@ Fact side      = repeating / MANY
 Filter         = Dimension → Fact
 ```
 
-## 17. Relationship review checklist
+## 18. Relationship review checklist
 
 For every relationship, ask:
 
@@ -384,7 +407,7 @@ For every relationship, ask:
 7. Is there more than one active path between these tables?
 8. Should the tables actually have been merged instead?
 
-## 18. Failure modes from this lesson
+## 19. Failure modes from this lesson
 
 - accepting automatically detected relationships without review;
 - forcing `1:*` when the supposed dimension contains duplicate keys;
@@ -392,6 +415,8 @@ For every relationship, ask:
 - enabling `Both` simply because it makes a visual appear to work;
 - leaving unnecessary 1:1 dimensions split without a reason;
 - creating multiple active paths and ambiguity;
+- assuming inactive means broken;
+- confusing multiple relationship roles with many-to-many cardinality;
 - assuming a rendered report proves the relationship design is correct.
 
 ## Active Recall
@@ -410,10 +435,13 @@ For every relationship, ask:
 12. What is ambiguity?
 13. What is the difference between active and inactive relationships?
 14. Why can an inactive relationship be intentional rather than broken?
+15. Why are bidirectional filtering and ambiguity different concepts?
+16. How can one date dimension support `order_date` and `ship_date` without a many-to-many relationship?
 
 ## Learning status
 
 - Theory documentation: ✅
-- Lesson watched/studied: 🟡 in progress
-- Active Recall checkpoint: ⬜
+- Lesson watched/studied: ✅
+- Active Recall checkpoint: ✅ completed after correction and re-test on 2026-09-01
+- Misconceptions recorded and resolved: ✅
 - Capstone implementation evidence: ⬜
