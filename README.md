@@ -4,22 +4,26 @@
 
 ## Project status
 
-**Theory phase complete — guided Nightmare PBIP implementation initialized.**
+**Theory complete — guided Nightmare implementation in progress. Current video checkpoint: 03:45:58.**
 
 Current progress:
 
-- ✅ Lesson 1 — Modeling foundations; facts vs dimensions
-- ✅ Lesson 2 — Star, snowflake and galaxy schemas
-- ✅ Lesson 3 — Relationships, cardinality, filter direction and ambiguity
-- ✅ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
-- ✅ Lesson 5 — Grain
-- ✅ Lesson 6 — Multiple fact tables
-- ✅ Lesson 7 — Security and Row-Level Security
-- ▶ Guided Nightmare portfolio project — source-model audit in progress
-- ⬜ Independent no-tutorial model audit
-- ⬜ Final validation and recruiter-ready evidence
+- ✅ Lessons 1–7 — complete and validated through Active Recall
+- ✅ Nightmare PBIP/TMDL project initialized
+- ✅ local course workbook repointed and refreshed
+- ✅ Power Query workspace groups created: `01_Stage`, `02_Dimensions`, `03_Facts`, `04_Support`
+- ✅ source tables explored at business/domain level
+- ✅ `dim_customer` built from customer-related source tables
+- ✅ `dim_product` built and enriched with category context
+- ✅ `ORDERS_2025` + `ORDERS_2026` consolidated into staging query `orders`
+- ✅ junk-dimension structure `dim_order_flags` created
+- ✅ manual channel-code mapping query `channels` created and joined into `dim_order_flags`
+- ▶ next guided step: polish the junk dimension, then begin `fact_sales` from `order_line_items`
+- ⬜ protected fact baseline metrics and first fact implementation
+- ⬜ remaining facts, relationships, date model, measures, RLS and final reconciliation
+- ⬜ independent no-tutorial model audit
 
-The seven theory lessons were marked complete only after the corresponding course segments had been watched and checked through Active Recall. The Power BI Project is now committed in PBIP/TMDL form, but no dimensional redesign or validation is claimed yet.
+The committed TMDL is the source of truth for implementation claims. At this checkpoint no completed fact table or final star/galaxy schema is claimed.
 
 ## Objective
 
@@ -29,8 +33,7 @@ This repository documents dimensional data modeling skills for analytics and dat
 - fact and dimension modeling
 - grain definition
 - keys and cardinality
-- relationship design
-- filter propagation
+- relationship design and filter propagation
 - star, snowflake and galaxy schemas
 - special dimension patterns
 - multiple-fact modeling
@@ -39,45 +42,33 @@ This repository documents dimensional data modeling skills for analytics and dat
 - row-level security
 - modeling decisions and trade-offs
 
-The capstone will redesign a deliberately messy multi-table analytical model into a validated dimensional model and document the reasoning and verification behind the redesign.
-
 ## Evidence model
 
 ```text
-Concept
-→ Explain from memory
-→ Implement
-→ Validate
-→ Debug
-→ Document
-→ Evidence
+Concept → Explain → Implement → Validate → Debug → Document → Evidence
 ```
 
 The repository separates three evidence levels:
 
-1. **Course-derived concepts** — paraphrased and organized in original documentation.
-2. **Guided implementation** — the Data with Baraa Nightmare case study reproduced hands-on.
-3. **Independent evidence** — validation, model audit, trade-off analysis and no-tutorial reconstruction.
+1. **Course-derived concepts** — paraphrased in original documentation.
+2. **Guided implementation** — the Data with Baraa Nightmare case reproduced hands-on.
+3. **Independent evidence** — later validation, model audit, trade-off analysis and no-tutorial reconstruction.
 
 ## Theory curriculum — completed
 
-The complete pre-project theory block is documented in [`docs/theory/`](docs/theory/README.md).
+The complete pre-project theory block is documented in [`docs/theory/`](docs/theory/README.md). Repository-native visual summaries are in [`diagrams/`](diagrams/README.md).
 
 | Lesson | Topic | Status |
 |---|---|---|
-| [01](docs/theory/lesson_01_modeling_foundations.md) | Modeling foundations; flat-table and one-report anti-patterns; facts and dimensions | ✅ Completed |
-| [02](docs/theory/lesson_02_schema_patterns.md) | Star, snowflake and galaxy schemas | ✅ Completed |
-| [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | ✅ Completed |
-| [04](docs/theory/lesson_04_special_dimensions.md) | Extracted dimensions, junk dimensions, role-playing dimensions | ✅ Completed |
-| [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ✅ Completed |
-| [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ✅ Completed |
-| [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ✅ Completed |
-
-Repository-native visual summaries are available in [`diagrams/`](diagrams/README.md).
+| 01 | Modeling foundations; facts and dimensions | ✅ |
+| 02 | Star, snowflake and galaxy schemas | ✅ |
+| 03 | Relationships, cardinality, filtering and ambiguity | ✅ |
+| 04 | Extracted, junk and role-playing dimensions | ✅ |
+| 05 | Grain and grain-aware aggregation | ✅ |
+| 06 | Multiple facts, Append/Merge/shared dimensions | ✅ |
+| 07 | Security and RLS | ✅ |
 
 ## Current implementation artifact
-
-The Nightmare project is stored as a source-controlled Power BI Project:
 
 ```text
 model/nightmare-data-model/
@@ -86,104 +77,90 @@ model/nightmare-data-model/
 └── nightmare-data-model.SemanticModel/
 ```
 
-The semantic model is stored in TMDL, making table, relationship and model-definition changes inspectable in Git.
+The semantic model is stored in TMDL, so Power Query, tables and relationships can be inspected as text-based Git diffs.
 
-The course source workbook `dataset.xlsx` is deliberately **not committed**. A local copy belongs at `local-data/dataset.xlsx`; see [`local-data/README.md`](local-data/README.md). The instructor's completed solution is also kept outside the repository and is used only as a later reference/check.
+The course source workbook `dataset.xlsx` is not committed. A local copy belongs at `local-data/dataset.xlsx`; see [`local-data/README.md`](local-data/README.md). The instructor's completed solution stays outside the repository and is used only as a later reference/check.
 
-## Core modeling decision map
+## Implemented capstone work through 03:45:58
 
-```mermaid
-flowchart TD
-    A[Understand business event and context] --> B[Identify Facts and Dimensions]
-    B --> C[Default to Star Schema]
-    C --> D[Validate Keys and Cardinality]
-    D --> E[Use clear Dimension-to-Fact filter paths]
-    E --> F[State Grain before calculations or fact combinations]
-    F --> G{Multiple facts?}
-    G -->|Same event + same grain + compatible shape| H[Append]
-    G -->|Same grain + one-to-one complementary data| I[Merge when justified]
-    G -->|Different grain or event| J[Keep separate + Shared Dimensions]
-    J --> K[Compare at a grain both facts understand]
-    K --> L[Define security requirement]
-    L --> M[Validate security filter path and RLS]
-```
+### Power Query organization
 
-## Completed theory checkpoints
-
-### Relationships
-
-- `Bidirectional filtering` is not the same as `ambiguity`.
-- Ambiguity means multiple active filter paths exist between parts of the model.
-- An inactive relationship can be semantically valid; it is simply not the default filter path.
-- Multiple date roles do not imply many-to-many cardinality; one `dim_date` can have active/inactive `1:*` role relationships to a fact.
-
-### Special dimensions
-
-- descriptive context embedded in a fact should be reviewed for extraction;
-- junk dimensions bundle suitable low-level flags / descriptive attributes;
-- role-playing dimensions allow one entity to serve multiple roles against the same fact;
-- `USERELATIONSHIP()` can intentionally use an inactive alternative relationship for a calculation.
-
-### Grain
-
-The core question is: **What does exactly one row represent?**
-
-- Order grain is coarser than Order-Line grain.
-- Table grain and measure/column grain can differ.
-- A higher-grain value repeated over lower-grain rows can be double counted by a naive aggregation.
-- Grain must be understood before aggregation, relationships or fact combination.
-
-### Multiple facts
-
-- same event + same grain + compatible structure → **Append**;
-- same grain + one-to-one complementary data → **Merge when justified**;
-- different grain/event → keep facts separate and connect through shared dimensions;
-- cross-fact comparisons must occur at a grain both facts understand.
-
-### Security / RLS
-
-The course distinguishes **table-level, column-level and row-level security**. RLS is the focus of the hands-on security section.
-
-- Static RLS uses fixed role/filter rules and is suitable for smaller scenarios.
-- Dynamic RLS maps users to permitted business values through a security table.
-- `USERPRINCIPALNAME()` identifies the current report user; the role then filters the security mapping rather than filtering every fact directly.
-- Correct relationships and filter direction are security-critical because the security filter must propagate from the security table into the analytical model.
-- RLS must be tested with representative roles/users and expected restricted totals.
-- Report filters answer **what the user wants to analyze**; RLS defines **what the user is allowed to see at all**.
-
-## Current capstone phase — source-model audit
-
-The repository has now moved from theory evidence to actual model evidence:
+The project now uses explicit work areas:
 
 ```text
-✅ initialize PBIP/TMDL project
-▶ inspect source model
-▶ record baseline metrics
-▶ define grain
-→ identify facts and dimensions
-→ build dimensions
-→ build facts
-→ establish relationships
-→ validate filter behavior
-→ add date / role-playing dimensions
-→ define measures
-→ implement RLS
-→ reconcile metrics
-→ final validation
+01_Stage
+02_Dimensions
+03_Facts
+04_Support
+```
+
+This separates source-aligned staging/reference queries from analytical dimensions and later facts.
+
+### Customer dimension
+
+`dim_customer` is built from `CUST_MASTER` and enriched through left merges with customer contacts, user details, address and city/region context. Dummy/test data and technical source columns are removed, and output columns are renamed toward the project snake_case standard.
+
+### Product dimension
+
+`dim_product` is built from `products`, enriched from the cleaned `subcategories` mapping, filters known dummy/problem rows, creates a model-generated `product_key`, removes technical/non-analytical columns and exposes report-friendly attributes.
+
+### Order staging and junk dimension
+
+`ORDERS_2025` and `ORDERS_2026` represent the same order-header event at the same grain and are appended into `orders`. Source-only columns such as legacy/reference notes are removed.
+
+From `orders`, the repeating low-cardinality descriptors `OrderChannel`, `Status` and `Priority` are extracted into `dim_order_flags`. A small manually entered `channels` lookup maps channel codes to descriptive names. At the 03:45:58 checkpoint the final polish/rename of this junk dimension is the next immediate guided step.
+
+The manual mapping is intentionally documented as a maintenance risk: if source codes change, the mapping must be updated; a production-grade preference would be to source this mapping upstream rather than maintain it manually inside the model.
+
+## Grain checkpoint
+
+Confirmed working grains relevant to the current implementation:
+
+```text
+ORDERS_2025      → one row = one order
+ORDERS_2026      → one row = one order
+orders           → one row = one order
+order_line_items → one row = one order line
+
+dim_customer     → one row = one customer
+dim_product      → one row = one product
+dim_order_flags  → one row = one distinct channel/status/priority combination
+```
+
+The Order Header / Order Detail pattern is now explicit: `orders` is the header-level staging object, while `order_line_items` is the finer-grain detail source. The first sales fact is expected to use the detail grain, but it has not yet been created at this checkpoint.
+
+## Current capstone path
+
+```text
+✅ initialize PBIP/TMDL
+✅ repoint + refresh local source
+✅ explore business/source tables
+✅ organize Power Query groups
+✅ build dim_customer
+✅ build dim_product
+✅ append order headers into orders
+✅ extract dim_order_flags + channels mapping
+▶ polish junk dimension
+→ create fact_sales from order_line_items
+→ record/protect fact baseline metrics
+→ add dimension keys
+→ build remaining facts
+→ establish dimensional relationships
+→ date model + measures
+→ RLS
+→ reconciliation + final validation
 → independent no-tutorial audit
 ```
 
-See [`PROJECT_PLAN.md`](PROJECT_PLAN.md), [`docs/04_source_model_assessment.md`](docs/04_source_model_assessment.md) and Issue #6 for the implementation checklist.
+See [`PROJECT_PLAN.md`](PROJECT_PLAN.md), [`docs/04_source_model_assessment.md`](docs/04_source_model_assessment.md), [`docs/05_grain_analysis.md`](docs/05_grain_analysis.md), [`docs/06_dimensions.md`](docs/06_dimensions.md) and the open implementation issues.
 
 ## Claim boundaries
 
-The theory phase is complete and the PBIP starting model has been committed, but the Nightmare model has not yet been redesigned or validated. This repository therefore currently demonstrates conceptual understanding plus an initialized hands-on implementation, not completed production Power BI experience.
-
-Implementation claims will be added only when corresponding model changes and validation evidence exist.
+The theory phase is complete and several guided dimensions/staging transformations are implemented in PBIP/TMDL. The final analytical model, facts, measures, security and reconciliation are not complete yet. This repository therefore demonstrates **guided implementation in progress**, not completed production Power BI experience.
 
 ## Attribution
 
-The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented. The repository adds original learning notes, diagrams, recall/correction evidence, PBIP/TMDL implementation work, validation evidence and independent reflection as those artifacts are actually created.
+The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented; this repository adds original documentation, model artifacts, validation evidence and later independent reconstruction.
 
 ## License
 
