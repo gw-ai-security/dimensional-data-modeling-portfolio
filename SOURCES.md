@@ -23,7 +23,7 @@
 
 ### `dataset.xlsx`
 
-The source workbook is part of the Data with Baraa Nightmare project materials. The project transcript describes the dataset as a deliberately chaotic starting point that should be investigated before dimensions and facts are rebuilt. fileciteturn213file4
+The source workbook is part of the Data with Baraa Nightmare project materials. In the project transcript, the dataset is deliberately presented as a chaotic starting point that should be investigated before dimensions and facts are rebuilt.
 
 The workbook itself is **not redistributed from this portfolio repository**. It should be kept locally at:
 
