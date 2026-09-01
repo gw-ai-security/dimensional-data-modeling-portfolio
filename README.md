@@ -4,7 +4,7 @@
 
 ## Project status
 
-**Theory phase complete — ready to start the guided Nightmare hands-on project.**
+**Theory phase complete — guided Nightmare PBIP implementation initialized.**
 
 Current progress:
 
@@ -15,11 +15,11 @@ Current progress:
 - ✅ Lesson 5 — Grain
 - ✅ Lesson 6 — Multiple fact tables
 - ✅ Lesson 7 — Security and Row-Level Security
-- ▶ Guided Nightmare portfolio project — ready to start
+- ▶ Guided Nightmare portfolio project — source-model audit in progress
 - ⬜ Independent no-tutorial model audit
 - ⬜ Final validation and recruiter-ready evidence
 
-The seven theory lessons were marked complete only after the corresponding course segments had been watched and checked through Active Recall. Practical Power BI implementation claims are intentionally deferred until the Nightmare project is actually built and validated.
+The seven theory lessons were marked complete only after the corresponding course segments had been watched and checked through Active Recall. The Power BI Project is now committed in PBIP/TMDL form, but no dimensional redesign or validation is claimed yet.
 
 ## Objective
 
@@ -74,6 +74,21 @@ The complete pre-project theory block is documented in [`docs/theory/`](docs/the
 | [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ✅ Completed |
 
 Repository-native visual summaries are available in [`diagrams/`](diagrams/README.md).
+
+## Current implementation artifact
+
+The Nightmare project is stored as a source-controlled Power BI Project:
+
+```text
+model/nightmare-data-model/
+├── nightmare-data-model.pbip
+├── nightmare-data-model.Report/
+└── nightmare-data-model.SemanticModel/
+```
+
+The semantic model is stored in TMDL, making table, relationship and model-definition changes inspectable in Git.
+
+The course source workbook `dataset.xlsx` is deliberately **not committed**. A local copy belongs at `local-data/dataset.xlsx`; see [`local-data/README.md`](local-data/README.md). The instructor's completed solution is also kept outside the repository and is used only as a later reference/check.
 
 ## Core modeling decision map
 
@@ -136,14 +151,15 @@ The course distinguishes **table-level, column-level and row-level security**. R
 - RLS must be tested with representative roles/users and expected restricted totals.
 - Report filters answer **what the user wants to analyze**; RLS defines **what the user is allowed to see at all**.
 
-## Next phase — Nightmare hands-on project
+## Current capstone phase — source-model audit
 
-The repository now moves from theory evidence to actual model evidence:
+The repository has now moved from theory evidence to actual model evidence:
 
 ```text
-Inspect source model
-→ record baseline metrics
-→ define grain
+✅ initialize PBIP/TMDL project
+▶ inspect source model
+▶ record baseline metrics
+▶ define grain
 → identify facts and dimensions
 → build dimensions
 → build facts
@@ -157,15 +173,17 @@ Inspect source model
 → independent no-tutorial audit
 ```
 
-See [`PROJECT_PLAN.md`](PROJECT_PLAN.md) and Issue #6 for the implementation checklist.
+See [`PROJECT_PLAN.md`](PROJECT_PLAN.md), [`docs/04_source_model_assessment.md`](docs/04_source_model_assessment.md) and Issue #6 for the implementation checklist.
 
 ## Claim boundaries
 
-The theory phase is complete, but the capstone is not yet implemented. This repository therefore demonstrates structured conceptual understanding and recall, not production Power BI experience. Implementation claims will be added only when corresponding model artifacts and validation evidence exist.
+The theory phase is complete and the PBIP starting model has been committed, but the Nightmare model has not yet been redesigned or validated. This repository therefore currently demonstrates conceptual understanding plus an initialized hands-on implementation, not completed production Power BI experience.
+
+Implementation claims will be added only when corresponding model changes and validation evidence exist.
 
 ## Attribution
 
-The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented. The repository currently adds original learning notes, diagrams and recall/correction evidence; hands-on implementation, validation and audit evidence will be added only as the capstone work is actually completed.
+The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented. The repository adds original learning notes, diagrams, recall/correction evidence, PBIP/TMDL implementation work, validation evidence and independent reflection as those artifacts are actually created.
 
 ## License
 
