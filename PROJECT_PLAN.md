@@ -8,16 +8,20 @@ Build defensible evidence of dimensional data modeling competence, progressing f
 
 | Module | Evidence | Status |
 |---|---|---|
-| Why data modeling | `docs/01_modeling_fundamentals.md` | ✅ documented |
-| Facts vs dimensions | `docs/01_modeling_fundamentals.md` | ✅ documented |
-| Star / Snowflake / Galaxy | `docs/02_schema_patterns.md` | ✅ documented |
-| Relationships | `docs/03_relationships.md` | 🟡 learning in progress |
-| Grain | `docs/05_grain_analysis.md` | ⬜ planned |
-| Advanced modeling patterns | documentation + diagrams | ⬜ planned |
+| Why data modeling | `docs/theory/lesson_01_modeling_foundations.md` | ✅ completed |
+| Facts vs dimensions | `docs/theory/lesson_01_modeling_foundations.md` | ✅ completed |
+| Star / Snowflake / Galaxy | `docs/theory/lesson_02_schema_patterns.md` | ✅ completed |
+| Relationships | `docs/theory/lesson_03_relationships.md` | ✅ completed |
+| Special dimensions | `docs/theory/lesson_04_special_dimensions.md` | ✅ completed |
+| Grain | `docs/theory/lesson_05_grain.md` | ▶ current |
+| Multiple facts | `docs/theory/lesson_06_multiple_facts.md` | ⬜ planned |
+| Security / RLS | `docs/theory/lesson_07_security_rls.md` | ⬜ planned |
+
+A theory module is marked complete only after the corresponding course segment has been watched and the concepts have been explained from memory through Active Recall.
 
 ## Phase B — Guided portfolio project
 
-The separate Data with Baraa portfolio project will be implemented hands-on after the theory block.
+The separate Data with Baraa Nightmare portfolio project will be implemented hands-on after the theory block.
 
 Planned sequence:
 
@@ -53,6 +57,8 @@ The phase is complete only when I can, without step-by-step guidance:
 - explain filter propagation
 - identify risky many-to-many relationships
 - detect ambiguous filter paths
+- recognize when descriptive attributes should become normal or junk dimensions
+- explain and use role-playing dimension patterns
 - validate that model changes did not break key business metrics
 - explain relevant trade-offs and limitations
 
