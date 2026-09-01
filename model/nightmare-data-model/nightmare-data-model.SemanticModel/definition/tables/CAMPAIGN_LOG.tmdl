@@ -106,7 +106,7 @@ table CAMPAIGN_LOG
 		mode: import
 		source =
 				let
-				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    CAMPAIGN_LOG_Sheet = Quelle{[Item="CAMPAIGN_LOG",Kind="Sheet"]}[Data],
 				    #"Höher gestufte Header" = Table.PromoteHeaders(CAMPAIGN_LOG_Sheet, [PromoteAllScalars=true]),
 				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CampaignName", type text}, {"Channel", type text}, {"StartDate", type date}, {"EndDate", type date}, {"Budget", Int64.Type}, {"Date", type date}, {"Impressions", Int64.Type}, {"Clicks", Int64.Type}, {"Spend", type number}})

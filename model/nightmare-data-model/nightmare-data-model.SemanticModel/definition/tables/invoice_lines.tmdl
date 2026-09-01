@@ -39,7 +39,7 @@ table invoice_lines
 		mode: import
 		source =
 				let
-				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    invoice_lines_Sheet = Quelle{[Item="invoice_lines",Kind="Sheet"]}[Data],
 				    #"Höher gestufte Header" = Table.PromoteHeaders(invoice_lines_Sheet, [PromoteAllScalars=true]),
 				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"InvoiceLineID", type text}, {"InvoiceID", type text}, {"ProductName", type text}, {"Amount", type number}})

@@ -21,7 +21,7 @@ table campaign_skus
 		mode: import
 		source =
 				let
-				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    campaign_skus_Sheet = Quelle{[Item="campaign_skus",Kind="Sheet"]}[Data],
 				    #"Geänderter Typ" = Table.TransformColumnTypes(campaign_skus_Sheet,{{"Column1", type text}, {"Column2", type text}})
 				in

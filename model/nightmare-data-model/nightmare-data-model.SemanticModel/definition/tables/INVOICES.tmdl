@@ -55,7 +55,7 @@ table INVOICES
 		mode: import
 		source =
 				let
-				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    INVOICES_Sheet = Quelle{[Item="INVOICES",Kind="Sheet"]}[Data],
 				    #"Höher gestufte Header" = Table.PromoteHeaders(INVOICES_Sheet, [PromoteAllScalars=true]),
 				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"InvoiceID", type text}, {"OrderID", type text}, {"CustomerName", type text}, {"InvoiceDate", type date}, {"Amount", type number}})

@@ -118,7 +118,7 @@ table ORDERS_2026
 		mode: import
 		source =
 				let
-				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    ORDERS_2026_Sheet = Quelle{[Item="ORDERS_2026",Kind="Sheet"]}[Data],
 				    #"Höher gestufte Header" = Table.PromoteHeaders(ORDERS_2026_Sheet, [PromoteAllScalars=true]),
 				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"OrderID", type text}, {"CustomerName", type text}, {"CustomerCity", type text}, {"RegionName", type text}, {"ShipToCity", type text}, {"BillToCity", type text}, {"OrderDate", type datetime}, {"OrderChannel", Int64.Type}, {"Status", type text}, {"Priority", type text}, {"OrderTotal", type number}, {"OrderNotes", type text}, {"GiftMessage", type any}})

@@ -30,7 +30,7 @@ table Address
 		mode: import
 		source =
 				let
-				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    Address_Sheet = Quelle{[Item="Address",Kind="Sheet"]}[Data],
 				    #"Höher gestufte Header" = Table.PromoteHeaders(Address_Sheet, [PromoteAllScalars=true]),
 				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"AddressID", Int64.Type}, {"Street", type text}, {"CityName", type text}})
