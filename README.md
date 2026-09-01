@@ -11,15 +11,15 @@ Current learning progress is tracked separately from documentation status:
 - ✅ Lesson 1 — Modeling foundations; facts vs dimensions
 - ✅ Lesson 2 — Star, snowflake and galaxy schemas
 - ✅ Lesson 3 — Relationships, cardinality, filter direction and ambiguity
-- ⬜ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
-- ⬜ Lesson 5 — Grain
+- ✅ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
+- ▶ Lesson 5 — Grain
 - ⬜ Lesson 6 — Multiple fact tables
 - ⬜ Lesson 7 — Security and Row-Level Security
 - ⬜ Guided Nightmare portfolio project
 - ⬜ Independent no-tutorial model audit
 - ⬜ Final validation and recruiter-ready evidence
 
-> **Documentation complete does not mean skill complete.** Lessons 4–7 are documented ahead from the course transcript but remain uncompleted learning checkpoints until they have been watched, explained from memory and tested through Active Recall.
+> **Documentation complete does not mean skill complete.** Lessons are marked complete only after the relevant video block has been watched, explained from memory and checked through Active Recall.
 
 ## Objective
 
@@ -66,8 +66,8 @@ The full theory block of the Data with Baraa course is documented in [`docs/theo
 | [01](docs/theory/lesson_01_modeling_foundations.md) | Modeling foundations; flat-table and one-report anti-patterns; facts and dimensions | ✅ Completed |
 | [02](docs/theory/lesson_02_schema_patterns.md) | Star, snowflake and galaxy schemas | ✅ Completed |
 | [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | ✅ Completed |
-| [04](docs/theory/lesson_04_special_dimensions.md) | Dimensions hidden in facts, junk dimensions, role-playing dimensions | ⬜ Not yet studied |
-| [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ⬜ Not yet studied |
+| [04](docs/theory/lesson_04_special_dimensions.md) | Dimensions hidden in facts, junk dimensions, role-playing dimensions | ✅ Completed |
+| [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ▶ Current |
 | [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ⬜ Not yet studied |
 | [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ⬜ Not yet studied |
 
@@ -90,14 +90,29 @@ flowchart TD
     K --> L[Apply and test security requirements]
 ```
 
-## Current relationship checkpoint
+## Completed learning checkpoints
 
-Lesson 3 has been completed through video study and Active Recall. The following distinctions were explicitly corrected and re-tested:
+### Lesson 3 — Relationships
+
+The following distinctions were explicitly corrected and re-tested:
 
 - `Bidirectional filtering` is not the same as `ambiguity`.
 - Ambiguity means multiple active filter paths exist between parts of the model.
 - An inactive relationship can be semantically valid; it is simply not the default filter path.
-- Multiple date roles such as `order_date` and `ship_date` do **not** imply many-to-many cardinality. A unique `dim_date` remains on the `1` side and the fact remains on the `*` side, with one relationship active and another potentially inactive.
+- Multiple date roles such as `order_date` and `ship_date` do **not** imply many-to-many cardinality. A unique `dim_date` remains on the `1` side and the fact remains on the `*` side.
+
+### Lesson 4 — Special Dimensions
+
+The completed checkpoint now includes:
+
+- identifying descriptive dimension-like context embedded in facts;
+- using normal extracted dimensions for coherent business concepts;
+- using a junk dimension to bundle heterogeneous low-level flags / descriptive attributes;
+- understanding role-playing dimensions as one dimension serving multiple roles against the same fact;
+- preserving an unambiguous default filter path with active/inactive role relationships;
+- using `USERELATIONSHIP()` conceptually to select an inactive alternative relationship for a specific calculation.
+
+A key correction from Active Recall: alternative role relationships are not inactive because multiple active relationships are universally forbidden. They are kept inactive where needed to avoid competing active filter paths and preserve unambiguous semantics.
 
 ## Claim boundaries
 
