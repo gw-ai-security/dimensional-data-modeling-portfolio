@@ -11,8 +11,6 @@ The key question is:
 
 > **What does one row represent?**
 
-The course recommends answering that question explicitly in one sentence before doing further modeling or calculations.
-
 Examples:
 
 ```text
@@ -21,205 +19,175 @@ One row = one whole order
 One row = one month of sales
 ```
 
-These are three different grains even when the tables refer to the same general business process and may show similar totals.
+These are different grains even when they describe the same broad business process.
 
-## 2. Why grain changes the meaning of a fact
-
-Three facts can all describe sales while representing completely different levels of detail.
-
-### Detailed fact — order-line grain
+## 2. Detail hierarchy
 
 ```text
-One row = one line of one order
+Order Line  → finer / more detailed
+Order       → coarser
+Month       → more aggregated
 ```
 
-An order with three products can create three rows.
+An Order can contain multiple Order Lines, so **Order-Line grain is finer than Order grain**.
 
-### Order-level fact
+## 3. Grain must be established first
+
+Before modeling or calculating from a fact:
 
 ```text
-One row = one complete order
+Inspect fact
+→ ask what one row represents
+→ state the grain
+→ inspect numeric column grain
+→ only then model / aggregate / combine
 ```
 
-The same order is represented once regardless of how many products it contains.
-
-### Monthly fact
-
-```text
-One row = one month of sales
-```
-
-Individual orders and order lines are no longer visible. The data is already highly aggregated.
-
-This produces a hierarchy of detail:
-
-```text
-Order line
-    ↓ less detail
-Order
-    ↓ less detail
-Month
-```
-
-## 3. Grain is the first question for a fact
-
-The transcript repeatedly emphasizes that understanding grain should happen before:
+Grain must be understood before:
 
 - deciding how facts connect;
 - combining tables;
 - writing calculations;
 - interpreting totals.
 
-The practical routine is:
+## 4. Aggregation depends on grain
+
+If a table is at Order-Line grain, a repeated `order_id` does not represent multiple orders. Counting rows or counting `order_id` without considering grain can therefore overcount business events.
 
 ```text
-See a fact table
-→ ask what one row represents
-→ state the grain clearly
-→ only then model / calculate
+Wrong assumption: 1 row = 1 order
+Actual grain:     1 row = 1 order line
 ```
 
-## 4. Grain controls aggregation logic
+The calculation must match the business grain.
 
-A calculation that is correct at one grain can be wrong at another.
+## 5. Table grain and measure grain can differ
 
-### Example: counting orders from an order-line fact
-
-Suppose an order-line fact contains six rows but only three distinct orders.
-
-A simple row count or count of `order_id` would return six and overstate the number of orders.
-
-Because the table grain is **order line**, the correct order count requires counting distinct order IDs.
-
-```text
-Wrong assumption:
-1 row = 1 order
-
-Actual grain:
-1 row = 1 order line
-
-Correct approach:
-count distinct order_id
-```
-
-The lesson is not specifically about one DAX function. The principle is that aggregation must match the grain.
-
-## 5. A table can contain measures at different grains
-
-A particularly important point in the transcript is that the table grain does not automatically mean every numeric column has the same grain.
+A particularly important point from the transcript is that the table grain does not automatically define the semantic grain of every numeric column.
 
 Example:
 
 ```text
 Table grain: one order line
-```
 
-Possible columns:
-
-```text
 line_sales     → order-line grain
-shipping_cost  → whole-order grain repeated on every line
+shipping_cost  → whole-order grain repeated on each line
 ```
 
-If a whole-order shipping cost is repeated across all lines, blindly summing it over the order-line table produces double counting.
+If the Order-level value is repeated across multiple lines, blindly summing it duplicates the business amount.
 
-This means grain must be understood at two levels:
+This creates two questions:
 
-1. **Table grain** — what one row represents.
-2. **Measure/column grain** — at what level a particular number was actually recorded.
+1. **Table grain** — what does one row represent?
+2. **Measure/column grain** — at what business level was this number actually recorded?
 
-## 6. Repeated higher-level values
+## 6. Double-counting example
 
-When an order-level value appears on every line of an order, the repetition is not proof that each line incurred that amount.
-
-The source demonstrates shipping cost as an example of this pattern.
+Recall exercise used during the learning checkpoint:
 
 ```text
-Order 1001
-Line 1 → shipping cost 50
-Line 2 → shipping cost 50
-Line 3 → shipping cost 50
+order_id | product | order_total
+1001     | Laptop  | 1,200
+1001     | Mouse   | 1,200
+1001     | Bag     | 1,200
+1002     | Monitor |   500
 ```
 
-The business meaning may still be:
+Interpretation:
 
 ```text
-Order 1001 shipping cost = 50
+Table grain             = Order Line
+order_total measure grain = Order
 ```
 
-not:
+A naive aggregation gives:
 
 ```text
-50 + 50 + 50 = 150
+SUM(order_total) = 4,100  ❌
 ```
 
-The modeler therefore needs to know whether a value belongs to the row grain or to a higher-level entity.
+because Order 1001 is counted three times.
+
+The correct Order-level total is:
+
+```text
+1,200 + 500 = 1,700  ✅
+```
+
+The lesson is not to memorize one specific DAX function. It is to prevent aggregation that contradicts the business grain.
 
 ## 7. Grain and business correctness
-
-The transcript presents grain errors as a direct business risk because they can create apparently valid calculations with incorrect totals.
 
 ```text
 Misunderstood grain
 → wrong aggregation
-→ wrong KPI
-→ wrong business decision
+→ plausible but wrong KPI
+→ wrong business conclusion
 ```
 
-This is why grain is treated as foundational rather than as an implementation detail.
+Grain is therefore a semantic modeling requirement, not merely a technical detail.
 
-## 8. Grain statement template
+## 8. Documentation template
 
-For every fact, document a sentence like:
+For every fact, write an explicit statement:
 
 ```text
 The grain of fact_sales is one row per order line.
 ```
 
-For important measures, add:
+For important measures, document exceptions:
 
 ```text
 line_sales is recorded at order-line grain.
-shipping_cost is recorded at order grain and is repeated across order lines.
+shipping_cost is recorded at order grain and repeated across order lines.
 ```
-
-This makes later modeling and validation much easier.
 
 ## 9. Grain checklist
 
 Before using a fact, ask:
 
 1. What exactly does one row represent?
-2. Which columns identify that row-level event?
+2. Which columns identify the row-level event?
 3. Is the table detailed or already aggregated?
-4. Does each numeric column exist at the same grain as the row?
+4. Does every numeric column exist at the same grain as the row?
 5. Are higher-level values repeated on lower-level rows?
-6. Will `SUM`, `COUNT` or another aggregation double count something?
-7. Do I need a distinct count or another grain-aware calculation?
+6. Could `SUM`, `COUNT` or another aggregation double count a business event/value?
+7. Is a distinct or otherwise grain-aware aggregation required?
 
-## 10. Failure modes from this lesson
+## 10. Failure modes
 
-- assuming every row is a complete transaction when the grain is a transaction line;
-- counting repeated business IDs as separate business events;
-- summing values that were recorded at a higher grain and repeated at a lower grain;
-- assuming every numeric column has the same grain as the table;
-- combining or relating facts before stating their grain;
-- trusting matching totals as proof that two facts have the same structure.
+- treating every row as a complete transaction when it is a transaction line;
+- counting repeated business IDs as separate events;
+- summing values recorded at a higher grain and repeated at a lower grain;
+- assuming every numeric column has the same grain as its table;
+- combining facts before stating their grains;
+- trusting matching grand totals as proof of structural compatibility.
 
-## Active Recall
+## Active Recall checkpoint — 2026-09-01
 
-1. What is grain?
-2. What is the single most important question to ask when inspecting a fact?
-3. What is the difference between order-line grain and order grain?
-4. Why can two sales facts with the same total still be structurally different?
-5. Why does counting `order_id` in an order-line fact potentially overcount orders?
-6. What is the difference between table grain and measure/column grain?
-7. Why can summing a repeated shipping-cost column be wrong?
-8. What grain statement would you write for a fact where one row represents one product line in an order?
+**Status: completed after correction and applied example.**
+
+Correctly recalled:
+
+- grain = level of detail / what one row represents;
+- table grain and measure grain can differ;
+- repeated higher-grain values can cause double counting;
+- grain must be understood before combining or comparing facts.
+
+Correction:
+
+- Order grain was initially described as more detailed; corrected to **Order-Line = finer**, **Order = coarser**.
+
+Applied test:
+
+- identified Order-Line table grain;
+- identified `order_total` as Order-grain measure;
+- diagnosed naive total `4,100` as wrong;
+- derived correct Order-level total `1,700`.
 
 ## Learning status
 
 - Theory documentation: ✅
-- Lesson watched/studied: ⬜
-- Active Recall checkpoint: ⬜
-- Capstone implementation evidence: ⬜
+- Lesson watched/studied: ✅
+- Active Recall checkpoint: ✅
+- Capstone implementation evidence: ⬜ not started
