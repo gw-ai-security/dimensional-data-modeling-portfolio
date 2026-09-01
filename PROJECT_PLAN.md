@@ -6,62 +6,75 @@ Build defensible evidence of dimensional data modeling competence, progressing f
 
 ## Phase A — Theory foundations ✅ COMPLETE
 
-| Module | Evidence | Status |
-|---|---|---|
-| Why data modeling | `docs/theory/lesson_01_modeling_foundations.md` | ✅ completed |
-| Facts vs dimensions | `docs/theory/lesson_01_modeling_foundations.md` | ✅ completed |
-| Star / Snowflake / Galaxy | `docs/theory/lesson_02_schema_patterns.md` | ✅ completed |
-| Relationships | `docs/theory/lesson_03_relationships.md` | ✅ completed |
-| Special dimensions | `docs/theory/lesson_04_special_dimensions.md` | ✅ completed |
-| Grain | `docs/theory/lesson_05_grain.md` | ✅ completed |
-| Multiple facts | `docs/theory/lesson_06_multiple_facts.md` | ✅ completed |
-| Security / RLS | `docs/theory/lesson_07_security_rls.md` | ✅ completed |
-
-A theory module was marked complete only after the corresponding course segment had been watched and explained from memory through Active Recall.
+All seven theory lessons are complete and were checked through Active Recall before the guided capstone began.
 
 ## Phase B — Guided Nightmare portfolio project ▶ CURRENT
 
-The Data with Baraa Nightmare portfolio project will now be implemented hands-on in Power BI. Theory-only status is complete; this phase creates practical evidence.
+**Current video checkpoint: 03:45:58.**
 
-### B1 — Inspect before changing
+### B1 — Prepare and investigate
 
-1. Inventory all source tables.
-2. Understand business meaning and dependencies.
-3. Capture the original model state.
-4. Record baseline metrics before remodeling.
-5. State a grain hypothesis for every fact-like table.
-6. Identify duplicate keys, risky relationships and likely data-quality issues.
+- [x] PBIP/TMDL project initialized
+- [x] course workbook kept local-only and source repointed
+- [x] successful refresh after source repoint
+- [x] Power Query groups created: `01_Stage`, `02_Dimensions`, `03_Facts`, `04_Support`
+- [x] source tables explored at business/domain level
+- [x] initial fact/dimension candidates identified
+- [x] order header vs order-line detail grain distinguished
+- [ ] before-state screenshot committed under `screenshots/before/`
+- [ ] protected fact baseline metrics recorded before fact reshaping
 
-### B2 — Build dimensions
+### B2 — Build dimensions ▶ IN PROGRESS
 
-7. Identify normal dimensions and descriptive attributes hidden in facts.
-8. Build/clean dimensions and validate key uniqueness.
-9. Use junk dimensions only where the course pattern is justified.
-10. Consolidate role-playing dimensions where the business entity is the same.
+- [x] `dim_customer` built from customer-related source tables
+- [x] customer dummy/test row filtered and non-analytical technical columns removed
+- [x] address/city/region context consolidated into `dim_customer`
+- [x] `dim_product` built and enriched from `subcategories`
+- [x] product data-quality rows handled as demonstrated in the guided project
+- [x] model-generated `product_key` created
+- [x] `ORDERS_2025` and `ORDERS_2026` appended into `orders`
+- [x] `dim_order_flags` extracted as a junk dimension from channel/status/priority combinations
+- [x] manual `channels` mapping created and merged
+- [ ] final junk-dimension naming/polish step
+- [ ] remaining guided dimensions
 
-### B3 — Build facts and relationships
+### B3 — Build facts and relationships ⬜ NEXT
 
-11. State fact grain before transformations.
-12. Preserve measures at their correct semantic grain.
-13. Decide Append vs Merge vs separate facts based on event, grain and structure.
-14. Connect separate facts through shared dimensions rather than direct fact-to-fact relationships.
-15. Validate cardinality, filter direction, active/inactive relationships and ambiguity.
+At 03:45:58 the first fact has **not yet been created**. The next guided sequence starts after the junk-dimension polish and uses `order_line_items` as the detail-grain source for `fact_sales`.
 
-### B4 — Semantic layer and security
+Planned controls:
 
-16. Add Date / role-playing Date relationships where required.
-17. Define core semantic measures.
-18. Reconcile measures against baseline results.
-19. Understand the security requirement before implementation.
-20. Implement RLS through a documented filter path.
-21. Test representative roles/users and restricted totals.
+1. state the fact grain before transformation;
+2. capture/protect the baseline sales number;
+3. merge header/context only with row-count/total protection;
+4. add model keys for dimensional relationships;
+5. preserve measures at the correct semantic grain;
+6. connect facts through dimensions, never directly fact-to-fact.
 
-### B5 — Final validation
+### B4 — Semantic layer and security ⬜
 
-22. Reconcile before/after metrics.
-23. Capture the final model diagram and evidence screenshots.
-24. Complete relationship, security and final validation checklists.
-25. Document architecture decisions and trade-offs.
+- Date / role-playing relationships
+- semantic measures
+- baseline reconciliation
+- documented RLS filter path
+- representative role/user testing
+
+### B5 — Final validation ⬜
+
+- before/after reconciliation
+- final model diagram and screenshots
+- relationship/security validation
+- architecture decisions and trade-offs
+
+## Confirmed implementation principles
+
+The guided implementation now demonstrates these decisions in the actual PBIP/TMDL model:
+
+- same event + same grain + compatible structure can be appended (`ORDERS_2025` + `ORDERS_2026` → `orders`);
+- related descriptive source tables can be consolidated into consumer-friendly dimensions (`dim_customer`, `dim_product`);
+- surrogate/model keys are introduced where the source does not provide the desired model key (`product_key`);
+- low-cardinality miscellaneous order attributes can be grouped into a junk dimension (`dim_order_flags`);
+- manual reference mappings introduce maintenance responsibility and should preferably be owned upstream in a production system.
 
 ## Phase C — Independent evidence
 
@@ -80,24 +93,20 @@ The Data Modeling phase is complete only when I can, without step-by-step guidan
 - determine table grain and distinguish row grain from measure grain;
 - distinguish facts and dimensions;
 - design a star/galaxy schema;
-- choose and justify relationship cardinality;
-- explain filter propagation;
-- identify risky many-to-many relationships;
-- detect ambiguous filter paths;
-- recognize when descriptive attributes should become normal or junk dimensions;
-- explain and use role-playing dimension patterns;
+- choose and justify relationship cardinality and filter direction;
+- identify many-to-many and ambiguity risks;
+- recognize normal, junk and role-playing dimension patterns;
 - choose Append vs Merge vs separate facts based on event, grain and shape;
-- compare facts only at a grain both facts understand;
-- explain static vs dynamic RLS and trace the security filter path;
-- validate that model changes did not break key business metrics;
-- explain relevant trade-offs and limitations.
+- reconcile important metrics after model changes;
+- trace and test an RLS security path;
+- explain architecture trade-offs and limitations.
 
 ## Portfolio evidence required
 
-- before/after model diagrams;
-- source model assessment;
+- before/after model evidence;
+- source assessment;
 - grain matrix;
-- fact/dimension documentation;
+- dimension/fact documentation;
 - relationship matrix;
 - baseline and reconciliation tests;
 - RLS evidence;
@@ -108,5 +117,5 @@ The Data Modeling phase is complete only when I can, without step-by-step guidan
 ## Current gate
 
 **Theory gate: passed.**  
-**Implementation gate: not yet passed.**  
-**Next action: Issue #6 — audit the Nightmare source model before changing it.**
+**Guided implementation: dimension-building phase in progress.**  
+**Immediate next action:** finish `dim_order_flags` polish, then start `fact_sales` from `order_line_items` and protect the first baseline metric.

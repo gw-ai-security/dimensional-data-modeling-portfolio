@@ -5,12 +5,12 @@ This directory contains the guided Nightmare Data Modeling capstone implementati
 ## Current status
 
 **Theory phase: complete.**  
-**Nightmare Power BI implementation: initialized.**  
-**Current implementation phase: source-model audit before redesign.**
+**Nightmare Power BI implementation: in progress.**  
+**Current guided checkpoint: 03:45:58.**
 
-The Power BI Project has now been committed in Git-friendly PBIP/TMDL form. No dimensional redesign is claimed yet: the committed model represents the imported Nightmare starting state that must first be inspected, documented and baselined.
+The committed PBIP/TMDL model has progressed beyond the raw Nightmare starting state. Power Query staging groups and the first analytical dimensions now exist, while the first final fact has not yet been created.
 
-## Current project structure
+## Project structure
 
 ```text
 model/
@@ -21,117 +21,90 @@ model/
     └── nightmare-data-model.SemanticModel/
 ```
 
-The semantic model is stored in **TMDL** under the `definition/` directory, which allows table and relationship changes to be reviewed as text-based Git diffs rather than only as a monolithic binary file.
+The semantic model is stored in TMDL under `definition/`, making model changes inspectable as Git diffs.
+
+## Implemented model objects through 03:45:58
+
+### Query groups
+
+```text
+01_Stage
+02_Dimensions
+03_Facts
+04_Support
+```
+
+### New/reshaped project objects
+
+```text
+01_Stage
+├── orders          # append of ORDERS_2025 + ORDERS_2026
+├── channels        # manually entered channel-code lookup
+└── source/reference expressions used by dimensions
+
+02_Dimensions
+├── dim_customer
+├── dim_product
+└── dim_order_flags
+
+03_Facts
+└── no completed analytical fact yet at this checkpoint
+```
+
+`dim_order_flags` has been structurally built and enriched with `channels`; the final naming/polish step shown immediately after 03:45:58 in the course is still pending in the committed state.
 
 ## Source data policy
 
-The guided project uses Data with Baraa's Nightmare source workbook, `dataset.xlsx`.
-
-The workbook is **not committed to this portfolio repository**. Keep a local copy at:
+The guided project uses Data with Baraa's `dataset.xlsx`. The workbook is not committed. Keep the local copy at:
 
 ```text
 local-data/dataset.xlsx
 ```
 
-See [`../local-data/README.md`](../local-data/README.md) for setup instructions.
+The completed instructor solution also remains outside this repository and is only a later reference/check.
 
-Reasons:
+Tracked PBIP source artifacts include `.pbip`, `.pbir`, `.pbism`, `.tmdl`, `.platform`, report/model `definition/` and shared editor metadata. Local cache/settings, binary PBIX/PBIT files, `unappliedChanges.json` and the course workbook remain ignored.
 
-- the workbook originates from third-party course material;
-- this repository should demonstrate the modeling work rather than redistribute course assets;
-- the PBIP/TMDL project already provides inspectable implementation evidence without committing the raw workbook;
-- large/binary source files add poor Git history compared with text-based model definitions.
+## Portability note
 
-The completed Data with Baraa solution file must also remain outside this repository and should be used only as a later reference/check, not as implementation evidence.
+The source queries use a local `File.Contents(...)` path. A different development machine must repoint the workbook path before refresh. The local development copy currently targets the ignored repository-local workbook under `local-data/`.
 
-## Power BI source-control rules
-
-Tracked:
-
-- `.pbip`
-- `.pbir`
-- `.pbism`
-- `.tmdl`
-- `.platform`
-- report `definition/`
-- semantic-model `definition/`
-- `.pbi/editorSettings.json`
-
-Ignored:
-
-- `.pbi/localSettings.json`
-- `.pbi/cache.abf`
-- `.pbi/unappliedChanges.json` in this repository
-- `.pbix` / `.pbit` binary artifacts
-- the local `dataset.xlsx`
-
-`editorSettings.json` remains tracked because it is semantic-model editor metadata intended to be shared across users/environments. `unappliedChanges.json` is deliberately ignored here so a portfolio commit represents applied Power Query/model state rather than unfinished local query changes.
-
-## Current portability limitation
-
-The imported source queries currently reference the Excel workbook through a local `File.Contents(...)` path. This is normal for a file-based Power BI source but means a different machine must repoint the source to its own local `dataset.xlsx` before refresh.
-
-For the local development copy, use:
+## Evidence workflow — current position
 
 ```text
-<repository-root>/local-data/dataset.xlsx
+✅ Import Nightmare source
+✅ Capture/inspect starting model in working session
+✅ Organize Power Query workspace
+✅ Explore source/business objects
+✅ Build dim_customer
+✅ Build dim_product
+✅ Append yearly order headers → orders
+✅ Extract dim_order_flags
+✅ Add channels mapping
+▶ Polish dim_order_flags
+→ Reference order_line_items → fact_sales
+→ Record/protect baseline sales metric
+→ Merge header context safely
+→ Add dimension keys
+→ Build remaining facts/relationships
+→ Date + measures + RLS
+→ Reconcile and validate
 ```
 
-After changing the source path in Power BI Desktop, refresh once and save the PBIP before beginning model transformations.
+## Current implementation rules
 
-## Capstone evidence workflow
-
-```text
-Import Nightmare source
-→ capture starting state
-→ inventory source tables
-→ establish baseline metrics
-→ define grain
-→ build dimensions
-→ build facts
-→ establish relationships
-→ validate filter behavior
-→ implement security
-→ reconcile metrics
-→ document decisions
-→ independent audit
-```
-
-## Recommended milestone commits
-
-```text
-feat: initialize nightmare PBIP source model
-
-docs: audit nightmare source tables and grain
-
-test: record protected baseline metrics
-
-feat: build and validate dimensions
-
-feat: define facts and dimensional relationships
-
-feat: implement role-playing date relationships
-
-feat: add semantic measures
-
-feat: implement row-level security
-
-test: reconcile final model metrics
-```
-
-## Artifact rules
-
-- do not commit temporary Power BI cache/local-setting files;
-- do not commit credentials or secrets;
-- do not commit the source course workbook unless redistribution permission for that exact asset is explicitly verified;
-- do not commit the instructor's completed solution as if it were project evidence;
-- project documentation must match the committed model state;
-- prefer meaningful PBIP/TMDL milestone commits over binary `final`, `final2`, `final-new` copies.
+- state grain before combining tables;
+- use Append only when event/grain/shape are compatible;
+- check merge cardinality so rows are not multiplied;
+- remove source attributes that do not earn a reporting role;
+- keep one authoritative analytical home for descriptive context;
+- document manually maintained mappings as an operational dependency;
+- do not claim a final star schema until facts, dimensional relationships and reconciliation evidence exist.
 
 ## Next evidence to create
 
-- before-state model screenshot;
-- source table inventory;
-- initial grain hypotheses;
-- relationship/cardinality/filter-direction risk assessment;
-- protected baseline metrics.
+1. finish the junk-dimension naming polish;
+2. create `fact_sales` from `order_line_items`;
+3. record the protected sales baseline before/after risky merges;
+4. commit the before-state Model View image to `screenshots/before/`;
+5. continue documenting fact grain and model-key lookups.

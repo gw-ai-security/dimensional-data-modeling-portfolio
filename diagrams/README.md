@@ -1,6 +1,6 @@
 # Diagrams
 
-Repository-native Mermaid diagrams make the modeling concepts inspectable directly on GitHub. These are original reconstructions of the learned concepts rather than copied course graphics.
+Repository-native Mermaid diagrams make modeling concepts and implemented project states inspectable directly on GitHub. These are original reconstructions rather than copied course graphics.
 
 ## Theory diagrams — complete
 
@@ -13,22 +13,24 @@ Repository-native Mermaid diagrams make the modeling concepts inspectable direct
 - [`lesson-06-multiple-facts.md`](lesson-06-multiple-facts.md) — Append vs Merge vs separate facts; shared dimensions
 - [`lesson-07-security-rls.md`](lesson-07-security-rls.md) — security levels, Dynamic RLS and security filter path
 
-## Capstone diagrams — pending implementation
+## Capstone diagrams — in progress
 
-The Nightmare project will add evidence-backed diagrams only after the corresponding Power BI states actually exist:
+- [`capstone-progress.md`](capstone-progress.md) — evidence-backed transformation map through video checkpoint 03:45:58: customer/product dimensions, unified order staging, junk dimension and next `fact_sales` step
 
-- source model before-state;
-- source/problem relationship map;
-- grain/fact/dimension design map;
-- target dimensional model;
+Still pending until corresponding implementation evidence exists:
+
+- committed source-model before-state image;
+- final relationship/problem map;
+- complete fact/dimension design map;
 - final star/galaxy schema;
-- role-playing relationship view;
+- role-playing date relationship view;
 - final RLS/security filter path.
 
 ## Diagram rules
 
 - diagrams must represent an actual concept, decision or implemented model state;
-- project diagrams must match the Power BI artifact and documentation;
+- project diagrams must match the committed Power BI artifact and documentation;
+- planned/not-yet-built objects must be visually and textually distinguished from implemented objects;
 - relationship direction/cardinality must be labeled where material;
 - avoid copied course screenshots/graphics; reconstruct diagrams in original form;
-- do not imply capstone implementation before model evidence exists.
+- do not imply final capstone completion before model and validation evidence exist.
