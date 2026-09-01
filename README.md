@@ -10,7 +10,7 @@ Current learning progress is tracked separately from documentation status:
 
 - ✅ Lesson 1 — Modeling foundations; facts vs dimensions
 - ✅ Lesson 2 — Star, snowflake and galaxy schemas
-- 🟡 Lesson 3 — Relationships, cardinality, filter direction and ambiguity
+- ✅ Lesson 3 — Relationships, cardinality, filter direction and ambiguity
 - ⬜ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
 - ⬜ Lesson 5 — Grain
 - ⬜ Lesson 6 — Multiple fact tables
@@ -65,7 +65,7 @@ The full theory block of the Data with Baraa course is documented in [`docs/theo
 |---|---|---|
 | [01](docs/theory/lesson_01_modeling_foundations.md) | Modeling foundations; flat-table and one-report anti-patterns; facts and dimensions | ✅ Completed |
 | [02](docs/theory/lesson_02_schema_patterns.md) | Star, snowflake and galaxy schemas | ✅ Completed |
-| [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | 🟡 In progress |
+| [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | ✅ Completed |
 | [04](docs/theory/lesson_04_special_dimensions.md) | Dimensions hidden in facts, junk dimensions, role-playing dimensions | ⬜ Not yet studied |
 | [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ⬜ Not yet studied |
 | [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ⬜ Not yet studied |
@@ -90,106 +90,20 @@ flowchart TD
     K --> L[Apply and test security requirements]
 ```
 
-## Core modeling principles documented from the course
+## Current relationship checkpoint
 
-- Facts capture business events / activities; dimensions provide descriptive analytical context.
-- A star schema is the default analytical pattern in the course.
-- Dimension keys on the `1` side should be unique for standard `1:*` star-schema relationships.
-- Filters should normally propagate **Dimension → Fact**.
-- Bidirectional filters require deliberate justification because they can create unintended propagation and ambiguity.
-- Direct fact-to-fact relationships are avoided; shared dimensions connect multiple facts.
-- Grain must be stated before aggregating, merging, appending or relating fact tables.
-- A numeric column can exist at a different grain from the fact table and can therefore be double-counted if aggregated blindly.
-- Same-event partitioned facts can be appended; compatible one-to-one facts can be merged; different-grain facts remain separate and use shared dimensions.
-- Measures from different facts should be compared only at a level of detail both facts actually support.
-- Security depends on valid model relationships and filter propagation and must be tested against known results.
+Lesson 3 has been completed through video study and Active Recall. The following distinctions were explicitly corrected and re-tested:
 
-## Repository map
-
-```text
-.
-├── README.md
-├── PROJECT_PLAN.md
-├── SOURCES.md
-├── model/
-│   └── README.md
-├── diagrams/
-│   ├── README.md
-│   ├── lesson-01-foundations.md
-│   ├── lesson-02-schema-patterns.md
-│   └── lesson-03-relationships.md
-├── docs/
-│   ├── theory/
-│   │   ├── README.md
-│   │   ├── lesson_01_modeling_foundations.md
-│   │   ├── lesson_02_schema_patterns.md
-│   │   ├── lesson_03_relationships.md
-│   │   ├── lesson_04_special_dimensions.md
-│   │   ├── lesson_05_grain.md
-│   │   ├── lesson_06_multiple_facts.md
-│   │   └── lesson_07_security_rls.md
-│   ├── 01_modeling_fundamentals.md
-│   ├── 02_schema_patterns.md
-│   ├── 03_relationships.md
-│   ├── 04_source_model_assessment.md
-│   ├── 05_grain_analysis.md
-│   ├── 06_dimensions.md
-│   ├── 07_facts.md
-│   ├── 08_semantic_measures.md
-│   ├── 09_security.md
-│   ├── 10_architecture_decisions.md
-│   └── 11_lessons_learned.md
-├── tests/
-│   ├── README.md
-│   ├── baseline_metrics.md
-│   ├── relationship_validation.md
-│   ├── reconciliation_tests.md
-│   └── final_validation.md
-├── screenshots/
-│   └── README.md
-└── learning/
-    ├── active_recall.md
-    └── confusion_log.md
-```
-
-The root `docs/01...11` files are the evidence/project documentation track. Files for later project stages are intentionally present as **templates** and do not claim that the capstone has already been implemented.
-
-## Evidence standards
-
-A modeling claim is only considered complete when it has corresponding evidence. Depending on the claim, that evidence may include:
-
-- model diagram
-- Power BI model screenshot
-- explicit grain statement
-- uniqueness/cardinality check
-- relationship validation
-- baseline metric comparison
-- reconciliation test
-- RLS test case
-- architecture decision record
-- documented failure and fix
-
-## Planned capstone flow
-
-```mermaid
-flowchart TD
-    A[Messy multi-table source model] --> B[Source model assessment]
-    B --> C[Define business entities and grain]
-    C --> D[Build dimensions]
-    D --> E[Build facts]
-    E --> F[Establish relationships]
-    F --> G[Date / role-playing dimensions]
-    G --> H[Semantic measures]
-    H --> I[Row-level security]
-    I --> J[Reconciliation and final validation]
-    J --> K[Independent no-tutorial audit]
-```
+- `Bidirectional filtering` is not the same as `ambiguity`.
+- Ambiguity means multiple active filter paths exist between parts of the model.
+- An inactive relationship can be semantically valid; it is simply not the default filter path.
+- Multiple date roles such as `order_date` and `ship_date` do **not** imply many-to-many cardinality. A unique `dim_date` remains on the `1` side and the fact remains on the `*` side, with one relationship active and another potentially inactive.
 
 ## Claim boundaries
 
 Until the capstone is implemented and validated, this repository should be read as **learning-in-progress evidence**, not as proof of production Power BI experience.
 
-The theory files demonstrate structured source-based documentation. Implementation claims will be added only when the corresponding Power BI model artifacts and validation results exist.
+The current evidence demonstrates structured understanding of the documented modeling concepts. Implementation claims will be added only when the corresponding model artifacts and validation results exist.
 
 ## Attribution
 
