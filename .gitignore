@@ -4,20 +4,37 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Temporary / lock files
+# Temporary / lock / backup files
 *.tmp
 *.temp
+*.bak
 ~$*
 
-# Power BI temporary files
-~$*.pbix
+# Power BI binary/export artifacts
+# The source-controlled artifact for this repository is PBIP/TMDL, not PBIX/PBIT.
+*.pbix
+*.pbit
 *.pbit.tmp
+*.pbix.autosave
 
 # Power BI Project local/cache artifacts
+# Microsoft recommends excluding localSettings.json and cache.abf.
+# This repository also excludes unappliedChanges.json intentionally so commits
+# represent query changes that have actually been applied to the semantic model.
 **/.pbi/localSettings.json
 **/.pbi/cache.abf
 **/.pbi/unappliedChanges.json
 
+# Keep PBIP source artifacts tracked:
+# *.pbip, *.pbir, *.pbism, *.tmdl, .platform, definition/, editorSettings.json
+
+# Third-party/local source data
+# The Data with Baraa Nightmare workbook is required locally but is not
+# redistributed from this portfolio repository unless its redistribution
+# terms are explicitly verified.
+**/dataset.xlsx
+local-data/*
+!local-data/README.md
+
 # Local exports that may contain generated or sensitive data
 exports/
-local-data/
