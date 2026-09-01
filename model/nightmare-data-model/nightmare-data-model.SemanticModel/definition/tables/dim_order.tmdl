@@ -1,0 +1,23 @@
+table dim_order
+	lineageTag: d283ccd8-3b6b-4b55-9025-991c5d985953
+
+	column Column1
+		dataType: string
+		lineageTag: 38dc27fe-2ab9-4d63-87e4-dcc1890af246
+		summarizeBy: none
+		sourceColumn: Column1
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_order = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    dim_order_Sheet = Quelle{[Item="dim_order",Kind="Sheet"]}[Data],
+				    #"Geänderter Typ" = Table.TransformColumnTypes(dim_order_Sheet,{{"Column1", type text}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

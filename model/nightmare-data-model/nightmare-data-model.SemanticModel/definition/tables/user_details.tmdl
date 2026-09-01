@@ -1,0 +1,42 @@
+table user_details
+	lineageTag: 3fdbce64-2f98-48f1-9bc1-12f2d065d623
+
+	column UserID
+		dataType: int64
+		formatString: 0
+		lineageTag: f9b6842a-bfed-47d8-9216-61f598b16faf
+		summarizeBy: count
+		sourceColumn: UserID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CreditLimit
+		dataType: int64
+		formatString: 0
+		lineageTag: dbf10316-5a02-448c-a2e1-42bd45f2e129
+		summarizeBy: sum
+		sourceColumn: CreditLimit
+
+		annotation SummarizationSetBy = Automatic
+
+	column Phone
+		dataType: string
+		lineageTag: 2859990e-54e4-4f5a-a472-ff174d391f4c
+		summarizeBy: none
+		sourceColumn: Phone
+
+		annotation SummarizationSetBy = Automatic
+
+	partition user_details = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    user_details_Sheet = Quelle{[Item="user_details",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(user_details_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"UserID", Int64.Type}, {"CreditLimit", Int64.Type}, {"Phone", type text}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

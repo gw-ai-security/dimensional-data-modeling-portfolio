@@ -1,0 +1,117 @@
+table CAMPAIGN_LOG
+	lineageTag: 4f1d7884-f659-40eb-9fdd-4285c1a576e2
+
+	column CampaignName
+		dataType: string
+		lineageTag: dc6fe14c-a62c-498a-9d00-15bc7d18e56e
+		summarizeBy: none
+		sourceColumn: CampaignName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Channel
+		dataType: string
+		lineageTag: 0482b2f8-4326-466c-90b1-92678233330c
+		summarizeBy: none
+		sourceColumn: Channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column StartDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: abe98e94-2297-47b4-b6d9-89a495ac0faf
+		summarizeBy: none
+		sourceColumn: StartDate
+
+		variation Variation
+			isDefault
+			relationship: 485a8cfe-5e3b-4d77-b88e-a8bfb7fcdaa2
+			defaultHierarchy: LocalDateTable_de3a7537-f5cc-4321-a4a4-6f17fa24e0ad.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column EndDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: cfdfd162-a7f0-49b0-a630-5acef18bacd1
+		summarizeBy: none
+		sourceColumn: EndDate
+
+		variation Variation
+			isDefault
+			relationship: a714186c-da39-43c1-bd09-1d96fb897c4d
+			defaultHierarchy: LocalDateTable_c38883f7-464c-4438-b703-5d9a7e464ba9.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Budget
+		dataType: int64
+		formatString: 0
+		lineageTag: 3bcca6fc-7458-42f9-ad2e-07fd1031f38d
+		summarizeBy: sum
+		sourceColumn: Budget
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 443c8bdb-dbdc-4165-a36f-25530b856a5f
+		summarizeBy: none
+		sourceColumn: Date
+
+		variation Variation
+			isDefault
+			relationship: d7aa0b2e-42be-4730-a021-513c3633a0d7
+			defaultHierarchy: LocalDateTable_8b1fae86-4fea-404f-adbc-6f5d5bcaf577.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Impressions
+		dataType: int64
+		formatString: 0
+		lineageTag: 2d539dc9-8520-41dd-bbc3-26b1919b4473
+		summarizeBy: sum
+		sourceColumn: Impressions
+
+		annotation SummarizationSetBy = Automatic
+
+	column Clicks
+		dataType: int64
+		formatString: 0
+		lineageTag: 19f99b28-22ca-41e7-a699-89313ef811a5
+		summarizeBy: sum
+		sourceColumn: Clicks
+
+		annotation SummarizationSetBy = Automatic
+
+	column Spend
+		dataType: double
+		lineageTag: d596490f-6a98-4fc5-a9b6-aa71748fa232
+		summarizeBy: sum
+		sourceColumn: Spend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition CAMPAIGN_LOG = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    CAMPAIGN_LOG_Sheet = Quelle{[Item="CAMPAIGN_LOG",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(CAMPAIGN_LOG_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CampaignName", type text}, {"Channel", type text}, {"StartDate", type date}, {"EndDate", type date}, {"Budget", Int64.Type}, {"Date", type date}, {"Impressions", Int64.Type}, {"Clicks", Int64.Type}, {"Spend", type number}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

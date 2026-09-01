@@ -1,0 +1,145 @@
+table ORDERS_2025
+	lineageTag: 66ebce69-eeaf-46bd-9478-5d640722c647
+
+	column OrderID
+		dataType: string
+		lineageTag: 8d4a4132-ca7d-443f-a141-65c2faba0aa7
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column LegacyRef
+		dataType: string
+		lineageTag: 1aaa139b-2dac-4133-8587-df80545042e7
+		summarizeBy: none
+		sourceColumn: LegacyRef
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerName
+		dataType: string
+		lineageTag: 02963ca9-237a-4a03-a3c7-613e88ab5f47
+		summarizeBy: none
+		sourceColumn: CustomerName
+
+		annotation SummarizationSetBy = Automatic
+
+	column CustomerCity
+		dataType: string
+		lineageTag: 64489c1e-9f4c-409a-be8b-c15da3c9bfbf
+		summarizeBy: none
+		sourceColumn: CustomerCity
+
+		annotation SummarizationSetBy = Automatic
+
+	column RegionName
+		dataType: string
+		lineageTag: f1af341a-f700-4c12-8507-c4ace9e5ee2c
+		summarizeBy: none
+		sourceColumn: RegionName
+
+		annotation SummarizationSetBy = Automatic
+
+	column ShipToCity
+		dataType: string
+		lineageTag: e1231034-abcf-4b64-9e2b-83e0afad8d9b
+		summarizeBy: none
+		sourceColumn: ShipToCity
+
+		annotation SummarizationSetBy = Automatic
+
+	column BillToCity
+		dataType: string
+		lineageTag: d703589c-c524-4a64-96c6-61d4f7dabbf6
+		summarizeBy: none
+		sourceColumn: BillToCity
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderDate
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: d3a6f12d-e8a7-454d-9580-9120b788361e
+		summarizeBy: none
+		sourceColumn: OrderDate
+
+		variation Variation
+			isDefault
+			relationship: 237f8de2-e3b3-4edc-b362-c38408349174
+			defaultHierarchy: LocalDateTable_f696fdbb-afa9-4c61-bb03-f1791355aef7.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderChannel
+		dataType: int64
+		formatString: 0
+		lineageTag: 77f84ac8-4354-4fd1-a888-d5065a7d8b89
+		summarizeBy: sum
+		sourceColumn: OrderChannel
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: 5e1be82e-d763-4c74-a7b6-d947a6203cbd
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Priority
+		dataType: string
+		lineageTag: 243e7be1-caf8-4ab4-8ef6-d1f03a5f5ca2
+		summarizeBy: none
+		sourceColumn: Priority
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderTotal
+		dataType: double
+		lineageTag: 34ed630e-8e9b-4201-a8bb-3faf823f04d8
+		summarizeBy: sum
+		sourceColumn: OrderTotal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column OrderNotes
+		dataType: string
+		lineageTag: 8eaae23d-3e7e-487a-b62e-852c867ef3b7
+		summarizeBy: none
+		sourceColumn: OrderNotes
+
+		annotation SummarizationSetBy = Automatic
+
+	column GiftMessage
+		dataType: string
+		lineageTag: e435e367-6674-4fd8-9c72-7fb2197b45e0
+		summarizeBy: none
+		sourceColumn: GiftMessage
+
+		annotation SummarizationSetBy = Automatic
+
+	column SourceFile
+		dataType: string
+		lineageTag: 35ab9f81-bf9d-41bc-a001-f514f6e1ef54
+		summarizeBy: none
+		sourceColumn: SourceFile
+
+		annotation SummarizationSetBy = Automatic
+
+	partition ORDERS_2025 = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    ORDERS_2025_Sheet = Quelle{[Item="ORDERS_2025",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(ORDERS_2025_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"OrderID", type text}, {"LegacyRef", type text}, {"CustomerName", type text}, {"CustomerCity", type text}, {"RegionName", type text}, {"ShipToCity", type text}, {"BillToCity", type text}, {"OrderDate", type datetime}, {"OrderChannel", Int64.Type}, {"Status", type text}, {"Priority", type text}, {"OrderTotal", type number}, {"OrderNotes", type text}, {"GiftMessage", type any}, {"SourceFile", type text}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

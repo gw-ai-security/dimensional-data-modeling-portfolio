@@ -1,0 +1,89 @@
+table order_line_items
+	lineageTag: 598b47e5-5b45-471b-ac38-90153539470b
+
+	column LineID
+		dataType: string
+		lineageTag: 3aa399c8-5ad5-4c1f-80a2-d913347b3b6f
+		summarizeBy: none
+		sourceColumn: LineID
+
+		annotation SummarizationSetBy = Automatic
+
+	column OrderID
+		dataType: string
+		lineageTag: c34a418b-f873-448c-a62a-a988e5d968e6
+		summarizeBy: none
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: cd6c2fd0-781b-4a7c-bb92-ad8282499118
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Quantity
+		dataType: int64
+		formatString: 0
+		lineageTag: dc216bfa-d9e5-4ff2-8e29-1d473a0cf0aa
+		summarizeBy: sum
+		sourceColumn: Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPrice
+		dataType: double
+		lineageTag: 229e9c66-2d03-44a1-a796-c9221038cf99
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UnitCost
+		dataType: double
+		lineageTag: 323bf797-a41e-4ee3-bcea-816e6f4b95a9
+		summarizeBy: sum
+		sourceColumn: UnitCost
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DiscountPct
+		dataType: double
+		lineageTag: 7a71725d-82a8-4ede-8117-f7ecbad0b6f2
+		summarizeBy: sum
+		sourceColumn: DiscountPct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LineTotal
+		dataType: double
+		lineageTag: b3fe0ab9-37d9-4712-ad99-d26f721ec86f
+		summarizeBy: sum
+		sourceColumn: LineTotal
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition order_line_items = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    order_line_items_Sheet = Quelle{[Item="order_line_items",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(order_line_items_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"LineID", type text}, {"OrderID", type text}, {"ProductName", type text}, {"Quantity", Int64.Type}, {"UnitPrice", type number}, {"UnitCost", type number}, {"DiscountPct", type number}, {"LineTotal", type number}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

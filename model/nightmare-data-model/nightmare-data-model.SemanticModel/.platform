@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "SemanticModel",
+    "displayName": "nightmare-data-model"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "fe4f7daf-6d0b-4388-b6e1-03a52776d2c2"
+  }
+}

@@ -1,0 +1,90 @@
+table products
+	lineageTag: 039a985b-ae3f-442f-87d5-f2831554abde
+
+	column ProductCode
+		dataType: string
+		lineageTag: 43bedcb2-5d12-4fed-aac0-c784c54be3d4
+		summarizeBy: none
+		sourceColumn: ProductCode
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductName
+		dataType: string
+		lineageTag: b6f4e066-7c07-4df3-9be1-4fc66fe6e5f2
+		summarizeBy: none
+		sourceColumn: ProductName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Brand
+		dataType: string
+		lineageTag: 91e189c6-e638-489a-abcf-6a86329af50d
+		summarizeBy: none
+		sourceColumn: Brand
+
+		annotation SummarizationSetBy = Automatic
+
+	column SubcategoryName
+		dataType: string
+		lineageTag: ede62604-b957-4bcf-b582-3bb75be2d6ac
+		summarizeBy: none
+		sourceColumn: SubcategoryName
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnitPrice
+		dataType: double
+		lineageTag: 021b53d9-18fe-4ee5-8d8a-1c408beeb338
+		summarizeBy: sum
+		sourceColumn: UnitPrice
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column PrimarySupplier
+		dataType: string
+		lineageTag: ed5532a9-d2e1-4d81-837f-bf3c61152fc1
+		summarizeBy: none
+		sourceColumn: PrimarySupplier
+
+		annotation SummarizationSetBy = Automatic
+
+	column ProductDescription
+		dataType: string
+		lineageTag: 0fd4a86b-c285-49c0-8db5-e9570f4973a2
+		summarizeBy: none
+		sourceColumn: ProductDescription
+
+		annotation SummarizationSetBy = Automatic
+
+	column hash_key
+		dataType: string
+		lineageTag: 10f9bc36-e4f9-4239-8ffe-bd1a4b913e87
+		summarizeBy: none
+		sourceColumn: hash_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column source_id
+		dataType: string
+		lineageTag: 8ddc763e-4ce3-4e3b-a54e-dcabcb0b5d70
+		summarizeBy: none
+		sourceColumn: source_id
+
+		annotation SummarizationSetBy = Automatic
+
+	partition products = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    products_Sheet = Quelle{[Item="products",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(products_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"ProductCode", type text}, {"ProductName", type text}, {"Brand", type text}, {"SubcategoryName", type text}, {"UnitPrice", type number}, {"PrimarySupplier", type text}, {"ProductDescription", type text}, {"hash_key", type text}, {"source_id", type text}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

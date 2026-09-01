@@ -1,0 +1,41 @@
+table sales_targets
+	lineageTag: 31dad8f5-25e3-410a-8058-29e8ec093b25
+
+	column Period
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 5786dc8a-624e-4b23-b193-e2ed6fdfabf9
+		summarizeBy: none
+		sourceColumn: Period
+
+		variation Variation
+			isDefault
+			relationship: a9fda59a-307c-4f71-9911-cc89013d1d00
+			defaultHierarchy: LocalDateTable_47a5379c-83f2-4769-89a6-83cdeab3ae5a.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column TargetRevenue
+		dataType: int64
+		formatString: 0
+		lineageTag: 1351aec1-d1ff-4826-9eca-2ad175387d6a
+		summarizeBy: sum
+		sourceColumn: TargetRevenue
+
+		annotation SummarizationSetBy = Automatic
+
+	partition sales_targets = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    sales_targets_Sheet = Quelle{[Item="sales_targets",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(sales_targets_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"Period", type date}, {"TargetRevenue", Int64.Type}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

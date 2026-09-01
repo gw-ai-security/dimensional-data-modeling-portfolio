@@ -1,0 +1,119 @@
+table inventory
+	lineageTag: bdb05f48-06dc-4eed-92b8-5d163ab3b90e
+
+	column Column1
+		dataType: string
+		lineageTag: aabdbbea-8a3c-4b48-b2bd-951b292eaf8a
+		summarizeBy: none
+		sourceColumn: Column1
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column2
+		dataType: string
+		lineageTag: ea64c75c-1f5d-47e9-868c-d9c85ccde66f
+		summarizeBy: none
+		sourceColumn: Column2
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column3
+		dataType: string
+		lineageTag: 4a33db49-2164-4d63-83f4-bd4f1a68c472
+		summarizeBy: none
+		sourceColumn: Column3
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column4
+		dataType: string
+		lineageTag: 73702bdc-0c1f-4b95-8033-ab661eb112d3
+		summarizeBy: none
+		sourceColumn: Column4
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column5
+		dataType: string
+		lineageTag: ac5789f8-5fc0-472f-b57e-46e3187b779f
+		summarizeBy: none
+		sourceColumn: Column5
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column6
+		dataType: string
+		lineageTag: 0cb433ba-bb0a-44f1-8f6d-3735910e995c
+		summarizeBy: none
+		sourceColumn: Column6
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column7
+		dataType: string
+		lineageTag: 9228781b-2976-4749-9885-9e7b4ca45910
+		summarizeBy: none
+		sourceColumn: Column7
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column8
+		dataType: string
+		lineageTag: 73f196e2-e29c-4051-ab70-f136251a1088
+		summarizeBy: none
+		sourceColumn: Column8
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column9
+		dataType: string
+		lineageTag: 5f4a538f-85df-4db9-a900-fb9fa1bbb65e
+		summarizeBy: none
+		sourceColumn: Column9
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column10
+		dataType: string
+		lineageTag: 1d291c30-d07c-49b2-9689-a10f13c5c16b
+		summarizeBy: none
+		sourceColumn: Column10
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column11
+		dataType: string
+		lineageTag: 72f04b8c-1e66-4795-87ab-f59c1a731502
+		summarizeBy: none
+		sourceColumn: Column11
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column12
+		dataType: string
+		lineageTag: 77f4dd99-896d-4622-844d-f95b9ee3262e
+		summarizeBy: none
+		sourceColumn: Column12
+
+		annotation SummarizationSetBy = Automatic
+
+	column Column13
+		dataType: string
+		lineageTag: 93f07367-26de-4031-a25c-7588691fe186
+		summarizeBy: none
+		sourceColumn: Column13
+
+		annotation SummarizationSetBy = Automatic
+
+	partition inventory = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    inventory_Sheet = Quelle{[Item="inventory",Kind="Sheet"]}[Data],
+				    #"Geänderter Typ" = Table.TransformColumnTypes(inventory_Sheet,{{"Column1", type text}, {"Column2", type any}, {"Column3", type any}, {"Column4", type any}, {"Column5", type any}, {"Column6", type any}, {"Column7", type any}, {"Column8", type any}, {"Column9", type any}, {"Column10", type any}, {"Column11", type any}, {"Column12", type any}, {"Column13", type any}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,41 @@
+table Address
+	lineageTag: d9f47e97-382a-4511-a53c-fc1a12ae28ab
+
+	column AddressID
+		dataType: int64
+		formatString: 0
+		lineageTag: 9335879a-8987-4bc6-8f87-bc9d221809f0
+		summarizeBy: none
+		sourceColumn: AddressID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Street
+		dataType: string
+		lineageTag: dd734324-b477-4415-b128-b7d4a345462d
+		summarizeBy: none
+		sourceColumn: Street
+
+		annotation SummarizationSetBy = Automatic
+
+	column CityName
+		dataType: string
+		lineageTag: 362ceeec-8951-4678-a797-077e347d7701
+		summarizeBy: none
+		sourceColumn: CityName
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Address = m
+		mode: import
+		source =
+				let
+				    Quelle = Excel.Workbook(File.Contents("C:\Users\admin\Desktop\powerbi-ultimate-course\project_nightmare_datamodel\dataset.xlsx"), null, true),
+				    Address_Sheet = Quelle{[Item="Address",Kind="Sheet"]}[Data],
+				    #"Höher gestufte Header" = Table.PromoteHeaders(Address_Sheet, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"AddressID", Int64.Type}, {"Street", type text}, {"CityName", type text}})
+				in
+				    #"Geänderter Typ"
+
+	annotation PBI_ResultType = Table
+
