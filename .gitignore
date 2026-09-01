@@ -13,6 +13,11 @@ Thumbs.db
 ~$*.pbix
 *.pbit.tmp
 
+# Power BI Project local/cache artifacts
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+**/.pbi/unappliedChanges.json
+
 # Local exports that may contain generated or sensitive data
 exports/
 local-data/
