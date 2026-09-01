@@ -212,11 +212,29 @@ Employee ID → Salesperson ID  = active
 Employee ID → Manager ID      = inactive
 ```
 
-## 11. Using an inactive relationship intentionally
+The same principle applies to a date dimension that serves multiple roles such as Order Date, Ship Date and Delivery Date. Each relationship can still be `1:*`; multiple roles do **not** imply many-to-many cardinality.
 
-By default, Power BI uses the active relationship when the Employee dimension filters the Sales fact.
+## 11. Why alternative role relationships can be inactive
 
-To calculate something through the alternative role, the course uses a DAX measure with `USERELATIONSHIP` to activate the inactive relationship for that calculation.
+An inactive relationship is not broken and is not defined by `1:1` cardinality. It is a semantically valid alternative relationship that is not the default filter path.
+
+The reason for keeping alternative role relationships inactive is not that multiple active relationships are universally forbidden. The modeling goal is to preserve one unambiguous standard filter path and avoid competing active paths.
+
+Conceptually:
+
+```text
+dim_date[date] 1 ─── * fact_sales[order_date]     ACTIVE
+
+dim_date[date] 1 - - * fact_sales[ship_date]     INACTIVE
+
+dim_date[date] 1 - - * fact_sales[delivery_date] INACTIVE
+```
+
+## 12. Using an inactive relationship intentionally
+
+By default, Power BI uses the active relationship when the dimension filters the fact.
+
+To calculate something through an alternative role, the course uses a DAX measure with `USERELATIONSHIP` to activate the inactive relationship for that calculation.
 
 The conceptual logic is:
 
@@ -230,7 +248,7 @@ Special measure + USERELATIONSHIP
 
 The important modeling lesson is not the DAX syntax itself. It is that one semantic dimension can legitimately represent multiple roles against the same fact without duplicating the entire dimension.
 
-## 12. Role-playing dimension benefits
+## 13. Role-playing dimension benefits
 
 The source presents this pattern as useful because it:
 
@@ -240,7 +258,7 @@ The source presents this pattern as useful because it:
 - avoids activating multiple competing relationships simultaneously;
 - keeps the model more compact and flexible.
 
-## 13. Decision model
+## 14. Decision model
 
 ```text
 Descriptive attributes inside fact?
@@ -258,7 +276,7 @@ Multiple structurally identical dimensions representing roles?
              + inactive alternative relationship(s) where needed
 ```
 
-## 14. Failure modes from this lesson
+## 15. Failure modes from this lesson
 
 - leaving large blocks of repeated descriptive attributes in a fact without review;
 - grouping unrelated attributes into a normal business dimension as if they described one entity;
@@ -266,6 +284,8 @@ Multiple structurally identical dimensions representing roles?
 - failing to make extracted dimension combinations unique;
 - using inconsistent null handling when generating/matching dimension keys;
 - duplicating structurally identical role dimensions unnecessarily;
+- assuming alternative role relationships must be inactive because multiple active relationships are generally illegal;
+- confusing multiple role-playing relationships with many-to-many cardinality;
 - activating multiple competing role relationships and creating ambiguity.
 
 ## Active Recall
@@ -281,10 +301,27 @@ Multiple structurally identical dimensions representing roles?
 9. Why can Salesperson and Manager be consolidated into one Employee dimension in the course example?
 10. Why is one relationship active and another inactive?
 11. What does `USERELATIONSHIP` conceptually allow a measure to do?
+12. Why can Order Date, Ship Date and Delivery Date all remain `1:*` relationships to one Date dimension?
+
+## Active Recall checkpoint — 2026-09-01
+
+**Status: completed after correction.**
+
+Correctly recalled:
+
+- dimensions are descriptive analytical context and should be reviewed when descriptive attributes are embedded in a fact;
+- a junk dimension bundles heterogeneous low-level descriptive/flag attributes instead of creating many tiny dimensions;
+- a role-playing dimension is one dimension serving multiple business roles against the same fact;
+- the same Date dimension can represent Order, Ship and Delivery Date roles;
+- `USERELATIONSHIP()` can intentionally use an inactive alternative relationship for a specific calculation.
+
+Correction made during recall:
+
+- Alternative role relationships are not inactive because multiple active relationships are universally forbidden. They are kept inactive where necessary to preserve an unambiguous default filter path and avoid competing active paths.
 
 ## Learning status
 
 - Theory documentation: ✅
-- Lesson watched/studied: ⬜
-- Active Recall checkpoint: ⬜
+- Lesson watched/studied: ✅
+- Active Recall checkpoint: ✅
 - Capstone implementation evidence: ⬜
