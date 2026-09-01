@@ -63,30 +63,6 @@ relationship 712a5b45-5312-4ce0-84b9-8da65101620d
 	fromColumn: shipments.DeliveryDate
 	toColumn: LocalDateTable_ffd96e46-84cf-4be3-bb48-6898965d45f6.Date
 
-relationship AutoDetected_059aaa33-79e3-45f1-ba91-60929f45dd9f
-	fromColumn: CUST_MASTER.AddressID
-	toColumn: Address.AddressID
-
-relationship AutoDetected_6d1b9650-7a39-4fba-afac-009206f6efc8
-	fromColumn: customer_contacts.CustomerID
-	toColumn: CUST_MASTER.CustomerID
-
-relationship AutoDetected_b6ae2c08-5958-4b21-b79b-52439067d116
-	fromColumn: INVOICES.CustomerName
-	toColumn: CUST_MASTER.CustomerName
-
-relationship AutoDetected_b85e6d04-3a49-4ed2-8d34-60275d3e0ed0
-	fromColumn: ORDERS_2025.CustomerName
-	toColumn: CUST_MASTER.CustomerName
-
-relationship AutoDetected_babc1f5b-8aa9-43b3-8d76-887ae62b76c6
-	fromColumn: ORDERS_2026.CustomerName
-	toColumn: CUST_MASTER.CustomerName
-
-relationship AutoDetected_3d81892b-e470-4f67-97ff-18049cb44026
-	fromColumn: payments.CustomerName
-	toColumn: CUST_MASTER.CustomerName
-
 relationship AutoDetected_f74247eb-7f3e-46da-b294-15b2e5f2445a
 	fromColumn: invoice_lines.InvoiceID
 	toColumn: INVOICES.InvoiceID
@@ -114,4 +90,50 @@ relationship AutoDetected_422cced8-d543-40a7-a4d5-6b16f8f908d9
 relationship AutoDetected_b5d99c14-a97f-4b02-9231-a8467a908c56
 	fromColumn: shipments.OrderID
 	toColumn: INVOICES.OrderID
+
+relationship 1995bda7-ff5b-4741-b340-7fe2c272c359
+	joinOnDateBehavior: datePartOnly
+	fromColumn: orders.OrderDate
+	toColumn: LocalDateTable_369d10e7-9642-4f7d-93e9-a01d648be43f.Date
+
+relationship AutoDetected_c54a4793-779b-42ad-95f1-ef6b3914a8fd
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: INVOICES.OrderID
+	toColumn: orders.OrderID
+
+relationship AutoDetected_eddda72d-a7e3-49ec-b2b3-05f002112d61
+	isActive: false
+	fromColumn: order_line_items.OrderID
+	toColumn: orders.OrderID
+
+relationship AutoDetected_ec85efe8-ff41-492a-8082-c5d061b96dfa
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: ORDERS_2025.OrderID
+	toColumn: orders.OrderID
+
+relationship AutoDetected_57fa29ab-ad6f-46eb-8805-7d3896f1502a
+	crossFilteringBehavior: bothDirections
+	fromCardinality: one
+	fromColumn: ORDERS_2026.OrderID
+	toColumn: orders.OrderID
+
+relationship AutoDetected_1a9b7aba-de7d-4427-bc71-006b49474cba
+	isActive: false
+	fromColumn: Sheet1.OrderID
+	toColumn: orders.OrderID
+
+relationship AutoDetected_8ecd6da9-ef41-4072-8a0d-da14023b1312
+	isActive: false
+	fromColumn: shipments.OrderID
+	toColumn: orders.OrderID
+
+relationship AutoDetected_fe2f1f18-59bd-4cad-a634-101a67c31801
+	fromColumn: orders.CustomerName
+	toColumn: dim_customer.customer_name
+
+relationship AutoDetected_ae141329-5cbd-48db-a137-a2cc58c2831f
+	fromColumn: dim_order_flags.'channels.channel_name'
+	toColumn: channels.channel_name
 

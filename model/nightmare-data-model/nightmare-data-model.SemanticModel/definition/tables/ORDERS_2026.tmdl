@@ -116,6 +116,7 @@ table ORDERS_2026
 
 	partition ORDERS_2026 = m
 		mode: import
+		queryGroup: 01_Stage
 		source =
 				let
 				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),

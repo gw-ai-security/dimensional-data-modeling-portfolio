@@ -37,6 +37,7 @@ table exchange_rates
 
 	partition exchange_rates = m
 		mode: import
+		queryGroup: 01_Stage
 		source =
 				let
 				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),

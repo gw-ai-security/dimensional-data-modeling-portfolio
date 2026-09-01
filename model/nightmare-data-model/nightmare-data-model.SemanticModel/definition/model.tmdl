@@ -6,9 +6,25 @@ model Model
 		legacyRedirects
 		returnErrorValuesAsNull
 
+queryGroup 01_Stage
+
+	annotation PBI_QueryGroupOrder = 0
+
+queryGroup 02_Dimensions
+
+	annotation PBI_QueryGroupOrder = 1
+
+queryGroup 03_Facts
+
+	annotation PBI_QueryGroupOrder = 2
+
+queryGroup 04_Support
+
+	annotation PBI_QueryGroupOrder = 3
+
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBI_QueryOrder = ["CAMPAIGN_LOG","Address","campaign_skus","cities","CUST_MASTER","customer_contacts","dim_order","exchange_rates","inventory","invoice_lines","INVOICES","order_line_items","ORDERS_2025","ORDERS_2026","payments","products","regions","sales_targets","security","Sheet1","shipments","subcategories","user_details"]
+annotation PBI_QueryOrder = ["CAMPAIGN_LOG","Address","campaign_skus","cities","CUST_MASTER","customer_contacts","dim_order","exchange_rates","inventory","invoice_lines","INVOICES","order_line_items","ORDERS_2025","ORDERS_2026","payments","products","regions","sales_targets","security","Sheet1","shipments","subcategories","user_details","dim_customer","dim_product","orders","dim_order_flags","channels"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
@@ -17,11 +33,7 @@ ref table DateTableTemplate_36a8971f-97aa-43cf-a774-1b48eddc82d8
 ref table LocalDateTable_de3a7537-f5cc-4321-a4a4-6f17fa24e0ad
 ref table LocalDateTable_c38883f7-464c-4438-b703-5d9a7e464ba9
 ref table LocalDateTable_8b1fae86-4fea-404f-adbc-6f5d5bcaf577
-ref table Address
 ref table campaign_skus
-ref table cities
-ref table CUST_MASTER
-ref table customer_contacts
 ref table dim_order
 ref table exchange_rates
 ref table LocalDateTable_e91117fa-526d-4546-94d7-cde389d13941
@@ -36,8 +48,6 @@ ref table ORDERS_2026
 ref table LocalDateTable_d44201e6-75c3-47f3-9460-44f6256ac986
 ref table payments
 ref table LocalDateTable_00f20046-f372-4b55-9c97-aadaa4395c46
-ref table products
-ref table regions
 ref table sales_targets
 ref table LocalDateTable_47a5379c-83f2-4769-89a6-83cdeab3ae5a
 ref table security
@@ -47,8 +57,12 @@ ref table LocalDateTable_727f9616-a7be-4b5d-8d92-7b756462a861
 ref table shipments
 ref table LocalDateTable_c9ab9a4d-049c-46c1-9ee1-e128221832df
 ref table LocalDateTable_ffd96e46-84cf-4be3-bb48-6898965d45f6
-ref table subcategories
-ref table user_details
+ref table dim_customer
+ref table dim_product
+ref table orders
+ref table LocalDateTable_369d10e7-9642-4f7d-93e9-a01d648be43f
+ref table dim_order_flags
+ref table channels
 
 ref cultureInfo de-DE
 

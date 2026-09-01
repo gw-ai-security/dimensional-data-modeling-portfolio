@@ -104,6 +104,7 @@ table CAMPAIGN_LOG
 
 	partition CAMPAIGN_LOG = m
 		mode: import
+		queryGroup: 01_Stage
 		source =
 				let
 				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
@@ -114,4 +115,6 @@ table CAMPAIGN_LOG
 				    #"Geänderter Typ"
 
 	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
 

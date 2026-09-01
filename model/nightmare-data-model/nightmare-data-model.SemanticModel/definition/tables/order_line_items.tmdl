@@ -76,6 +76,7 @@ table order_line_items
 
 	partition order_line_items = m
 		mode: import
+		queryGroup: 01_Stage
 		source =
 				let
 				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),

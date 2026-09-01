@@ -1,0 +1,122 @@
+expression Address =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    Address_Sheet = Quelle{[Item="Address",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(Address_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"AddressID", Int64.Type}, {"Street", type text}, {"CityName", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 69839807-61ce-47d5-9c32-6a45d99857e6
+	queryGroup: 01_Stage
+
+	annotation PBI_ResultType = Table
+
+expression cities =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    cities_Sheet = Quelle{[Item="cities",Kind="Sheet"]}[Data],
+		    #"Geänderter Typ" = Table.TransformColumnTypes(cities_Sheet,{{"Column1", type text}, {"Column2", type text}}),
+		    #"Höher gestufte Header" = Table.PromoteHeaders(#"Geänderter Typ", [PromoteAllScalars=true]),
+		    #"Geänderter Typ1" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CityName", type text}, {"RegionName", type text}})
+		in
+		    #"Geänderter Typ1"
+	lineageTag: ce89a019-ce8c-4a0b-9d38-33dfa6ce2a25
+	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression CUST_MASTER =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    CUST_MASTER_Sheet = Quelle{[Item="CUST_MASTER",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(CUST_MASTER_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CustomerID", Int64.Type}, {"CustomerName", type text}, {"Segment", type text}, {"AddressID", Int64.Type}, {"AccountManager", type text}, {"PaymentTerms", type text}, {"hash_key", type text}, {"source_id", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: a06732a9-f769-41bb-8bc6-8e86b5d1b971
+	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression customer_contacts =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    customer_contacts_Sheet = Quelle{[Item="customer_contacts",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(customer_contacts_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CustomerID", Int64.Type}, {"ContactName", type text}, {"Email", type text}, {"IsPrimary", type logical}}),
+		    #"Gefilterte Zeilen" = Table.SelectRows(#"Geänderter Typ", each ([IsPrimary] = true))
+		in
+		    #"Gefilterte Zeilen"
+	lineageTag: bdd0178b-ddbb-46e8-9594-4226ffc2a0ec
+	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression regions =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    regions_Sheet = Quelle{[Item="regions",Kind="Sheet"]}[Data],
+		    #"Geänderter Typ" = Table.TransformColumnTypes(regions_Sheet,{{"Column1", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 351dde17-4b87-4d52-99b4-f7769643a58e
+	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression user_details =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    user_details_Sheet = Quelle{[Item="user_details",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(user_details_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"UserID", Int64.Type}, {"CreditLimit", Int64.Type}, {"Phone", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: c3b566af-35bb-4e01-9823-fc958a50b21c
+	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression products =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    products_Sheet = Quelle{[Item="products",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(products_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"ProductCode", type text}, {"ProductName", type text}, {"Brand", type text}, {"SubcategoryName", type text}, {"UnitPrice", type number}, {"PrimarySupplier", type text}, {"ProductDescription", type text}, {"hash_key", type text}, {"source_id", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 13050b59-7695-4f0a-8de8-64117ec2b9ee
+	queryGroup: 01_Stage
+
+	annotation PBI_ResultType = Table
+
+expression subcategories =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    subcategories_Sheet = Quelle{[Item="subcategories",Kind="Sheet"]}[Data],
+		    #"Geänderter Typ" = Table.TransformColumnTypes(subcategories_Sheet,{{"Column1", type text}}),
+		    #"Höher gestufte Header" = Table.PromoteHeaders(#"Geänderter Typ", [PromoteAllScalars=true]),
+		    #"Geänderter Typ1" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CategorySubcategory", type text}}),
+		    #"Spalte nach Trennzeichen teilen" = Table.SplitColumn(#"Geänderter Typ1", "CategorySubcategory", Splitter.SplitTextByEachDelimiter({"|"}, QuoteStyle.Csv, false), {"CategorySubcategory.1", "CategorySubcategory.2"}),
+		    #"Geänderter Typ2" = Table.TransformColumnTypes(#"Spalte nach Trennzeichen teilen",{{"CategorySubcategory.1", type text}, {"CategorySubcategory.2", type text}}),
+		    #"Umbenannte Spalten" = Table.RenameColumns(#"Geänderter Typ2",{{"CategorySubcategory.1", "category"}, {"CategorySubcategory.2", "subcategory"}}),
+		    #"Jedes Wort groß geschrieben" = Table.TransformColumns(#"Umbenannte Spalten",{{"subcategory", Text.Proper, type text}, {"category", Text.Proper, type text}})
+		in
+		    #"Jedes Wort groß geschrieben"
+	lineageTag: fa1cc191-7eef-48aa-800d-ca6fc7f09d5b
+	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,58 @@
+table dim_order_flags
+	lineageTag: 363af728-ab09-4ff4-a06d-9a43ee39b574
+
+	column flag_key
+		dataType: int64
+		formatString: 0
+		lineageTag: c01b00dc-53ab-4ccf-a36a-243b0b9ab715
+		summarizeBy: sum
+		sourceColumn: flag_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'channels.channel_name'
+		dataType: string
+		lineageTag: c81265ef-6d79-4d1f-9035-2db3aa86b8c4
+		summarizeBy: none
+		sourceColumn: channels.channel_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column Status
+		dataType: string
+		lineageTag: d6c705aa-dde8-47f3-beec-f9d0f5bd00e4
+		summarizeBy: none
+		sourceColumn: Status
+
+		annotation SummarizationSetBy = Automatic
+
+	column Priority
+		dataType: string
+		lineageTag: 093552e5-6c7f-4063-9112-38aca8f5a53b
+		summarizeBy: none
+		sourceColumn: Priority
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_order_flags = m
+		mode: import
+		queryGroup: 02_Dimensions
+		source =
+				let
+				    Quelle = orders,
+				    #"Entfernte Spalten" = Table.RemoveColumns(Quelle,{"OrderID", "CustomerName", "CustomerCity", "RegionName", "ShipToCity", "BillToCity", "OrderDate", "OrderTotal"}),
+				    #"Entfernte Duplikate" = Table.Distinct(#"Entfernte Spalten"),
+				    #"Hinzugefügter Index" = Table.AddIndexColumn(#"Entfernte Duplikate", "Index", 1, 1, Int64.Type),
+				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Hinzugefügter Index",{"Index", "OrderChannel", "Status", "Priority"}),
+				    #"Umbenannte Spalten" = Table.RenameColumns(#"Neu angeordnete Spalten",{{"Index", "flag_key"}}),
+				    #"Zusammengeführte Abfragen" = Table.NestedJoin(#"Umbenannte Spalten", {"OrderChannel"}, channels, {"channel_code"}, "channels", JoinKind.LeftOuter),
+				    #"Erweiterte channels" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen", "channels", {"channel_name"}, {"channels.channel_name"}),
+				    #"Neu angeordnete Spalten1" = Table.ReorderColumns(#"Erweiterte channels",{"flag_key", "OrderChannel", "channels.channel_name", "Status", "Priority"}),
+				    #"Entfernte Spalten1" = Table.RemoveColumns(#"Neu angeordnete Spalten1",{"OrderChannel"})
+				in
+				    #"Entfernte Spalten1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
