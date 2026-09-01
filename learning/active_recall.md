@@ -158,6 +158,38 @@ Correctly recalled:
 - daily Sales can be aggregated to Month for comparison with monthly Budget;
 - monthly Budget cannot be interpreted at Day grain without introducing an additional allocation assumption.
 
+## Lesson 7 — Security / RLS
+
+1. What three security levels does the course distinguish?
+2. What is the difference between Static RLS and Dynamic RLS?
+3. What does a security/user table contain in Dynamic RLS?
+4. What does `USERPRINCIPALNAME()` actually do?
+5. Why must the security filter path through the model be understood?
+6. How can relationship/filter direction cause an RLS failure or security leak?
+7. How should RLS be validated before release?
+8. What is the difference between RLS and an ordinary report filter/slicer?
+
+### Lesson 7 checkpoint — 2026-09-01
+
+**Status: completed after clarification.**
+
+Correctly recalled:
+
+- Static RLS creates fixed role/rule mappings; Dynamic RLS uses current-user identity plus a security mapping table;
+- the security table maps users to permitted analytical scope;
+- relationships and filter direction carry the security filter through the model;
+- RLS should be tested by viewing/testing as representative roles/users;
+- security logic restricts access, while report filtering supports analytical business use cases.
+
+Clarifications:
+
+1. **Security-level terminology** — the three levels are `Table / Column / Row`, not `Table / Row / Line`.
+2. **`USERPRINCIPALNAME()` semantics** — it identifies the current report user (typically an email-like identity). It does not independently secure every table; the role, security mapping and relationship/filter path complete the Dynamic RLS flow.
+
+### Theory phase status
+
+**Lessons 1–7 complete.** The next learning mode is implementation evidence in the Nightmare capstone.
+
 ## Review rule
 
 A concept is not marked mastered merely because the answer looks familiar. I should be able to explain it, sketch it and apply it to an unfamiliar model.
