@@ -6,12 +6,9 @@ Original Mermaid reconstruction of the security concepts documented in `docs/the
 
 ```mermaid
 flowchart LR
-    S[Security] --> T[Table-Level
-protect entire table]
-    S --> C[Column-Level
-protect sensitive columns]
-    S --> R[Row-Level Security
-restrict visible rows]
+    S[Security] --> T["Table-Level<br/>protect entire table"]
+    S --> C["Column-Level<br/>protect sensitive columns"]
+    S --> R["Row-Level Security<br/>restrict visible rows"]
 ```
 
 ## Dynamic RLS filter path
