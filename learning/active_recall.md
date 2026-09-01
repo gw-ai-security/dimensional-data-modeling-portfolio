@@ -44,6 +44,27 @@ The goal is to answer these questions without reading the documentation first.
 6. What is ambiguity?
 7. What is the difference between active and inactive relationships?
 8. Why does a duplicate product key break the intended `1:*` relationship?
+9. What is the difference between bidirectional filtering and ambiguity?
+10. Why can a relationship be intentionally inactive even when it is semantically correct?
+11. If `fact_sales` contains both `order_date` and `ship_date`, how can one `dim_date` relate to both without creating many-to-many cardinality?
+
+### Lesson 3 checkpoint — 2026-09-01
+
+**Status: completed after correction and re-test.**
+
+Correctly recalled:
+
+- `dim_customer (1) → (*) fact_sales` when the customer key is unique in the dimension and repeated in the fact;
+- single-direction filtering from Dimension → Fact as the normal star-schema default;
+- direct fact-to-fact many-to-many should be avoided in favor of a shared dimension;
+- ambiguity means multiple active filter paths;
+- inactive relationships can represent valid alternative paths that are not used automatically.
+
+Misconceptions identified and corrected:
+
+1. **Bidirectional filtering vs ambiguity** — bidirectional filtering allows filters to travel both ways across a relationship; ambiguity is the existence of multiple active filter paths. Bidirectional filtering can contribute to ambiguity, but the concepts are not identical.
+2. **Inactive relationship semantics** — an inactive relationship is not inherently `1:1`, not a broken relationship, and not a snowflake split. It is a valid relationship that is not the default active filter path.
+3. **Role-playing date dimension** — `dim_date[date]` can relate `1:*` to both `fact_sales[order_date]` and `fact_sales[ship_date]`; one relationship may be active and the other inactive. Multiple date roles do not imply `*:*`.
 
 ## Review rule
 
