@@ -12,9 +12,9 @@ This folder contains the complete **theory block before the Nightmare hands-on p
 | [02](lesson_02_schema_patterns.md) | 00:18:36–00:27:42 | Star, snowflake and galaxy schemas | Completed |
 | [03](lesson_03_relationships.md) | 00:27:43–01:07:37 | Relationships, cardinality, filtering, ambiguity, active/inactive relationships | Completed |
 | [04](lesson_04_special_dimensions.md) | 01:07:38–01:34:28 | Dimensions hidden in facts, junk dimensions, role-playing dimensions | Completed |
-| [05](lesson_05_grain.md) | 01:34:29–01:41:27 | Grain at table and column level | Current |
-| [06](lesson_06_multiple_facts.md) | 01:41:28–02:08:57 | Multiple facts, append/merge decisions, shared/bridge dimensions | Not yet studied |
-| [07](lesson_07_security_rls.md) | 02:08:58–02:40:07 | Table/column/row security; static and dynamic RLS | Not yet studied |
+| [05](lesson_05_grain.md) | 01:34:29–01:41:27 | Grain at table and column level | Completed |
+| [06](lesson_06_multiple_facts.md) | 01:41:28–02:08:57 | Multiple facts, append/merge decisions, shared/bridge dimensions | Completed |
+| [07](lesson_07_security_rls.md) | 02:08:58–02:40:07 | Table/column/row security; static and dynamic RLS | Current |
 
 The **guided Nightmare project starts at approximately 02:40:08** in the full-course transcript. Project implementation evidence belongs in the separate model/project documentation, not in these theory notes.
 
@@ -36,11 +36,17 @@ Each lesson therefore contains:
 
 ## Current checkpoint
 
-Lessons 1–4 are completed.
+Lessons 1–6 are completed.
 
-Lesson 4 was closed after Active Recall confirmed the core distinction between extracted dimensions, junk dimensions and role-playing dimensions. One misconception was corrected: alternative role relationships are not inactive because multiple active relationships are universally forbidden; they are kept inactive where necessary to preserve one unambiguous default filter path. `USERELATIONSHIP()` was correctly understood as a way for a calculation to intentionally use an inactive alternative relationship.
+### Grain checkpoint
 
-The next learning block starts with **Lesson 5 — Grain** at `01:34:29`.
+The core question is: **What does exactly one row represent?** Order grain is coarser than Order-Line grain. The recall exercise also confirmed that the semantic grain of a measure can differ from the row grain of its table: a repeated `order_total` on Order-Line rows must not be blindly summed because that duplicates the Order-level amount.
+
+### Multiple-facts checkpoint
+
+The course decision logic was recalled successfully: append facts representing the same event at the same grain and compatible shape; merge only when same-grain records can be meaningfully combined one-to-one; otherwise preserve separate facts and connect them through shared dimensions. Cross-fact comparison is performed at the highest/common grain both facts understand, such as aggregating daily Sales to Month before comparison with monthly Budget.
+
+The next learning block is **Lesson 7 — Security / RLS**, beginning at `02:08:58`.
 
 ## Claim boundary
 
