@@ -1,0 +1,50 @@
+# Active Recall Question Bank
+
+The goal is to answer these questions without reading the documentation first.
+
+## Lesson 1 — Fundamentals
+
+1. Why does one large flat table become problematic as the model grows?
+2. Why is `one table → one report` a maintenance risk?
+3. What are the three core components of a data model in the course framing?
+4. What is the fundamental difference between a fact and a dimension?
+5. In `Sales by Product Category`, what comes from the fact side and what comes from the dimension side?
+
+### Minimum recall target
+
+- repeated descriptive data → larger model / performance cost
+- duplicated report logic → maintenance / inconsistent KPIs
+- Tables + Relationships + Calculations
+- Fact = what happened; Dimension = descriptive context
+- Sales = fact/measure; Product Category = dimension/context
+
+## Lesson 2 — Schema patterns
+
+1. How is a star schema structured?
+2. What is the normal filter direction in the course's star-schema model?
+3. Why can a good model simplify DAX?
+4. When would snowflaking a dimension be considered and what is the trade-off?
+5. What makes a galaxy schema, and how should multiple facts be connected?
+
+### Minimum recall target
+
+- fact center, dimensions around it
+- Dimension → Fact
+- relationships/model structure carry semantic work
+- snowflake only when justified; more relationships/complexity
+- multiple facts share dimensions; no direct fact-to-fact relationship
+
+## Lesson 3 — Relationships
+
+1. What is the difference between Merge and Relationship in the course scenarios?
+2. What does `ONE` mean in cardinality? What does `MANY` mean?
+3. Why is `Dimension 1 → * Fact` the normal star-schema pattern?
+4. What is the default filter direction?
+5. Why is `Both` potentially problematic?
+6. What is ambiguity?
+7. What is the difference between active and inactive relationships?
+8. Why does a duplicate product key break the intended `1:*` relationship?
+
+## Review rule
+
+A concept is not marked mastered merely because the answer looks familiar. I should be able to explain it, sketch it and apply it to an unfamiliar model.

@@ -1,0 +1,18 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Temporary / lock files
+*.tmp
+*.temp
+~$*
+
+# Power BI temporary files
+~$*.pbix
+*.pbit.tmp
+
+# Local exports that may contain generated or sensitive data
+exports/
+local-data/
