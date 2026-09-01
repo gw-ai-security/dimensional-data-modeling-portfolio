@@ -4,17 +4,22 @@
 
 ## Project status
 
-**In progress — foundations documented; guided capstone not started yet.**
+**In progress — the complete theory reference is documented; guided capstone not started yet.**
 
-Current learning progress:
+Current learning progress is tracked separately from documentation status:
 
-- ✅ Lesson 1 — Why data modeling matters; facts vs. dimensions
+- ✅ Lesson 1 — Modeling foundations; facts vs dimensions
 - ✅ Lesson 2 — Star, snowflake and galaxy schemas
 - 🟡 Lesson 3 — Relationships, cardinality, filter direction and ambiguity
-- ⬜ Grain and advanced modeling patterns
-- ⬜ Guided 23-table portfolio project
+- ⬜ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
+- ⬜ Lesson 5 — Grain
+- ⬜ Lesson 6 — Multiple fact tables
+- ⬜ Lesson 7 — Security and Row-Level Security
+- ⬜ Guided Nightmare portfolio project
 - ⬜ Independent no-tutorial model audit
 - ⬜ Final validation and recruiter-ready evidence
+
+> **Documentation complete does not mean skill complete.** Lessons 4–7 are documented ahead from the course transcript but remain uncompleted learning checkpoints until they have been watched, explained from memory and tested through Active Recall.
 
 ## Objective
 
@@ -29,6 +34,8 @@ The target is not dashboard design. The target is the semantic and structural la
 - relationship design
 - filter propagation
 - star, snowflake and galaxy schemas
+- special dimension patterns
+- multiple-fact modeling
 - data quality and reconciliation
 - semantic measures
 - row-level security
@@ -44,34 +51,58 @@ A completed course is weak evidence on its own. This repository converts learnin
 Concept → Explain → Implement → Validate → Debug → Document → Evidence
 ```
 
-The project therefore separates three things:
+The project separates three evidence levels:
 
-1. **Course-derived concepts** — documented in my own words.
-2. **Guided implementation** — the Data with Baraa case study reproduced hands-on.
+1. **Course-derived concepts** — paraphrased and organized in original documentation.
+2. **Guided implementation** — the Data with Baraa Nightmare case study reproduced hands-on.
 3. **Independent evidence** — validation, model audit, trade-off analysis and no-tutorial reconstruction.
 
-## Current model principles
+## Complete theory curriculum
 
-The first three lessons establish the following working model:
+The full theory block of the Data with Baraa course is documented in [`docs/theory/`](docs/theory/README.md). The lesson split follows the sequence and topic transitions in the transcript.
+
+| Lesson | Topic | Learning status |
+|---|---|---|
+| [01](docs/theory/lesson_01_modeling_foundations.md) | Modeling foundations; flat-table and one-report anti-patterns; facts and dimensions | ✅ Completed |
+| [02](docs/theory/lesson_02_schema_patterns.md) | Star, snowflake and galaxy schemas | ✅ Completed |
+| [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | 🟡 In progress |
+| [04](docs/theory/lesson_04_special_dimensions.md) | Dimensions hidden in facts, junk dimensions, role-playing dimensions | ⬜ Not yet studied |
+| [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ⬜ Not yet studied |
+| [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ⬜ Not yet studied |
+| [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ⬜ Not yet studied |
+
+The guided Nightmare project begins after this theory block. Practical Power BI artifacts will be added only when that project is implemented.
+
+## Theory decision map
 
 ```mermaid
-flowchart LR
-    C[dim_customer] -->|1 to many| F[fact_sales]
-    P[dim_product] -->|1 to many| F
-    D[dim_date] -->|1 to many| F
-    S[dim_store] -->|1 to many| F
+flowchart TD
+    A[Understand business event and context] --> B[Identify Facts and Dimensions]
+    B --> C[Default to Star Schema]
+    C --> D[Validate Keys and Cardinality]
+    D --> E[Use clear Dimension-to-Fact filter paths]
+    E --> F[State the Grain before calculations or fact combinations]
+    F --> G{Multiple facts?}
+    G -->|Same event and same grain/shape| H[Append]
+    G -->|Same grain and one-to-one complementary measures| I[Merge]
+    G -->|Different grain/event| J[Keep separate + Shared Dimensions]
+    J --> K[Compare only at a grain both facts understand]
+    K --> L[Apply and test security requirements]
 ```
 
-Core rules documented so far:
+## Core modeling principles documented from the course
 
-- Facts capture business events / activities and numeric values.
-- Dimensions provide descriptive context for filtering and grouping.
+- Facts capture business events / activities; dimensions provide descriptive analytical context.
 - A star schema is the default analytical pattern in the course.
+- Dimension keys on the `1` side should be unique for standard `1:*` star-schema relationships.
 - Filters should normally propagate **Dimension → Fact**.
-- Dimension keys on the `1` side must be unique.
+- Bidirectional filters require deliberate justification because they can create unintended propagation and ambiguity.
 - Direct fact-to-fact relationships are avoided; shared dimensions connect multiple facts.
-- Many-to-many relationships require deliberate modeling and should not be accepted casually.
-- Multiple active filter paths can create ambiguity and incorrect results.
+- Grain must be stated before aggregating, merging, appending or relating fact tables.
+- A numeric column can exist at a different grain from the fact table and can therefore be double-counted if aggregated blindly.
+- Same-event partitioned facts can be appended; compatible one-to-one facts can be merged; different-grain facts remain separate and use shared dimensions.
+- Measures from different facts should be compared only at a level of detail both facts actually support.
+- Security depends on valid model relationships and filter propagation and must be tested against known results.
 
 ## Repository map
 
@@ -88,6 +119,15 @@ Core rules documented so far:
 │   ├── lesson-02-schema-patterns.md
 │   └── lesson-03-relationships.md
 ├── docs/
+│   ├── theory/
+│   │   ├── README.md
+│   │   ├── lesson_01_modeling_foundations.md
+│   │   ├── lesson_02_schema_patterns.md
+│   │   ├── lesson_03_relationships.md
+│   │   ├── lesson_04_special_dimensions.md
+│   │   ├── lesson_05_grain.md
+│   │   ├── lesson_06_multiple_facts.md
+│   │   └── lesson_07_security_rls.md
 │   ├── 01_modeling_fundamentals.md
 │   ├── 02_schema_patterns.md
 │   ├── 03_relationships.md
@@ -112,7 +152,7 @@ Core rules documented so far:
     └── confusion_log.md
 ```
 
-Files for later project stages are intentionally present as **templates**. They do not claim that the capstone has already been implemented.
+The root `docs/01...11` files are the evidence/project documentation track. Files for later project stages are intentionally present as **templates** and do not claim that the capstone has already been implemented.
 
 ## Evidence standards
 
@@ -149,7 +189,7 @@ flowchart TD
 
 Until the capstone is implemented and validated, this repository should be read as **learning-in-progress evidence**, not as proof of production Power BI experience.
 
-The current evidence demonstrates structured understanding of the documented modeling concepts. Implementation claims will be added only when the corresponding model artifacts and validation results exist.
+The theory files demonstrate structured source-based documentation. Implementation claims will be added only when the corresponding Power BI model artifacts and validation results exist.
 
 ## Attribution
 
