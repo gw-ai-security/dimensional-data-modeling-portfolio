@@ -1,10 +1,10 @@
 # 04 — Source Model Assessment
 
-> **Status: planned template.** The guided capstone source model has not yet been audited in this repository.
+> **Status: next active template.** The theory phase is complete. This is the first documentation artifact to fill when the guided Nightmare project begins.
 
 ## Purpose
 
-Capture the starting state before redesigning the model. The goal is to understand the business meaning and structural problems before making changes.
+Capture the starting state **before redesigning anything**. The goal is to understand business meaning, grain, relationships and structural risks before making changes.
 
 ## Assessment table
 
@@ -14,20 +14,38 @@ Capture the starting state before redesigning the model. The goal is to understa
 
 ## Questions to answer
 
-- What business process does each table represent?
-- What does one row represent?
-- Which tables describe entities?
-- Which tables record events/activities?
-- Which tables appear to contain duplicated or mixed concepts?
+For every source table:
+
+- What business process/entity does it represent?
+- What does exactly one row represent?
+- Is it an entity/context table, event/fact table, mapping/bridge table or other supporting table?
 - Which keys are expected to be unique?
-- Which relationships are currently many-to-many?
-- Are there ambiguous filter paths?
-- Which baseline business totals must be protected before remodeling?
+- Which identifiers repeat and why?
+- Which columns appear dimensional despite being embedded in facts?
+- Are there mixed or incompatible grains inside one table?
 
-## Evidence to add during the project
+For the model as a whole:
 
-- before-state model screenshot
-- source table inventory
-- baseline metrics
-- initial relationship/cardinality findings
-- explicit list of problems to solve
+- Which relationships are `1:*`, `1:1` or `*:*`?
+- Are any direct fact-to-fact relationships present?
+- Are there bidirectional filters or ambiguous active paths?
+- Are role-playing relationships already present?
+- Which facts appear to share dimensions?
+- Which data-quality issues could invalidate cardinality?
+- Which business totals must be captured as baselines before remodeling?
+- Is there an existing security/RLS path that must be preserved or redesigned?
+
+## Before-state evidence required
+
+- [ ] source table inventory
+- [ ] initial business meaning for each table
+- [ ] initial grain hypothesis for each fact-like table
+- [ ] candidate Fact / Dimension / Bridge classification
+- [ ] before-state model screenshot
+- [ ] relationship/cardinality risk list
+- [ ] duplicate-key/data-quality risk list
+- [ ] baseline metrics recorded in `tests/baseline_metrics.md`
+
+## Rule
+
+Do not start restructuring tables simply because the target pattern is already known from the tutorial. The source assessment must document **why** each later modeling decision is needed.
