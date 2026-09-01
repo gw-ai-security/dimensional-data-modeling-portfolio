@@ -4,9 +4,9 @@
 
 ## Project status
 
-**In progress — the complete theory reference is documented; guided capstone not started yet.**
+**Theory phase complete — ready to start the guided Nightmare hands-on project.**
 
-Current learning progress is tracked separately from documentation status:
+Current progress:
 
 - ✅ Lesson 1 — Modeling foundations; facts vs dimensions
 - ✅ Lesson 2 — Star, snowflake and galaxy schemas
@@ -14,18 +14,16 @@ Current learning progress is tracked separately from documentation status:
 - ✅ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
 - ✅ Lesson 5 — Grain
 - ✅ Lesson 6 — Multiple fact tables
-- ▶ Lesson 7 — Security and Row-Level Security
-- ⬜ Guided Nightmare portfolio project
+- ✅ Lesson 7 — Security and Row-Level Security
+- ▶ Guided Nightmare portfolio project — ready to start
 - ⬜ Independent no-tutorial model audit
 - ⬜ Final validation and recruiter-ready evidence
 
-> **Documentation complete does not mean skill complete.** Lessons are marked complete only after the relevant video block has been watched, explained from memory and checked through Active Recall.
+The seven theory lessons were marked complete only after the corresponding course segments had been watched and checked through Active Recall. Practical Power BI implementation claims are intentionally deferred until the Nightmare project is actually built and validated.
 
 ## Objective
 
-This repository documents my hands-on development of dimensional data modeling skills for analytics and data engineering.
-
-The target is not dashboard design. The target is the semantic and structural layer underneath analytics:
+This repository documents dimensional data modeling skills for analytics and data engineering, with emphasis on the semantic and structural layer underneath reporting:
 
 - business-oriented table design
 - fact and dimension modeling
@@ -41,39 +39,43 @@ The target is not dashboard design. The target is the semantic and structural la
 - row-level security
 - modeling decisions and trade-offs
 
-The final capstone will rebuild a deliberately messy multi-table analytical model into a validated dimensional model and document the reasoning and verification behind the redesign.
+The capstone will redesign a deliberately messy multi-table analytical model into a validated dimensional model and document the reasoning and verification behind the redesign.
 
-## Why this repository exists
-
-A completed course is weak evidence on its own. This repository converts learning into inspectable artifacts:
+## Evidence model
 
 ```text
-Concept → Explain → Implement → Validate → Debug → Document → Evidence
+Concept
+→ Explain from memory
+→ Implement
+→ Validate
+→ Debug
+→ Document
+→ Evidence
 ```
 
-The project separates three evidence levels:
+The repository separates three evidence levels:
 
 1. **Course-derived concepts** — paraphrased and organized in original documentation.
 2. **Guided implementation** — the Data with Baraa Nightmare case study reproduced hands-on.
 3. **Independent evidence** — validation, model audit, trade-off analysis and no-tutorial reconstruction.
 
-## Complete theory curriculum
+## Theory curriculum — completed
 
-The full theory block of the Data with Baraa course is documented in [`docs/theory/`](docs/theory/README.md). The lesson split follows the sequence and topic transitions in the transcript.
+The complete pre-project theory block is documented in [`docs/theory/`](docs/theory/README.md).
 
-| Lesson | Topic | Learning status |
+| Lesson | Topic | Status |
 |---|---|---|
 | [01](docs/theory/lesson_01_modeling_foundations.md) | Modeling foundations; flat-table and one-report anti-patterns; facts and dimensions | ✅ Completed |
 | [02](docs/theory/lesson_02_schema_patterns.md) | Star, snowflake and galaxy schemas | ✅ Completed |
 | [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | ✅ Completed |
-| [04](docs/theory/lesson_04_special_dimensions.md) | Dimensions hidden in facts, junk dimensions, role-playing dimensions | ✅ Completed |
+| [04](docs/theory/lesson_04_special_dimensions.md) | Extracted dimensions, junk dimensions, role-playing dimensions | ✅ Completed |
 | [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ✅ Completed |
 | [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ✅ Completed |
-| [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ▶ Current |
+| [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ✅ Completed |
 
-The guided Nightmare project begins after this theory block. Practical Power BI artifacts will be added only when that project is implemented.
+Repository-native visual summaries are available in [`diagrams/`](diagrams/README.md).
 
-## Theory decision map
+## Core modeling decision map
 
 ```mermaid
 flowchart TD
@@ -81,63 +83,89 @@ flowchart TD
     B --> C[Default to Star Schema]
     C --> D[Validate Keys and Cardinality]
     D --> E[Use clear Dimension-to-Fact filter paths]
-    E --> F[State the Grain before calculations or fact combinations]
+    E --> F[State Grain before calculations or fact combinations]
     F --> G{Multiple facts?}
-    G -->|Same event and same grain/shape| H[Append]
-    G -->|Same grain and one-to-one complementary measures| I[Merge]
-    G -->|Different grain/event| J[Keep separate + Shared Dimensions]
-    J --> K[Compare only at a grain both facts understand]
-    K --> L[Apply and test security requirements]
+    G -->|Same event + same grain + compatible shape| H[Append]
+    G -->|Same grain + one-to-one complementary data| I[Merge when justified]
+    G -->|Different grain or event| J[Keep separate + Shared Dimensions]
+    J --> K[Compare at a grain both facts understand]
+    K --> L[Define security requirement]
+    L --> M[Validate security filter path and RLS]
 ```
 
-## Completed learning checkpoints
+## Completed theory checkpoints
 
-### Lesson 3 — Relationships
-
-The following distinctions were explicitly corrected and re-tested:
+### Relationships
 
 - `Bidirectional filtering` is not the same as `ambiguity`.
 - Ambiguity means multiple active filter paths exist between parts of the model.
 - An inactive relationship can be semantically valid; it is simply not the default filter path.
-- Multiple date roles such as `order_date` and `ship_date` do **not** imply many-to-many cardinality. A unique `dim_date` remains on the `1` side and the fact remains on the `*` side.
+- Multiple date roles do not imply many-to-many cardinality; one `dim_date` can have active/inactive `1:*` role relationships to a fact.
 
-### Lesson 4 — Special Dimensions
+### Special dimensions
 
-The completed checkpoint includes identifying dimension-like context embedded in facts, junk dimensions, role-playing dimensions, active/inactive role relationships and the conceptual purpose of `USERELATIONSHIP()`.
+- descriptive context embedded in a fact should be reviewed for extraction;
+- junk dimensions bundle suitable low-level flags / descriptive attributes;
+- role-playing dimensions allow one entity to serve multiple roles against the same fact;
+- `USERELATIONSHIP()` can intentionally use an inactive alternative relationship for a calculation.
 
-### Lesson 5 — Grain
+### Grain
 
-The checkpoint established the core working question: **What does exactly one row represent?**
-
-Key distinctions validated through recall:
+The core question is: **What does exactly one row represent?**
 
 - Order grain is coarser than Order-Line grain.
-- A table can be at Order-Line grain while a repeated measure such as `order_total` is semantically at Order grain.
-- Blindly summing a coarser-grain measure repeated across finer-grain rows causes double counting.
-- Grain must therefore be established before aggregation, relationship design or combining facts.
+- Table grain and measure/column grain can differ.
+- A higher-grain value repeated over lower-grain rows can be double counted by a naive aggregation.
+- Grain must be understood before aggregation, relationships or fact combination.
 
-### Lesson 6 — Multiple Facts
+### Multiple facts
 
-The checkpoint established the course decision logic:
+- same event + same grain + compatible structure → **Append**;
+- same grain + one-to-one complementary data → **Merge when justified**;
+- different grain/event → keep facts separate and connect through shared dimensions;
+- cross-fact comparisons must occur at a grain both facts understand.
 
-- same business event + same grain + compatible shape → **Append**;
-- same grain + one-to-one complementary attributes/measures → **Merge** when justified;
-- different grain or different business events → keep facts separate and model through shared dimensions;
-- comparisons between facts must occur at a grain both facts understand.
+### Security / RLS
 
-Example validated in recall: daily Sales can be aggregated to Month and compared with monthly Budget; monthly Budget cannot be interpreted at Day grain without an additional allocation assumption.
+The course distinguishes **table-level, column-level and row-level security**. RLS is the focus of the hands-on security section.
+
+- Static RLS uses fixed role/filter rules and is suitable for smaller scenarios.
+- Dynamic RLS maps users to permitted business values through a security table.
+- `USERPRINCIPALNAME()` identifies the current report user; the role then filters the security mapping rather than magically filtering every fact directly.
+- Correct relationships and filter direction are security-critical because the security filter must propagate from the security table into the analytical model.
+- RLS must be tested with representative roles/users and expected restricted totals.
+- Report filters answer **what the user wants to analyze**; RLS defines **what the user is allowed to see at all**.
+
+## Next phase — Nightmare hands-on project
+
+The next implementation step is the guided Nightmare project. The repository will now move from theory evidence to actual model evidence:
+
+```text
+Inspect source model
+→ record baseline metrics
+→ define grain
+→ identify facts and dimensions
+→ build dimensions
+→ build facts
+→ establish relationships
+→ validate filter behavior
+→ add date / role-playing dimensions
+→ define measures
+→ implement RLS
+→ reconcile metrics
+→ final validation
+→ independent no-tutorial audit
+```
+
+See [`PROJECT_PLAN.md`](PROJECT_PLAN.md) and Issue #6 for the implementation checklist.
 
 ## Claim boundaries
 
-Until the capstone is implemented and validated, this repository should be read as **learning-in-progress evidence**, not as proof of production Power BI experience.
-
-The current evidence demonstrates structured understanding of the documented modeling concepts. Implementation claims will be added only when the corresponding model artifacts and validation results exist.
+The theory phase is complete, but the capstone is not yet implemented. This repository therefore demonstrates structured conceptual understanding and recall, not production Power BI experience. Implementation claims will be added only when corresponding model artifacts and validation evidence exist.
 
 ## Attribution
 
-The guided case study and source dataset are based on the **Data with Baraa** Data Modeling course and portfolio project. See [SOURCES.md](SOURCES.md).
-
-The implementation will be reproduced hands-on and extended with my own documentation, validation evidence, architecture decisions, model audits, diagrams and learning reflections.
+The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented; the repository adds original learning notes, diagrams, implementation evidence, validation, decision records and independent reflection.
 
 ## License
 
