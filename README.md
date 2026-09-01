@@ -131,14 +131,14 @@ The course distinguishes **table-level, column-level and row-level security**. R
 
 - Static RLS uses fixed role/filter rules and is suitable for smaller scenarios.
 - Dynamic RLS maps users to permitted business values through a security table.
-- `USERPRINCIPALNAME()` identifies the current report user; the role then filters the security mapping rather than magically filtering every fact directly.
+- `USERPRINCIPALNAME()` identifies the current report user; the role then filters the security mapping rather than filtering every fact directly.
 - Correct relationships and filter direction are security-critical because the security filter must propagate from the security table into the analytical model.
 - RLS must be tested with representative roles/users and expected restricted totals.
 - Report filters answer **what the user wants to analyze**; RLS defines **what the user is allowed to see at all**.
 
 ## Next phase — Nightmare hands-on project
 
-The next implementation step is the guided Nightmare project. The repository will now move from theory evidence to actual model evidence:
+The repository now moves from theory evidence to actual model evidence:
 
 ```text
 Inspect source model
@@ -165,7 +165,7 @@ The theory phase is complete, but the capstone is not yet implemented. This repo
 
 ## Attribution
 
-The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented; the repository adds original learning notes, diagrams, implementation evidence, validation, decision records and independent reflection.
+The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented. The repository currently adds original learning notes, diagrams and recall/correction evidence; hands-on implementation, validation and audit evidence will be added only as the capstone work is actually completed.
 
 ## License
 
