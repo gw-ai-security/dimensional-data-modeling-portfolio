@@ -97,6 +97,67 @@ Terminology correction:
 
 - `Junk Dimension`, not `Chunk Dimension`.
 
+## Lesson 5 — Grain
+
+1. What does exactly one row in the table represent?
+2. What is the difference between Order grain and Order-Line grain?
+3. Can a measure have a different semantic grain from the row grain of its table?
+4. Why can repeated Order-level values in an Order-Line table cause double counting?
+5. Why must grain be understood before aggregation or fact combination?
+
+### Lesson 5 checkpoint — 2026-09-01
+
+**Status: completed after correction and applied example.**
+
+Correctly recalled:
+
+- grain is the level of detail represented by the data;
+- Order-Line grain is finer than Order grain because one order can contain multiple product positions;
+- the grain of a table and the semantic grain of a measure can differ;
+- an Order-level total repeated on Order-Line rows must not be blindly summed.
+
+Correction made during recall:
+
+- **Order vs Order-Line detail** — Order grain is the coarser level; Order-Line grain is the finer level.
+
+Applied validation example:
+
+```text
+order_id | product | order_total
+1001     | Laptop  | 1,200
+1001     | Mouse   | 1,200
+1001     | Bag     | 1,200
+1002     | Monitor |   500
+```
+
+- table grain = Order Line;
+- `order_total` semantic grain = Order;
+- naive `SUM(order_total)` = 4,100 and is wrong because Order 1001 is counted three times;
+- correct total across the two orders = 1,700.
+
+## Lesson 6 — Multiple Facts
+
+1. When should two fact datasets be appended?
+2. When can a merge be appropriate?
+3. What should happen when facts represent different events or different grains?
+4. Why should separate facts not be directly related fact-to-fact?
+5. At what grain can two facts be meaningfully compared?
+6. How should daily Sales be compared with monthly Budget?
+
+### Lesson 6 checkpoint — 2026-09-01
+
+**Status: completed.**
+
+Correctly recalled:
+
+- same event + same grain + same/compatible structure → Append;
+- same grain + complementary one-to-one data → Merge when justified;
+- different grain/event → keep facts separate and use shared dimensions;
+- facts should not be directly connected through repeating keys;
+- comparisons must occur at a grain both facts understand;
+- daily Sales can be aggregated to Month for comparison with monthly Budget;
+- monthly Budget cannot be interpreted at Day grain without introducing an additional allocation assumption.
+
 ## Review rule
 
 A concept is not marked mastered merely because the answer looks familiar. I should be able to explain it, sketch it and apply it to an unfamiliar model.
