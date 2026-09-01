@@ -10,7 +10,7 @@ This folder contains the complete **theory block before the Nightmare hands-on p
 |---|---:|---|---|
 | [01](lesson_01_modeling_foundations.md) | 00:00:00–00:18:35 | Why modeling matters; data model components; facts vs dimensions | Completed |
 | [02](lesson_02_schema_patterns.md) | 00:18:36–00:27:42 | Star, snowflake and galaxy schemas | Completed |
-| [03](lesson_03_relationships.md) | 00:27:43–01:07:37 | Relationships, cardinality, filtering, ambiguity, active/inactive relationships | In progress |
+| [03](lesson_03_relationships.md) | 00:27:43–01:07:37 | Relationships, cardinality, filtering, ambiguity, active/inactive relationships | Completed |
 | [04](lesson_04_special_dimensions.md) | 01:07:38–01:34:28 | Dimensions hidden in facts, junk dimensions, role-playing dimensions | Not yet studied |
 | [05](lesson_05_grain.md) | 01:34:29–01:41:27 | Grain at table and column level | Not yet studied |
 | [06](lesson_06_multiple_facts.md) | 01:41:28–02:08:57 | Multiple facts, append/merge decisions, shared/bridge dimensions | Not yet studied |
@@ -33,6 +33,12 @@ Each lesson therefore contains:
 - failure modes demonstrated or warned about in the transcript,
 - a compact decision model,
 - Active Recall questions.
+
+## Current checkpoint
+
+Lessons 1–3 are now completed. Lesson 3 was closed only after the Active Recall identified and corrected three specific misconceptions: bidirectional filtering vs ambiguity, inactive relationship semantics, and the cardinality of role-playing date relationships.
+
+The next learning block starts with **Lesson 4 — Special Dimensions** at approximately `01:07:38`.
 
 ## Claim boundary
 
