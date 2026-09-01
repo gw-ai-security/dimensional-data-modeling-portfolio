@@ -1,10 +1,21 @@
 # 04 — Source Model Assessment
 
-> **Status: next active template.** The theory phase is complete. This is the first documentation artifact to fill when the guided Nightmare project begins.
+> **Status: active.** The Nightmare PBIP project has been initialized from the source workbook. This is now the current implementation document and must be completed before any redesign.
 
 ## Purpose
 
 Capture the starting state **before redesigning anything**. The goal is to understand business meaning, grain, relationships and structural risks before making changes.
+
+## Environment checkpoint
+
+- [x] Power BI Project saved in PBIP/TMDL format
+- [x] PBIP project committed under `model/nightmare-data-model/`
+- [x] course dataset excluded from Git and documented as local-only source data
+- [ ] local workbook source repointed to `<repository-root>/local-data/dataset.xlsx`
+- [ ] source model refreshed successfully after repointing
+- [ ] before-state Model View screenshot stored as project evidence
+
+The semantic-model TMDL currently exposes a machine-specific `File.Contents(...)` path inherited from the initial local import. Before structural work starts, the local Power BI project should point to the repository-local ignored workbook path documented in `local-data/README.md`.
 
 ## Assessment table
 
