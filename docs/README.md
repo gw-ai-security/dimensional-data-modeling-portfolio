@@ -1,49 +1,54 @@
 # Documentation Map
 
-This repository separates **theory evidence** from **capstone implementation evidence** so that completed learning is not confused with work that has not yet been built.
+This repository separates **theory evidence** from **capstone implementation evidence** so completed learning is not confused with work that has not yet been built.
 
 ## 1. Theory reference — complete
 
-[`theory/`](theory/README.md) contains the full lesson-by-lesson pre-project theory reference:
-
-```text
-Lesson 01 — Modeling Foundations
-Lesson 02 — Schema Patterns
-Lesson 03 — Relationships
-Lesson 04 — Special Dimensions
-Lesson 05 — Grain
-Lesson 06 — Multiple Facts
-Lesson 07 — Security / RLS
-```
-
-All seven lessons are completed through video study + Active Recall. Related visual summaries are in `../diagrams/`.
+[`theory/`](theory/README.md) contains the seven lesson-by-lesson theory references. All seven lessons are complete through video study and Active Recall. Related visual summaries are in `../diagrams/`.
 
 ## 2. Concise foundation summaries
-
-These files are shorter reference summaries for core concepts:
 
 - [`01_modeling_fundamentals.md`](01_modeling_fundamentals.md)
 - [`02_schema_patterns.md`](02_schema_patterns.md)
 - [`03_relationships.md`](03_relationships.md)
 
-They do not replace the detailed lesson documents in `theory/`.
+## 3. Nightmare capstone evidence — implementation in progress
 
-## 3. Nightmare capstone evidence — ready, not yet implemented
-
-The following files are evidence templates that will be populated from the actual Power BI Nightmare project:
+**Current guided checkpoint: 03:45:58.**
 
 | File | Purpose | Current state |
 |---|---|---|
-| [`04_source_model_assessment.md`](04_source_model_assessment.md) | source inventory, business meaning, before-state risks | ▶ next active |
-| [`05_grain_analysis.md`](05_grain_analysis.md) | table/measure grain matrix and validation | ▶ next active |
-| [`06_dimensions.md`](06_dimensions.md) | implemented Dimension design/evidence | ⬜ pending implementation |
-| [`07_facts.md`](07_facts.md) | implemented Fact design/evidence | ⬜ pending implementation |
-| [`08_semantic_measures.md`](08_semantic_measures.md) | measures and reconciliation evidence | ⬜ pending implementation |
-| [`09_security.md`](09_security.md) | RLS requirement, filter path and tests | ⬜ pending implementation |
-| [`10_architecture_decisions.md`](10_architecture_decisions.md) | modeling decisions and trade-offs | ⬜ pending implementation |
-| [`11_lessons_learned.md`](11_lessons_learned.md) | theory lessons + later implementation lessons | theory ✅ / capstone ⬜ |
+| [`04_source_model_assessment.md`](04_source_model_assessment.md) | source inventory, business meaning and starting risks | ✅ coarse investigation documented; screenshot/baseline follow-up open |
+| [`05_grain_analysis.md`](05_grain_analysis.md) | grain matrix and header/detail decisions | ▶ active evidence; orders/order-lines/dimensions documented |
+| [`06_dimensions.md`](06_dimensions.md) | implemented Dimension design/evidence | ▶ active; `dim_customer`, `dim_product`, `dim_order_flags` documented |
+| [`07_facts.md`](07_facts.md) | implemented Fact design/evidence | ⬜ first fact is next guided step |
+| [`08_semantic_measures.md`](08_semantic_measures.md) | measures and reconciliation evidence | ⬜ pending |
+| [`09_security.md`](09_security.md) | RLS requirement, filter path and tests | ⬜ pending |
+| [`10_architecture_decisions.md`](10_architecture_decisions.md) | modeling decisions and trade-offs | ▶ active; first six decisions recorded |
+| [`11_lessons_learned.md`](11_lessons_learned.md) | theory + later implementation lessons | theory ✅ / capstone ongoing |
 
-## 4. Validation evidence
+## 4. Current model evidence
+
+The PBIP/TMDL artifact under `../model/nightmare-data-model/` currently contains:
+
+```text
+01_Stage
+├── orders
+├── channels
+└── source/reference queries
+
+02_Dimensions
+├── dim_customer
+├── dim_product
+└── dim_order_flags
+
+03_Facts
+└── first analytical fact not yet created at 03:45:58
+```
+
+See [`../diagrams/capstone-progress.md`](../diagrams/capstone-progress.md) for the current transformation map.
+
+## 5. Validation evidence
 
 Project validation belongs in `../tests/`:
 
@@ -54,18 +59,23 @@ reconciliation_tests.md
 final_validation.md
 ```
 
-A template is not evidence of a passed test. Results are added only after execution against the real Power BI model.
+A template is not evidence of a passed test. In particular, the protected sales baseline has not yet been documented at the current checkpoint and must be recorded as the first fact is built.
 
-## 5. Claim boundary
+## 6. Claim boundary
 
 Current claim:
 
 ```text
-Theory + Active Recall          ✅ complete
-Original learning diagrams      ✅ complete
-Nightmare Power BI model         ⬜ not started
-Capstone validation evidence     ⬜ not started
-Independent no-tutorial audit    ⬜ not started
+Theory + Active Recall                ✅ complete
+Original theory diagrams              ✅ complete
+PBIP/TMDL capstone                     ▶ in progress
+Source/business investigation          ✅ coarse pass complete
+Customer/Product dimensions            ✅ implemented
+Order junk dimension                   ▶ built; final polish next
+First analytical fact                  ⬜ next
+Metric reconciliation                  ⬜ pending
+RLS/final model validation              ⬜ pending
+Independent no-tutorial audit           ⬜ pending
 ```
 
-This separation is intentional and should be preserved throughout the project.
+Documentation must continue to match the committed TMDL state rather than the instructor's completed solution.
