@@ -13,9 +13,9 @@ Build defensible evidence of dimensional data modeling competence, progressing f
 | Star / Snowflake / Galaxy | `docs/theory/lesson_02_schema_patterns.md` | ✅ completed |
 | Relationships | `docs/theory/lesson_03_relationships.md` | ✅ completed |
 | Special dimensions | `docs/theory/lesson_04_special_dimensions.md` | ✅ completed |
-| Grain | `docs/theory/lesson_05_grain.md` | ▶ current |
-| Multiple facts | `docs/theory/lesson_06_multiple_facts.md` | ⬜ planned |
-| Security / RLS | `docs/theory/lesson_07_security_rls.md` | ⬜ planned |
+| Grain | `docs/theory/lesson_05_grain.md` | ✅ completed |
+| Multiple facts | `docs/theory/lesson_06_multiple_facts.md` | ✅ completed |
+| Security / RLS | `docs/theory/lesson_07_security_rls.md` | ▶ current |
 
 A theory module is marked complete only after the corresponding course segment has been watched and the concepts have been explained from memory through Active Recall.
 
@@ -50,7 +50,7 @@ After the guided implementation:
 
 The phase is complete only when I can, without step-by-step guidance:
 
-- determine table grain
+- determine table grain and distinguish row grain from measure grain
 - distinguish facts and dimensions
 - design a star/galaxy schema
 - choose and justify relationship cardinality
@@ -59,6 +59,8 @@ The phase is complete only when I can, without step-by-step guidance:
 - detect ambiguous filter paths
 - recognize when descriptive attributes should become normal or junk dimensions
 - explain and use role-playing dimension patterns
+- choose append vs merge vs separate facts based on event, grain and shape
+- compare facts only at a grain both facts understand
 - validate that model changes did not break key business metrics
 - explain relevant trade-offs and limitations
 
