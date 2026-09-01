@@ -66,6 +66,37 @@ Misconceptions identified and corrected:
 2. **Inactive relationship semantics** — an inactive relationship is not inherently `1:1`, not a broken relationship, and not a snowflake split. It is a valid relationship that is not the default active filter path.
 3. **Role-playing date dimension** — `dim_date[date]` can relate `1:*` to both `fact_sales[order_date]` and `fact_sales[ship_date]`; one relationship may be active and the other inactive. Multiple date roles do not imply `*:*`.
 
+## Lesson 4 — Special Dimensions
+
+1. What does it mean when descriptive dimensional attributes are hidden inside a fact table?
+2. How do you decide whether descriptive attributes form one coherent normal dimension?
+3. What is a junk dimension and why use it instead of many tiny dimensions?
+4. What is a role-playing dimension?
+5. Why can one Date dimension represent Order Date, Ship Date and Delivery Date?
+6. Why may only one role relationship be active by default?
+7. What does `USERELATIONSHIP()` do conceptually?
+8. Do multiple role-playing relationships imply many-to-many cardinality?
+
+### Lesson 4 checkpoint — 2026-09-01
+
+**Status: completed after correction.**
+
+Correctly recalled:
+
+- descriptive attributes in a fact should be reviewed as potential dimension context;
+- junk dimensions bundle heterogeneous low-level flags / descriptive attributes;
+- role-playing dimensions represent one entity serving multiple roles against the same fact;
+- one Date dimension can serve Order, Ship and Delivery Date roles;
+- `USERELATIONSHIP()` intentionally uses an inactive alternative relationship for a calculation.
+
+Misconception identified and corrected:
+
+- **Why alternative role relationships are inactive** — the reason is not that multiple active relationships are universally forbidden. The purpose is to preserve an unambiguous default filter path and avoid competing active paths.
+
+Terminology correction:
+
+- `Junk Dimension`, not `Chunk Dimension`.
+
 ## Review rule
 
 A concept is not marked mastered merely because the answer looks familiar. I should be able to explain it, sketch it and apply it to an unfamiliar model.
