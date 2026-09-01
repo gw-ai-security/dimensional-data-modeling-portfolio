@@ -1,6 +1,6 @@
 # 03 — Relationships, Cardinality and Filter Direction
 
-> Source basis: Data with Baraa Data Modeling full-course transcript. This document captures the relationship block covered so far.
+> Source basis: Data with Baraa Data Modeling full-course transcript. Detailed lesson evidence: [`theory/lesson_03_relationships.md`](theory/lesson_03_relationships.md).
 
 ## 1. Why relationships matter
 
@@ -8,121 +8,58 @@ A model can render reports without obvious technical errors and still produce wr
 
 A relationship is more than a line between tables. It defines a contract around:
 
-- the key columns used to match rows
-- cardinality
-- filter direction
-- active/inactive state
+- key columns used to match rows;
+- cardinality;
+- filter direction;
+- active/inactive state.
 
-## 2. Merge vs relationship
-
-The course distinguishes physical table consolidation from semantic relationships.
+## 2. Merge vs Relationship
 
 ### Merge
 
-Use Power Query merge when two inputs belong to the same business object / same logical row and should become one table.
-
-Example idea:
-
-```text
-Customer master + customer email attributes → one customer dimension
-```
+Use Power Query merge in the course scenarios when two inputs describe the same business object / compatible logical row and should become one analytical table.
 
 ### Relationship
 
-Keep tables separate when they represent different business concepts/events and should interact through the model.
+Keep tables separate when they represent different analytical roles, such as a Dimension providing context to a Fact recording events.
 
-Example:
+This is the course decision framing for the demonstrated Power BI scenarios rather than a universal database-design law.
 
-```text
-Customer dimension ↔ Sales fact
-```
+## 3. Cardinality
 
-This is not an absolute database-design law; it is the course decision framing for the Power BI modeling scenarios shown.
-
-## 3. Relationship key
-
-Power BI needs columns that identify how rows match between tables.
-
-Typical star-schema pattern:
+Cardinality is driven by key uniqueness:
 
 ```text
-dim_customer.customer_id → fact_sales.customer_id
+ONE  (1) = relationship key is unique on that side
+MANY (*) = relationship key may repeat on that side
 ```
 
-The dimension-side value identifies one business entity while the same identifier may repeat in the fact because one entity can participate in many events.
-
-## 4. Cardinality
-
-The course explains cardinality through uniqueness:
-
-- **ONE (`1`)** — relationship-key values are unique on that side.
-- **MANY (`*`)** — relationship-key values may repeat on that side.
-
-### One-to-many (`1:*`)
-
-The normal star-schema pattern:
+The standard star-schema pattern is:
 
 ```text
 Dimension 1 → * Fact
 ```
 
-Example: one customer row can relate to many sales rows.
+A duplicate key on the intended Dimension `1` side is therefore a data-quality/model-preparation problem, not something to hide by forcing a relationship setting.
 
-### Many-to-one (`*:1`)
+## 4. Filter direction
 
-The same relationship read from the opposite direction.
-
-### One-to-one (`1:1`)
-
-Both sides contain unique relationship keys. When both tables also represent the same business object, the modeler should consider whether they should instead be combined.
-
-### Many-to-many (`*:*`)
-
-Both sides contain repeated relationship keys. The course treats this as a risky pattern that needs deliberate modeling rather than automatic acceptance.
-
-A common anti-pattern is a direct relationship between two facts. A shared dimension is preferred when it correctly represents the business key/context.
-
-## 5. Data quality and cardinality
-
-A planned dimension `1` side cannot behave as `1` if duplicate keys exist.
-
-Example:
+The course default is single-direction filtering:
 
 ```text
-product_id
-1
-2
-6
-6   ← duplicate
+Dimension → Fact
 ```
 
-If `product_id` is supposed to uniquely identify a product in the dimension, the duplicate is a data-quality/model-preparation problem. It should be investigated and corrected before relying on a `1:*` relationship.
+The Dimension supplies analytical context; the Fact supplies events and measures evaluated under that context.
 
-This gives an important dependency chain:
+Bidirectional filtering (`Both`) is not a generic fix. It can allow filters to travel back through Facts and influence other Dimensions, increasing complexity and potentially contributing to multiple active paths.
 
-```text
-Data quality → Cardinality → Relationship behavior → Report result
-```
+## 5. Ambiguity
 
-## 6. Filter direction
+**Bidirectional filtering and ambiguity are different concepts.**
 
-The course default for a star schema is **single-direction filtering from dimension to fact**:
-
-```text
-Dimension 1 → * Fact
-```
-
-The dimension provides the filter context; the fact supplies the events and numeric values evaluated under that context.
-
-## 7. Why bidirectional (`Both`) filtering is risky
-
-If filters can travel back from facts into dimensions and across the model, one selection may unexpectedly filter other dimensions. This can make report behavior difficult to predict and can contribute to multiple filter paths.
-
-The course recommendation is therefore to keep `Both` for cases where it is specifically required and understood rather than using it as a default.
-
-## 8. Ambiguity
-
-Ambiguity occurs when more than one active filter path can connect the same areas of the model.
+- Bidirectional filtering describes how a filter may cross a relationship.
+- Ambiguity means more than one active filter path exists between parts of the model.
 
 Example:
 
@@ -131,31 +68,42 @@ Customer → Sales
 Customer → Store → Sales
 ```
 
-A customer filter can reach sales through two routes. The engine then lacks one unambiguous semantic path.
+A Customer filter can reach Sales by two routes, creating competing semantics.
 
-## 9. Active and inactive relationships
+## 6. Active and inactive relationships
 
-- **Active relationship** — used automatically for filter propagation.
-- **Inactive relationship** — exists in the model but is not used automatically.
+- **Active** — used automatically as a normal filter path.
+- **Inactive** — semantically valid relationship that exists but is not used automatically.
 
-An inactive relationship can prevent competing active paths and is also useful later for scenarios such as role-playing dimensions.
+Inactive does **not** mean broken, `1:1`, or snowflaked.
 
-## 10. Healthy relationship checklist
+A role-playing Date pattern can contain:
 
-For the course's default star-schema pattern, verify:
+```text
+dim_date[date] 1 → * fact_sales[order_date]   ACTIVE
+dim_date[date] 1 - - * fact_sales[ship_date] INACTIVE
+```
 
-- [ ] dimension-side key is unique
-- [ ] fact-side foreign key can repeat
-- [ ] cardinality is `1:*`
-- [ ] filter direction is Dimension → Fact
-- [ ] no accidental direct fact-to-fact relationship
-- [ ] no unexplained many-to-many relationship
-- [ ] no competing active filter paths
-- [ ] relationship behavior matches the business meaning
+Both relationships remain `1:*`; multiple Date roles do not imply many-to-many cardinality.
 
-## Current evidence status
+## 7. Healthy relationship checklist
+
+- [x] Dimension-side uniqueness understood as prerequisite for `1:*`
+- [x] Fact-side foreign key repetition understood
+- [x] Dimension → Fact established as default filter direction
+- [x] Bidirectional filtering distinguished from ambiguity
+- [x] Active/inactive semantics understood
+- [x] Role-playing relationships distinguished from many-to-many
+- [x] Direct fact-to-fact relationships recognized as a modeling risk
+
+Project-specific validation remains pending until the Nightmare model is implemented.
+
+## Theory evidence status
 
 - Concept documented: ✅
-- Active-recall checkpoint: 🟡 pending for this lesson
+- Active Recall completed: ✅
+- Misconceptions corrected and re-tested: ✅
 - Capstone implementation: ⬜ not started
-- Relationship validation on project model: ⬜ not started
+- Project relationship validation: ⬜ not started
+
+See `learning/active_recall.md` and `learning/confusion_log.md` for the recall/correction record.
