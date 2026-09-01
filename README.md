@@ -12,9 +12,9 @@ Current learning progress is tracked separately from documentation status:
 - ✅ Lesson 2 — Star, snowflake and galaxy schemas
 - ✅ Lesson 3 — Relationships, cardinality, filter direction and ambiguity
 - ✅ Lesson 4 — Special dimensions: extracted, junk and role-playing dimensions
-- ▶ Lesson 5 — Grain
-- ⬜ Lesson 6 — Multiple fact tables
-- ⬜ Lesson 7 — Security and Row-Level Security
+- ✅ Lesson 5 — Grain
+- ✅ Lesson 6 — Multiple fact tables
+- ▶ Lesson 7 — Security and Row-Level Security
 - ⬜ Guided Nightmare portfolio project
 - ⬜ Independent no-tutorial model audit
 - ⬜ Final validation and recruiter-ready evidence
@@ -67,9 +67,9 @@ The full theory block of the Data with Baraa course is documented in [`docs/theo
 | [02](docs/theory/lesson_02_schema_patterns.md) | Star, snowflake and galaxy schemas | ✅ Completed |
 | [03](docs/theory/lesson_03_relationships.md) | Merge vs relationship, cardinality, filtering, ambiguity, active/inactive relationships | ✅ Completed |
 | [04](docs/theory/lesson_04_special_dimensions.md) | Dimensions hidden in facts, junk dimensions, role-playing dimensions | ✅ Completed |
-| [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ▶ Current |
-| [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ⬜ Not yet studied |
-| [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ⬜ Not yet studied |
+| [05](docs/theory/lesson_05_grain.md) | Table grain, measure grain and grain-aware aggregation | ✅ Completed |
+| [06](docs/theory/lesson_06_multiple_facts.md) | Append vs merge, shared dimensions, fan-out and common comparison grain | ✅ Completed |
+| [07](docs/theory/lesson_07_security_rls.md) | Table/column/row security; static and dynamic RLS | ▶ Current |
 
 The guided Nightmare project begins after this theory block. Practical Power BI artifacts will be added only when that project is implemented.
 
@@ -103,16 +103,29 @@ The following distinctions were explicitly corrected and re-tested:
 
 ### Lesson 4 — Special Dimensions
 
-The completed checkpoint now includes:
+The completed checkpoint includes identifying dimension-like context embedded in facts, junk dimensions, role-playing dimensions, active/inactive role relationships and the conceptual purpose of `USERELATIONSHIP()`.
 
-- identifying descriptive dimension-like context embedded in facts;
-- using normal extracted dimensions for coherent business concepts;
-- using a junk dimension to bundle heterogeneous low-level flags / descriptive attributes;
-- understanding role-playing dimensions as one dimension serving multiple roles against the same fact;
-- preserving an unambiguous default filter path with active/inactive role relationships;
-- using `USERELATIONSHIP()` conceptually to select an inactive alternative relationship for a specific calculation.
+### Lesson 5 — Grain
 
-A key correction from Active Recall: alternative role relationships are not inactive because multiple active relationships are universally forbidden. They are kept inactive where needed to avoid competing active filter paths and preserve unambiguous semantics.
+The checkpoint established the core working question: **What does exactly one row represent?**
+
+Key distinctions validated through recall:
+
+- Order grain is coarser than Order-Line grain.
+- A table can be at Order-Line grain while a repeated measure such as `order_total` is semantically at Order grain.
+- Blindly summing a coarser-grain measure repeated across finer-grain rows causes double counting.
+- Grain must therefore be established before aggregation, relationship design or combining facts.
+
+### Lesson 6 — Multiple Facts
+
+The checkpoint established the course decision logic:
+
+- same business event + same grain + compatible shape → **Append**;
+- same grain + one-to-one complementary attributes/measures → **Merge** when justified;
+- different grain or different business events → keep facts separate and model through shared dimensions;
+- comparisons between facts must occur at a grain both facts understand.
+
+Example validated in recall: daily Sales can be aggregated to Month and compared with monthly Budget; monthly Budget cannot be interpreted at Day grain without an additional allocation assumption.
 
 ## Claim boundaries
 
