@@ -1,172 +1,80 @@
 # 06 — Dimension Design
 
-> **Status: implementation evidence in progress. Current guided checkpoint: 03:45:58.**
+> **Status: all guided dimensions implemented in PBIP/TMDL.** Runtime refresh of the latest Unmapped Product change remains a final release check.
 
-This file documents dimensions that actually exist in the committed PBIP/TMDL model. It does not claim dimensions that have not yet been built.
+## Dimension catalog
+
+| Dimension | Grain | Key | Main source(s) | Purpose |
+|---|---|---|---|---|
+| `dim_customer` | one customer | `customer_id` | customer master + contacts + user details + address + cities | consolidated customer context and RLS attachment point |
+| `dim_product` | one analytical product/member | `product_key` | products + subcategories | product/category context |
+| `dim_order_flags` | one channel/status/priority combination | `flag_key` | `orders` + `channels` | Junk Dimension |
+| `dim_geo` | one city/region member | `geo_key` | cities | reusable geographic context |
+| `dim_campaign` | one campaign | `campaign_key` | campaign log | campaign descriptive context |
+| `dim_date` | one calendar date | `Date` | calculated calendar | shared and role-playing time context |
 
 ## `dim_customer`
 
-### Business purpose
+The dimension consolidates fragmented B2B customer context. The source staging query `customer_contacts` is filtered to `IsPrimary = true` before it is merged, protecting the one-customer grain. Final analytical fields include customer identity, segment, account manager, payment terms, primary contact, credit/phone and address/region context.
 
-Provide one report-friendly source of customer context instead of leaving customer attributes fragmented across source tables.
-
-### Grain
-
-> One row represents one customer.
-
-### Source inputs
-
-- `CUST_MASTER`
-- `customer_contacts`
-- `user_details`
-- `Address`
-- `cities`
-
-### Key
-
-- source/natural identifier: `CustomerID`
-- exposed model column at this checkpoint: `customer_id`
-
-### Implemented transformations
-
-- remove dummy/test customer `CustomerID = 9999`;
-- merge primary contact context from `customer_contacts`;
-- merge credit/phone context from `user_details`;
-- merge address context through `Address`;
-- merge region context through `cities`;
-- remove source-only/technical attributes such as `hash_key` and `source_id`;
-- rename output attributes toward snake_case and report-friendly names.
-
-Current output includes:
-
-```text
-customer_id
-customer_name
-segment
-account_manager
-payment_terms
-contact_name
-contact_email
-credit_limit
-phone
-street
-city
-region
-```
-
-### Validation principle
-
-Each enrichment merge must preserve the customer grain. The guided project uses relationship/cardinality checks and row-count checks to build confidence that a lookup-side table will not duplicate customers.
-
----
+A redundant Address merge sequence remains in the generated Power Query steps. It does not change the documented output shape but is technical debt that could be simplified in a later refactor; it is not hidden as if the query were perfectly minimal.
 
 ## `dim_product`
 
-### Business purpose
+The dimension flattens product + category/subcategory context, removes technical source fields and creates model key `product_key`.
 
-Provide one product dimension containing product identity plus category context required for analysis.
+The source contains guided problem/dummy rows (`ZZZ-000`, `ELE-901`, `HOM-902`) that are handled during transformation.
 
-### Grain
+### Unmapped-member design
 
-> One row represents one product.
-
-### Source inputs
-
-- `products`
-- `subcategories`
-
-### Keys
-
-- source business key: `product_code`
-- model-generated surrogate/model key: `product_key`
-
-The product source does not provide the desired model surrogate ID, so an index is created and renamed to `product_key`.
-
-### Implemented transformations
-
-- filter dummy row `ZZZ-000`;
-- clean/split the source subcategory mapping;
-- merge category into the product dimension using subcategory;
-- handle the guided project problem rows `ELE-901` and `HOM-902`;
-- create `product_key` using an index;
-- remove `ProductDescription`, `hash_key`, `source_id` from the analytical dimension;
-- rename and reorder attributes.
-
-Current output:
+The first Business Overview exposed sales without a matching Product Category as `(Blank)`. The latest source-controlled design adds:
 
 ```text
-product_key
-product_code
-product_name
-brand
-subcategory
-category
-price
-supplier
+product_key = 0
+product_code = UNMAPPED
+product_name = Unmapped Product
+category = Unmapped
 ```
 
-### Design rationale
+and maps null product lookups in `fact_sales` to key `0`. This preserves fact rows instead of filtering sales out of the model.
 
-The course source is partially snowflaked: product description and category mapping are split across source tables. The guided analytical design merges the useful category context into a single consumer-friendly product dimension rather than retaining an unnecessary snowflake.
+**Validation boundary:** this latest source change still requires a clean Power BI refresh/runtime confirmation before it is marked release-validated.
 
----
+## `dim_order_flags`
 
-## `dim_order_flags` — Junk Dimension
+Final columns are standardized:
 
-### Business purpose
+```text
+flag_key
+channel_code
+channel_name
+status
+priority
+```
 
-Extract small repetitive order descriptors from the order-header data so they do not remain as separate scattered flags in the analytical fact.
+The `channels` mapping is manually maintained for the controlled course case. In production, an authoritative upstream mapping is preferable because new source codes can otherwise become unmapped.
 
-### Grain
+## `dim_geo`
 
-> One row represents one unique combination of order channel, status and priority.
+Built from distinct city/region mappings with model-generated `geo_key`. It is reused by `fact_sales` for geographic roles. Ship-To is the active default relationship; Bill-To is an inactive alternative.
 
-### Source inputs
+## `dim_campaign`
 
-- `orders`
-- manually entered staging lookup `channels`
+`CAMPAIGN_LOG` contains descriptive campaign attributes and dated event metrics. Campaign metadata is deduplicated into `dim_campaign`; dated metrics remain in `fact_campaign_spend`.
 
-### Key
+## `dim_date`
 
-- model-generated `flag_key`
+A shared calendar dimension is created with `CALENDARAUTO()` and date attributes. It is used across Sales, Inventory, Campaign Spend, Sales Targets and the Order Process.
 
-### Implemented transformations through 03:45:58
+Power BI Auto Date/Time artifacts (`LocalDateTable_*`) are still serialized in the model. The explicit `dim_date` is the intended analytical date dimension; Auto Date tables are documented as a remaining technical-polish limitation rather than silently presented as part of the target architecture.
 
-1. reference the unified `orders` staging query;
-2. retain `OrderChannel`, `Status`, `Priority`;
-3. remove duplicates so the dimension contains unique combinations;
-4. create `flag_key` via index;
-5. merge `channels` on channel code;
-6. replace the cryptic channel code with a descriptive channel name.
+## Dimension status
 
-At the current checkpoint, the final column-name polish shown immediately afterward in the video has **not yet been completed**. The committed TMDL still exposes names such as `channels.channel_name`, `Status` and `Priority`. That is intentional documentation of the exact current state rather than a premature claim.
-
-### Manual mapping risk
-
-`channels` is manually entered model data. This introduces an operational dependency: if the source system adds or changes channel codes, the local mapping can become stale and produce unmatched/null values.
-
-For a production system, the preferred design would move this mapping responsibility upstream so the source/data-contract owner supplies the authoritative mapping and refresh stays automated.
-
----
-
-## Dimension implementation status
-
-| Dimension | Grain documented | Built in PBIP | Key strategy | Cleanup documented | Status |
-|---|---|---|---|---|---|
-| `dim_customer` | ✅ | ✅ | source customer ID | ✅ | implemented |
-| `dim_product` | ✅ | ✅ | model `product_key` + source code | ✅ | implemented |
-| `dim_order_flags` | ✅ | ✅ | model `flag_key` | ✅ | built; final naming polish next |
-| remaining guided dimensions | ⬜ | ⬜ | TBD | ⬜ | pending |
-
-## Current validation checklist
-
-- [x] dimension grain stated for implemented dimensions
-- [x] source inputs documented
-- [x] key strategy documented
-- [x] unnecessary/technical attributes actively removed
-- [x] dummy/problem rows handled where the guided project demonstrates them
-- [x] junk-dimension purpose documented
-- [x] manual mapping maintenance risk documented
-- [ ] final `dim_order_flags` naming polished
-- [ ] all remaining project dimensions completed
-- [ ] final dimension-to-fact relationships validated
+- [x] final guided dimensions exist in TMDL
+- [x] grains documented
+- [x] keys documented
+- [x] junk-dimension naming polished
+- [x] shared Geo/Date roles documented
+- [x] manual mapping caveat documented
+- [x] unmapped-product handling source-controlled
+- [ ] latest product change verified by clean Power BI refresh

@@ -1,6 +1,6 @@
 # Local source data
 
-This directory is the **local-only data landing zone** for the Nightmare Data Modeling capstone.
+This directory is the local-only data landing zone for the Nightmare Data Modeling capstone.
 
 ## Expected file
 
@@ -10,40 +10,32 @@ local-data/
 └── dataset.xlsx   # local only, ignored by Git
 ```
 
-`dataset.xlsx` is the source workbook used by the guided Data with Baraa Nightmare Data Modeling project.
-
-## Why the workbook is not committed
-
-The workbook originates from third-party course material. This portfolio documents and versions the modeling work, not a redistribution of the original course dataset. The source workbook therefore remains local unless explicit redistribution terms for this specific Power BI course dataset are verified.
+`dataset.xlsx` originates from the Data with Baraa course materials and is intentionally not redistributed from this public portfolio.
 
 The repository instead versions:
 
-- PBIP project files;
+- PBIP/PBIR project definitions;
 - TMDL semantic-model definitions;
-- Power Query / model logic contained in the PBIP project;
+- Power Query/model logic;
 - original documentation and diagrams;
-- model screenshots created during the implementation;
-- validation and reconciliation evidence.
+- project screenshots;
+- validation/reconciliation evidence.
 
 ## Local setup
 
-1. Obtain `dataset.xlsx` from the original Data with Baraa course materials.
-2. Copy it locally to:
-
-   ```text
-   local-data/dataset.xlsx
-   ```
-
-3. In Power BI Desktop, update the workbook source to this local file if the current query source points to another machine-specific path.
-4. Refresh the model and verify that all expected source tables load before continuing the source-model audit.
+1. Obtain `dataset.xlsx` from the original course materials.
+2. Copy it to `local-data/dataset.xlsx`.
+3. Open `model/nightmare-data-model/nightmare-data-model.pbip`.
+4. If required, repoint the Excel source to the local workbook.
+5. Refresh and run the checks in `tests/final_validation.md`.
 
 ## Portability note
 
-Power Query `File.Contents(...)` can store a machine-specific absolute file path. The committed PBIP/TMDL files may therefore show the current developer's local source path. The workbook itself is intentionally not versioned. Before running the project on another machine, update the data-source path to that machine's local copy of `dataset.xlsx`.
+Power Query currently serializes a machine-specific absolute `File.Contents(...)` path. A different development machine must repoint the workbook. This repository does not present the local Excel source as a production ingestion architecture.
 
 ## Do not add here
 
-- the completed course solution PBIX/PBIP;
-- credentials or secrets;
+- the completed instructor solution;
+- credentials/secrets;
 - private production data;
-- exports that are not required as evidence.
+- generated exports that are not required as evidence.

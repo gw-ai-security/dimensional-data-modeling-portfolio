@@ -1,100 +1,74 @@
 # 05 — Grain Analysis
 
-> **Status: active capstone evidence. Current guided checkpoint: 03:45:58.**
+> **Status: final implementation grain matrix documented.**
 
 Theory reference: [`theory/lesson_05_grain.md`](theory/lesson_05_grain.md)
 
-## Purpose
+## Grain rule
 
-For every analytical object, state what exactly one row represents before merging, appending, aggregating or connecting tables.
+For every analytical table ask:
 
-## Confirmed / working grain matrix
+> **What does exactly one row represent?**
 
-| Table | Grain statement | Key / row identity | Modeling consequence | Status |
-|---|---|---|---|---|
-| `ORDERS_2025` | one row represents one order header | `OrderID` | same grain/event as 2026; eligible for Append | confirmed in guided analysis |
-| `ORDERS_2026` | one row represents one order header | `OrderID` | same grain/event as 2025; eligible for Append | confirmed in guided analysis |
-| `orders` | one row represents one order header after year consolidation | `OrderID` | unified staging object for order-level context | implemented |
-| `order_line_items` | one row represents one line/position within an order | `LineID`; `OrderID` repeats | finer grain than order header; planned foundation for sales fact | confirmed |
-| `dim_customer` | one row represents one customer | `customer_id` expected unique | dimension-side uniqueness must be protected during merges | implemented |
-| `dim_product` | one row represents one product | model `product_key`; source `product_code` business key | model surrogate key introduced | implemented |
-| `dim_order_flags` | one row represents one distinct combination of order channel, status and priority | `flag_key` | junk-dimension grain is the distinct attribute combination | implemented |
-| `INVOICES` | one row is expected to represent one invoice header | `InvoiceID` | later header/detail fact decision | pending deeper validation |
-| `invoice_lines` | one row represents one invoice line | `InvoiceLineID`; `InvoiceID` repeats | finer grain than invoice header | pending later fact build |
-| `payments` | one row represents one payment transaction | `PaymentID` | independent business event/fact candidate | pending later fact build |
-| `shipments` | one row represents one shipment event | `ShipmentID` | independent business event/fact candidate | pending later fact build |
+Grain is treated as a contract. A successful merge that changes row meaning is a modeling defect.
 
-## Header/detail pattern
+## Final grain matrix
 
-The current project has reached the classic transactional pattern:
+| Object | Grain | Primary identity / important key | Consequence |
+|---|---|---|---|
+| `orders` | one order header | `OrderID` | staging context; do not sum Order-level values after expansion to lines |
+| `dim_customer` | one customer | `customer_id` | dimension lookup |
+| `dim_product` | one analytical product/member | `product_key` | includes explicit unmapped member in latest source design |
+| `dim_order_flags` | one unique channel/status/priority combination | `flag_key` | junk dimension |
+| `dim_geo` | one city/region lookup member | `geo_key` | reused for Ship-To/Bill-To roles |
+| `dim_campaign` | one campaign | `campaign_key` | shared by campaign facts |
+| `dim_date` | one calendar date | `Date` | shared/role-playing date context |
+| `fact_sales` | one order line | `line_id`; `order_id` repeats | additive line sales/quantity live at detail grain |
+| `fact_inventory` | one product-month snapshot | `product_key` + `month` | monthly inventory cannot truthfully become daily without an allocation/assumption |
+| `fact_campaign_spend` | one campaign-date activity record | `campaign_key` + `date` | impressions/clicks/spend are dated campaign events |
+| `fact_promotion_coverage` | one campaign-product combination | `campaign_key` + `product_key` | factless/coverage-style fact |
+| `fact_order_process` | one order lifecycle row | `order_id` | accumulating process snapshot; child events must be reduced to order milestones |
+| `fact_sales_targets` | one target period | `period` | compare to sales only at a common supported time grain |
+
+## Header/detail control
 
 ```text
-ORDER HEADER
 orders
 1 row = 1 order
         │
         │ OrderID
         ▼
-ORDER DETAILS
-order_line_items
+fact_sales
 1 row = 1 order line
 ```
 
-The detail table has the finer grain. One `OrderID` can therefore occur on multiple order-line rows. This is expected behavior, not a duplicate-row defect.
+`OrderTotal` is an Order-grain value. It must not be repeated and naively summed at Order-Line grain. The final sales fact therefore uses line-level `line_total` as its additive sales value.
 
-The analytical fact should be modeled at the level of what is being measured. In the guided project the next planned `fact_sales` starts from `order_line_items`, so its intended row grain is the order-line grain. This is a **planned next step**, not yet an implementation claim at 03:45:58.
+## Merge fan-out control
 
-## Append decision already applied
-
-`ORDERS_2025` and `ORDERS_2026` are split by the source system but represent the same event at the same grain. They are therefore appended into `orders`:
+The local QA exposed why grain must be verified after Merges:
 
 ```text
-ORDERS_2025 ─┐
-             ├─ APPEND → orders
-ORDERS_2026 ─┘
+Expected fact_order_process
+80 orders → 80 rows
 
-Grain before: one order
-Grain after:  one order
+Naive child-event merge
+80 orders → 97 rows   ❌
+
+Final milestone design
+child events aggregated first
+→ one process row per order
 ```
 
-The Append preserves the row meaning while removing an unnecessary source-system split from the analytical preparation layer.
+## Multiple-fact comparison rule
 
-## Dimension grains now visible
-
-```text
-dim_customer
-1 row = 1 customer
-
-dim_product
-1 row = 1 product
-
-dim_order_flags
-1 row = 1 unique combination of:
-channel + status + priority
-```
-
-The junk-dimension example is important because its row identity is not a source business entity ID. Its grain is the **unique combination of descriptive flags** and the model-generated `flag_key` identifies that combination.
-
-## Measure-grain controls for the next phase
-
-Before `fact_sales` is reshaped, record the protected total requested by the guided project. After each merge that can change row multiplicity, re-check the same total.
-
-Questions that remain mandatory:
-
-- does a merge preserve the order-line row count/grain?
-- does a lookup dimension contain one matching row per lookup value?
-- are any order-header measures repeated after bringing header context to order lines?
-- does a numeric column belong to Order grain or Order-Line grain?
-- can a naive `SUM` double count a higher-grain amount?
+Facts remain separate when they describe different events or grains. They meet through shared dimensions. Comparisons are only valid at a grain both facts understand; for example, periodic targets must not be invented at a finer time grain than the source provides.
 
 ## Evidence status
 
-- [x] Order header grain documented
-- [x] Order-line grain documented
-- [x] year-split Append justified by same grain/event
-- [x] current dimension grains documented
-- [x] header/detail risk explicitly documented
-- [ ] protected sales baseline recorded
-- [ ] first `fact_sales` grain validated after implementation
-- [ ] remaining fact grains validated
-- [ ] final grain statements reconciled with final model
+- [x] all final dimensions have grain statements
+- [x] all six final facts have grain statements
+- [x] Order vs Order-Line distinction documented
+- [x] order-process fan-out failure documented
+- [x] target/common-grain limitation documented
+- [ ] final runtime row-count proof for current `main` state captured in Power BI evidence

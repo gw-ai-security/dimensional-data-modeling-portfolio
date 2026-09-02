@@ -2,8 +2,6 @@
 
 > Primary source: the user-provided transcript of **Data with Baraa — Data Modeling in Power BI Full Course**. These notes paraphrase the course in original wording and structure; they do not reproduce the transcript verbatim.
 
-This folder contains the complete **theory block before the Nightmare hands-on project**. The theory is split into seven lessons that follow the order of the transcript.
-
 ## Lesson map
 
 | Lesson | Transcript range | Topic | Learning status |
@@ -16,11 +14,9 @@ This folder contains the complete **theory block before the Nightmare hands-on p
 | [06](lesson_06_multiple_facts.md) | 01:41:28–02:08:57 | Multiple facts, append/merge decisions, shared dimensions | ✅ Completed |
 | [07](lesson_07_security_rls.md) | 02:08:58–02:40:07 | Table/column/row security; static and dynamic RLS | ✅ Completed |
 
-The guided **Nightmare project starts at approximately 02:40:08** in the full-course transcript. Project implementation evidence belongs in the model/project documentation, not in these theory notes.
+The guided Nightmare project begins after this theory block. The theory files remain historical learning evidence; they are not rewritten to pretend the later implementation was independently derived.
 
 ## Learning method
-
-A lesson was not marked complete merely because notes existed. The completion loop used throughout the theory phase was:
 
 ```text
 Watch
@@ -31,63 +27,23 @@ Watch
 → Mark complete
 ```
 
-The detailed recall record is in [`../../learning/active_recall.md`](../../learning/active_recall.md), with resolved misconceptions in [`../../learning/confusion_log.md`](../../learning/confusion_log.md).
+Detailed recall evidence is in `../../learning/active_recall.md` and `../../learning/confusion_log.md`.
 
-## Theory completion checkpoint
+## Current project context
 
-The theory phase now covers the complete pre-project course sequence:
-
-```text
-Why Modeling Matters
-→ Facts & Dimensions
-→ Star / Snowflake / Galaxy
-→ Relationships
-→ Special Dimensions
-→ Grain
-→ Multiple Facts
-→ Security / RLS
-```
-
-Key gates passed through recall include:
-
-- explaining why star schema and clear filter paths reduce model complexity;
-- distinguishing cardinality from filter direction and ambiguity;
-- distinguishing active/inactive relationships from many-to-many modeling;
-- recognizing extracted, junk and role-playing dimensions;
-- stating table grain and detecting higher-grain measures repeated at lower grain;
-- choosing Append vs Merge vs separate facts based on grain/event/shape;
-- comparing facts only at a grain both understand;
-- explaining static vs dynamic RLS and why security depends on relationship/filter topology.
-
-## Security checkpoint
-
-The final theory lesson was completed after recall of:
-
-- **Table-Level Security** — protect an entire table;
-- **Column-Level Security** — protect specific sensitive columns;
-- **Row-Level Security (RLS)** — restrict which rows a user may see;
-- **Static RLS** — fixed role/filter rules, suitable for smaller scenarios;
-- **Dynamic RLS** — user-to-scope mappings stored in a security table;
-- `USERPRINCIPALNAME()` — identifies the current report user for the dynamic mapping;
-- security filters must propagate through valid relationships into the analytical model;
-- RLS must be validated with representative users/roles and expected restricted totals.
-
-## Next phase
-
-Theory consumption now stops. The next evidence level is the guided Nightmare implementation:
+The guided Nightmare implementation has now been built and source-controlled. The current project gate is no longer “start the capstone”; it is:
 
 ```text
 Theory complete
-→ inspect the source model
-→ build in Power BI
-→ validate each modeling decision
-→ capture evidence
-→ reconcile metrics
-→ independent audit
+→ guided implementation complete
+→ final Power BI runtime validation
+→ representative RLS tests
+→ final screenshots
+→ independent no-tutorial audit
 ```
 
 See [`../../PROJECT_PLAN.md`](../../PROJECT_PLAN.md).
 
 ## Claim boundary
 
-These files prove structured theory study and Active Recall, not production implementation. Practical claims will only be added after the Nightmare project is built and validated in Power BI.
+These theory files prove structured study and Active Recall. Practical implementation/validation evidence lives in `../`, `../../model/`, `../../tests/` and `../../screenshots/`.

@@ -1,90 +1,70 @@
 # 09 — Security / Row-Level Security Evidence
 
-> **Status: implementation template.** The Security/RLS theory lesson is complete; actual RLS evidence will be added during the guided Nightmare project.
+> **Status: dynamic RLS implemented in TMDL; representative Power BI runtime tests still pending.**
 
 Theory reference: [`theory/lesson_07_security_rls.md`](theory/lesson_07_security_rls.md)
 
-## Security requirement
+## Requirement
 
-Document the requirement before changing the model.
+Restrict customer-related analytical data by the Region(s) assigned to the current user.
 
-**Question:** Who is allowed to see which data?
+## Implementation
 
-Record:
+The model contains:
 
-- protected business scope;
-- authorization attribute (for example Region);
-- source of the requirement;
-- facts/dimensions that actually require protection;
-- whether Static or Dynamic RLS is appropriate.
+- `security[user_email]`
+- `security[region]`
+- role `regional access`
+- `dim_customer[region]` as the controlled analytical attribute
 
-## Mapping / access model
+The source-controlled role expression is:
 
-| Principal / role | Allowed scope | Mapping key | Expected behavior |
-|---|---|---|---|
-| | | | |
+```DAX
+dim_customer[region] IN
+CALCULATETABLE(
+    VALUES(security[region]),
+    security[user_email] = USERPRINCIPALNAME()
+)
+```
 
-For a public repository, use synthetic identities only.
-
-## Security filter path
-
-Document the exact propagation route, for example:
+## Security path
 
 ```text
-Current User
+Current Power BI user
 → USERPRINCIPALNAME()
-→ Dynamic Role
-→ Security Mapping Table
-→ Dimension
-→ Fact(s)
+→ security[user_email]
+→ allowed security[region]
+→ role filter on dim_customer[region]
+→ customer-related facts through dimensional relationships
 ```
 
-For each hop verify:
+`USERPRINCIPALNAME()` identifies the current user; it is not itself the complete authorization model.
 
-- relationship exists;
-- cardinality is intentional;
-- filter direction allows the security restriction to travel toward protected data;
-- the path reaches every fact that is in scope;
-- unrelated facts are not forced into the path without a requirement.
+## Scope caveat
 
-## RLS validation cases
+Not every fact has Region grain. In particular, `fact_sales_targets` is period-based/global in this dataset. Regional Sales restricted by RLS must not automatically be compared to a global Target as if the target were regional.
 
-| Test user/role | Expected allowed scope | Expected forbidden scope | Expected KPI/total | Actual | Result |
-|---|---|---|---:|---:|---|
-| | | | | | |
+## Runtime test plan
 
-Minimum tests:
+Power BI Desktop `View As` must still be executed with representative synthetic/test users.
 
-1. user with one allowed value;
-2. user with multiple allowed values if the mapping supports this;
-3. user with no security-table mapping;
-4. broad-access role/user if required;
-5. verify restricted totals against known baselines.
+| Case | Expected result | Status |
+|---|---|---|
+| user mapped to one Region | only that Region's customer/sales data visible | pending runtime evidence |
+| second user / different Region | different allowed Sales scope | pending runtime evidence |
+| unmapped user | no customer rows unless an explicit broader rule exists | pending runtime evidence |
+| unrestricted view | full recorded Sales baseline restored | pending runtime evidence |
 
-## Security vs report filtering
+## Evidence boundary
 
-```text
-RLS           = access boundary
-Report filter = analytical selection inside the access boundary
-```
-
-Do not treat a slicer/report filter as security evidence.
-
-## Public-repository rules
-
-- do not commit real personal email addresses;
-- do not commit credentials, secrets or tokens;
-- do not commit confidential organizational access mappings;
-- use synthetic principals and synthetic/test mappings;
-- screenshots must not expose sensitive identities or internal data.
-
-## Evidence required before marking complete
-
-- [ ] security requirement documented
-- [ ] RLS type justified
-- [ ] security mapping documented
-- [ ] filter path diagram captured
-- [ ] representative users/roles tested
+- [x] RLS requirement documented
+- [x] dynamic design justified
+- [x] role exists in TMDL
+- [x] exact DAX rule documented
+- [x] security path documented
+- [x] target/RLS semantic caveat documented
+- [ ] representative users tested with `View As`
 - [ ] restricted totals reconciled
-- [ ] no unintended data exposure observed
-- [ ] public evidence sanitized
+- [ ] sanitized RLS screenshot committed
+
+A source-controlled role is implementation evidence, not proof that authorization has been runtime-tested.

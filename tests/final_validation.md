@@ -1,45 +1,57 @@
 # Final Validation Checklist
 
-> **Status: template — complete only after the capstone and independent audit.**
+> **Status: guided implementation complete; release validation not yet fully closed.**
 
-## Model semantics
+## Source-controlled model semantics
 
-- [ ] every fact has a precise grain statement
-- [ ] every dimension has a precise grain statement
-- [ ] fact/dimension classification is justified
-- [ ] dimension-side keys expected to be unique are unique
-- [ ] relationships match business meaning
-- [ ] cardinality is validated
-- [ ] filter direction is justified
-- [ ] no unexplained many-to-many relationship
-- [ ] no accidental direct fact-to-fact relationship
-- [ ] no unresolved ambiguous filter path
+- [x] every final fact has a grain statement
+- [x] every final dimension has a grain statement
+- [x] fact/dimension classifications documented
+- [x] no direct fact-to-fact relationship in TMDL
+- [x] active/inactive Date roles documented
+- [x] Ship-To/Bill-To Geo roles documented
+- [x] order-process fan-out root cause and fix documented
+- [x] core measure definitions documented
+- [x] dynamic RLS role source-controlled
 
-## Metrics
+## Recorded metrics
 
-- [ ] baseline metrics recorded
-- [ ] key metrics reconcile after redesign
-- [ ] distinct-count requirements match fact grain
-- [ ] measure definitions documented
+- [x] Total Sales reference recorded
+- [x] Orders reference recorded
+- [x] Customer counts recorded
+- [x] Target / attainment references recorded
+- [x] Order Process failure/reference counts recorded
 
-## Security
+## Repository evidence
 
-- [ ] RLS requirement documented
-- [ ] synthetic RLS test users/roles validated
-- [ ] public repository contains no sensitive identity/credential data
+- [x] source-model before-state committed
+- [x] source assessment complete
+- [x] grain matrix complete
+- [x] dimension/fact documentation current
+- [x] relationship inventory current
+- [x] architecture decisions current
+- [x] debugging/failure evidence documented
+- [x] README no longer claims the project is only at 03:45:58
 
-## Evidence
+## Runtime release gates — still open
 
-- [ ] before-state model captured
-- [ ] final model diagram captured
-- [ ] source model assessment complete
-- [ ] grain matrix complete
-- [ ] fact/dimension documentation complete
-- [ ] relationship matrix complete
-- [ ] architecture decisions documented
-- [ ] debugging/failure evidence documented
+- [ ] current `main` PBIP opens and Refresh succeeds after latest Product changes
+- [ ] `dim_product` query loads without error after Unmapped member addition
+- [ ] Product key types/relationship are accepted by Power BI after refresh
+- [ ] Sales Trend renders values through `dim_date`
+- [ ] Sales vs Target renders both measures at a valid common time grain
+- [ ] Product Category contains explicit `Unmapped` instead of unexplained `(Blank)`
+- [ ] `fact_order_process` confirms 80 rows / 80 distinct Orders
+- [ ] representative Dynamic RLS `View As` tests executed (minimum two users)
+- [ ] restricted totals reconciled
+- [ ] final model screenshot committed under `screenshots/after/`
+- [ ] Business Overview screenshot committed under `screenshots/after/`
 - [ ] independent no-tutorial audit complete
 
 ## Claim gate
 
-Only after this checklist is complete should the README describe the capstone as a fully implemented and validated modeling project.
+Until every runtime/independent gate above is complete, the correct claim is:
+
+> **Guided implementation complete; final runtime validation and independent audit pending.**
+
+Do not describe the portfolio as fully validated production Power BI evidence before this checklist is closed.

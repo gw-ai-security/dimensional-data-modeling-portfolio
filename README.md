@@ -1,167 +1,182 @@
 # Dimensional Data Modeling Portfolio
 
-> Evidence-driven learning portfolio for dimensional data modeling: from modeling fundamentals and relationship semantics to the redesign and validation of a complex analytical model.
+> Evidence-driven Power BI dimensional-modeling portfolio: a deliberately messy analytical source model is assessed, reshaped into a star/galaxy semantic model, tested against protected business metrics, secured with dynamic RLS, and exposed through a deliberately simple report.
 
 ## Project status
 
-**Theory complete — guided Nightmare implementation in progress. Current video checkpoint: 03:45:58.**
+**Guided implementation complete; final runtime validation and the independent no-tutorial audit are still open release gates.**
 
-Current progress:
+The repository now contains the complete PBIP/TMDL implementation:
 
-- ✅ Lessons 1–7 — complete and validated through Active Recall
-- ✅ Nightmare PBIP/TMDL project initialized
-- ✅ local course workbook repointed and refreshed
-- ✅ Power Query workspace groups created: `01_Stage`, `02_Dimensions`, `03_Facts`, `04_Support`
-- ✅ source tables explored at business/domain level
-- ✅ `dim_customer` built from customer-related source tables
-- ✅ `dim_product` built and enriched with category context
-- ✅ `ORDERS_2025` + `ORDERS_2026` consolidated into staging query `orders`
-- ✅ junk-dimension structure `dim_order_flags` created
-- ✅ manual channel-code mapping query `channels` created and joined into `dim_order_flags`
-- ▶ next guided step: polish the junk dimension, then begin `fact_sales` from `order_line_items`
-- ⬜ protected fact baseline metrics and first fact implementation
-- ⬜ remaining facts, relationships, date model, measures, RLS and final reconciliation
-- ⬜ independent no-tutorial model audit
+- ✅ theory Lessons 1–7 completed through Active Recall
+- ✅ Nightmare source model assessed and before-state captured
+- ✅ Power Query organized into `01_Stage`, `02_Dimensions`, `03_Facts`, `04_Support`
+- ✅ six analytical dimensions implemented
+- ✅ six fact tables implemented at explicit business grains
+- ✅ shared and role-playing relationships defined
+- ✅ semantic measure table implemented
+- ✅ dynamic regional RLS role source-controlled
+- ✅ `Business Overview` and `Model Validation` report pages source-controlled
+- ✅ major grain/fan-out and date-key defects identified and corrected during QA
+- ▶ final Power BI refresh/smoke-test evidence after the latest source changes
+- ▶ representative `View As` RLS runtime tests
+- ▶ final after-state/report screenshots committed to Git
+- ⬜ independent no-tutorial audit
 
-The committed TMDL is the source of truth for implementation claims. At this checkpoint no completed fact table or final star/galaxy schema is claimed.
+The PBIP/TMDL files are the implementation source of truth. Documentation distinguishes **implemented in source control** from **runtime-validated in Power BI Desktop**.
 
-## Objective
+## Problem
 
-This repository documents dimensional data modeling skills for analytics and data engineering, with emphasis on the semantic and structural layer underneath reporting:
+The course case starts from a deliberately chaotic analytical model: fragmented customer/product context, yearly source splits, mixed grains, weak relationship topology, wide inventory data, multiple business events and security requirements.
 
-- business-oriented table design
-- fact and dimension modeling
-- grain definition
-- keys and cardinality
-- relationship design and filter propagation
-- star, snowflake and galaxy schemas
-- special dimension patterns
-- multiple-fact modeling
-- data quality and reconciliation
-- semantic measures
-- row-level security
-- modeling decisions and trade-offs
-
-## Evidence model
+The modeling objective is not to make a prettier diagram. It is to make the semantic layer reliable:
 
 ```text
-Concept → Explain → Implement → Validate → Debug → Document → Evidence
-```
-
-The repository separates three evidence levels:
-
-1. **Course-derived concepts** — paraphrased in original documentation.
-2. **Guided implementation** — the Data with Baraa Nightmare case reproduced hands-on.
-3. **Independent evidence** — later validation, model audit, trade-off analysis and no-tutorial reconstruction.
-
-## Theory curriculum — completed
-
-The complete pre-project theory block is documented in [`docs/theory/`](docs/theory/README.md). Repository-native visual summaries are in [`diagrams/`](diagrams/README.md).
-
-| Lesson | Topic | Status |
-|---|---|---|
-| 01 | Modeling foundations; facts and dimensions | ✅ |
-| 02 | Star, snowflake and galaxy schemas | ✅ |
-| 03 | Relationships, cardinality, filtering and ambiguity | ✅ |
-| 04 | Extracted, junk and role-playing dimensions | ✅ |
-| 05 | Grain and grain-aware aggregation | ✅ |
-| 06 | Multiple facts, Append/Merge/shared dimensions | ✅ |
-| 07 | Security and RLS | ✅ |
-
-## Current implementation artifact
-
-```text
-model/nightmare-data-model/
-├── nightmare-data-model.pbip
-├── nightmare-data-model.Report/
-└── nightmare-data-model.SemanticModel/
-```
-
-The semantic model is stored in TMDL, so Power Query, tables and relationships can be inspected as text-based Git diffs.
-
-The course source workbook `dataset.xlsx` is not committed. A local copy belongs at `local-data/dataset.xlsx`; see [`local-data/README.md`](local-data/README.md). The instructor's completed solution stays outside the repository and is used only as a later reference/check.
-
-## Implemented capstone work through 03:45:58
-
-### Power Query organization
-
-The project now uses explicit work areas:
-
-```text
-01_Stage
-02_Dimensions
-03_Facts
-04_Support
-```
-
-This separates source-aligned staging/reference queries from analytical dimensions and later facts.
-
-### Customer dimension
-
-`dim_customer` is built from `CUST_MASTER` and enriched through left merges with customer contacts, user details, address and city/region context. Dummy/test data and technical source columns are removed, and output columns are renamed toward the project snake_case standard.
-
-### Product dimension
-
-`dim_product` is built from `products`, enriched from the cleaned `subcategories` mapping, filters known dummy/problem rows, creates a model-generated `product_key`, removes technical/non-analytical columns and exposes report-friendly attributes.
-
-### Order staging and junk dimension
-
-`ORDERS_2025` and `ORDERS_2026` represent the same order-header event at the same grain and are appended into `orders`. Source-only columns such as legacy/reference notes are removed.
-
-From `orders`, the repeating low-cardinality descriptors `OrderChannel`, `Status` and `Priority` are extracted into `dim_order_flags`. A small manually entered `channels` lookup maps channel codes to descriptive names. At the 03:45:58 checkpoint the final polish/rename of this junk dimension is the next immediate guided step.
-
-The manual mapping is intentionally documented as a maintenance risk: if source codes change, the mapping must be updated; a production-grade preference would be to source this mapping upstream rather than maintain it manually inside the model.
-
-## Grain checkpoint
-
-Confirmed working grains relevant to the current implementation:
-
-```text
-ORDERS_2025      → one row = one order
-ORDERS_2026      → one row = one order
-orders           → one row = one order
-order_line_items → one row = one order line
-
-dim_customer     → one row = one customer
-dim_product      → one row = one product
-dim_order_flags  → one row = one distinct channel/status/priority combination
-```
-
-The Order Header / Order Detail pattern is now explicit: `orders` is the header-level staging object, while `order_line_items` is the finer-grain detail source. The first sales fact is expected to use the detail grain, but it has not yet been created at this checkpoint.
-
-## Current capstone path
-
-```text
-✅ initialize PBIP/TMDL
-✅ repoint + refresh local source
-✅ explore business/source tables
-✅ organize Power Query groups
-✅ build dim_customer
-✅ build dim_product
-✅ append order headers into orders
-✅ extract dim_order_flags + channels mapping
-▶ polish junk dimension
-→ create fact_sales from order_line_items
-→ record/protect fact baseline metrics
-→ add dimension keys
-→ build remaining facts
+Understand business events
+→ state grain
+→ build dimensions
+→ build facts
+→ protect row counts and totals
 → establish dimensional relationships
-→ date model + measures
-→ RLS
-→ reconciliation + final validation
-→ independent no-tutorial audit
+→ add semantic measures
+→ apply/test RLS
+→ reconcile
+→ prove the model through reporting
 ```
 
-See [`PROJECT_PLAN.md`](PROJECT_PLAN.md), [`docs/04_source_model_assessment.md`](docs/04_source_model_assessment.md), [`docs/05_grain_analysis.md`](docs/05_grain_analysis.md), [`docs/06_dimensions.md`](docs/06_dimensions.md) and the open implementation issues.
+## Final semantic model
 
-## Claim boundaries
+### Dimensions
 
-The theory phase is complete and several guided dimensions/staging transformations are implemented in PBIP/TMDL. The final analytical model, facts, measures, security and reconciliation are not complete yet. This repository therefore demonstrates **guided implementation in progress**, not completed production Power BI experience.
+- `dim_customer` — one row per customer
+- `dim_product` — one row per analytical product, including an explicit unmapped member
+- `dim_order_flags` — one row per unique channel/status/priority combination
+- `dim_geo` — geographic lookup for city/region context
+- `dim_campaign` — one row per campaign
+- `dim_date` — shared calendar dimension
+
+### Facts
+
+- `fact_sales` — one row per order line
+- `fact_inventory` — one row per product-month inventory snapshot
+- `fact_campaign_spend` — one row per campaign-date activity record
+- `fact_promotion_coverage` — one row per campaign-product coverage combination
+- `fact_order_process` — one row per order/process lifecycle
+- `fact_sales_targets` — one row per target period
+
+The current relationship model contains no direct fact-to-fact relationship. Facts are analyzed through shared dimensions. `fact_order_process` uses active/inactive date relationships for role-playing process dates; `fact_sales` uses active Ship-To geography and an inactive Bill-To alternative.
+
+See [`diagrams/capstone-progress.md`](diagrams/capstone-progress.md) and [`tests/relationship_validation.md`](tests/relationship_validation.md).
+
+## Important QA findings
+
+### 1. Merge fan-out in the order process
+
+The intended grain of `fact_order_process` is **one row per order**. A naive merge of one-to-many child events can multiply order rows. During the local audit, the naive path produced **97 rows for 80 distinct orders**.
+
+The final query aggregates lifecycle milestones before the join:
+
+```text
+shipments → OrderID milestones
+payments  → InvoiceID milestone
+invoices  → OrderID milestones
+                ↓
+orders → fact_order_process
+         1 row = 1 order
+```
+
+This is a stronger portfolio result than merely reproducing the tutorial: a technically valid merge was rejected because it violated grain.
+
+### 2. Date key compatibility
+
+The first Business Overview smoke test showed correct headline Sales but a blank Sales Trend. `fact_sales[order_date]` still contained a DateTime representation while the shared calendar operates at Date grain. The Power Query output was normalized to Date before the shared relationship is used.
+
+### 3. Unmapped product handling
+
+The first report exposed an unexplained `(Blank)` Product Category. The latest source-controlled model introduces `product_key = 0` / `Unmapped Product` rather than deleting fact rows or hiding the blank visual category. This preserves fact totals and makes the source-quality exception explicit. A final Power BI refresh is still required to prove the latest query state at runtime.
+
+## Recorded validation values
+
+The following values were recorded from the local course dataset / Power BI model during the 2026-09-02 audit. The source workbook is intentionally not committed, so GitHub cannot independently recalculate them.
+
+| Metric | Recorded value |
+|---|---:|
+| Order lines | 200 |
+| Distinct orders | 80 |
+| Total Sales | 526,643.91 |
+| Active customers | 47 |
+| Customers in `dim_customer` | 60 |
+| Sales target | 552,000.00 |
+| Target attainment | 95.4% |
+| Hardened `fact_order_process` rows | 80 |
+| Orders with payment | 60 |
+| Average Order → Pay | ~32.93 days |
+
+See [`tests/baseline_metrics.md`](tests/baseline_metrics.md) and [`tests/reconciliation_tests.md`](tests/reconciliation_tests.md).
+
+## Semantic measures
+
+The `_measures` table currently defines:
+
+- `total_sales`
+- `total_orders`
+- `total_active_customers`
+- `base_total_customers`
+- `avg_order_to_pay`
+- `total_target_revenue`
+- `target_attainment_pct`
+
+The business definitions and grain dependencies are documented in [`docs/08_semantic_measures.md`](docs/08_semantic_measures.md).
+
+## Dynamic RLS
+
+The model contains a source-controlled `regional access` role using `USERPRINCIPALNAME()` and the `security` mapping table to restrict `dim_customer[region]`. The implementation exists in TMDL; representative Power BI `View As` tests are intentionally still an open validation gate and are not claimed as complete merely because the role exists.
+
+See [`docs/09_security.md`](docs/09_security.md).
+
+## Reporting proof
+
+The PBIP report contains two pages:
+
+- **Business Overview** — simple business-facing proof of the semantic model
+- **Model Validation** — model/measure validation surface retained from the project workflow
+
+The Business Overview is intentionally small. This portfolio targets Data Modeling / semantic-layer evidence, not dashboard-design specialization.
+
+## Repository structure
+
+```text
+.
+├── README.md
+├── PROJECT_PLAN.md
+├── SOURCES.md
+├── docs/
+├── diagrams/
+├── learning/
+├── local-data/          # dataset.xlsx local-only
+├── model/
+│   └── nightmare-data-model/
+├── screenshots/
+└── tests/
+```
+
+## Evidence and claim boundary
+
+This repository supports the claim:
+
+> I completed a guided redesign of a complex analytical Power BI model, documented grain and model decisions, created dimensional facts/dimensions, implemented shared/role-playing relationships, semantic measures and dynamic RLS, and performed targeted QA that found and corrected modeling defects.
+
+It does **not** claim:
+
+- production Power BI administration;
+- enterprise-scale performance testing;
+- production refresh/deployment SLAs;
+- independently completed no-tutorial modeling until Issue #10 is closed.
 
 ## Attribution
 
-The course structure, guided case study and source dataset are based on **Data with Baraa**. See [`SOURCES.md`](SOURCES.md). Course material is not presented as independently invented; this repository adds original documentation, model artifacts, validation evidence and later independent reconstruction.
+The course structure, case study and source dataset originate from **Data with Baraa**. The repository adds original documentation, Mermaid diagrams, Active Recall records, PBIP/TMDL implementation, QA findings and validation evidence. See [`SOURCES.md`](SOURCES.md).
 
 ## License
 
-Code and original documentation in this repository are covered by the repository license. Third-party course material and source datasets remain subject to their original authors' terms.
+Code and original documentation in this repository are covered by the repository license. Third-party course material and datasets remain subject to their original authors' terms.

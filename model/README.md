@@ -1,14 +1,10 @@
 # Power BI Model Artifacts
 
-This directory contains the guided Nightmare Data Modeling capstone implementation.
+This directory contains the guided Nightmare Data Modeling capstone in Power BI Project (PBIP) format.
 
 ## Current status
 
-**Theory phase: complete.**  
-**Nightmare Power BI implementation: in progress.**  
-**Current guided checkpoint: 03:45:58.**
-
-The committed PBIP/TMDL model has progressed beyond the raw Nightmare starting state. Power Query staging groups and the first analytical dimensions now exist, while the first final fact has not yet been created.
+**Guided semantic-model implementation complete and source-controlled. Final runtime validation remains open.**
 
 ## Project structure
 
@@ -21,90 +17,70 @@ model/
     └── nightmare-data-model.SemanticModel/
 ```
 
-The semantic model is stored in TMDL under `definition/`, making model changes inspectable as Git diffs.
+TMDL/PBIR makes Power Query, model, role and report definitions inspectable as Git diffs.
 
-## Implemented model objects through 03:45:58
-
-### Query groups
+## Analytical model objects
 
 ```text
-01_Stage
-02_Dimensions
-03_Facts
-04_Support
-```
-
-### New/reshaped project objects
-
-```text
-01_Stage
-├── orders          # append of ORDERS_2025 + ORDERS_2026
-├── channels        # manually entered channel-code lookup
-└── source/reference expressions used by dimensions
-
 02_Dimensions
 ├── dim_customer
 ├── dim_product
-└── dim_order_flags
+├── dim_order_flags
+├── dim_geo
+├── dim_campaign
+└── dim_date
 
 03_Facts
-└── no completed analytical fact yet at this checkpoint
+├── fact_sales
+├── fact_inventory
+├── fact_campaign_spend
+├── fact_promotion_coverage
+├── fact_order_process
+└── fact_sales_targets
+
+04_Support / semantic
+├── security
+└── _measures
 ```
 
-`dim_order_flags` has been structurally built and enriched with `channels`; the final naming/polish step shown immediately after 03:45:58 in the course is still pending in the committed state.
+The staging/source expressions remain available for lineage and transformation logic.
+
+## Report pages
+
+- `Business Overview`
+- `Model Validation`
+
+## Key modeling characteristics
+
+- Order-Line Sales fact
+- Product-Month Inventory fact
+- Campaign Spend and Campaign-Product coverage facts
+- Order-level accumulating process fact
+- period Sales Target fact
+- shared Customer/Product/Campaign/Geo/Date context
+- active/inactive role-playing Date and Geo relationships
+- dynamic regional RLS role
+- centralized measures
 
 ## Source data policy
 
-The guided project uses Data with Baraa's `dataset.xlsx`. The workbook is not committed. Keep the local copy at:
+`dataset.xlsx` stays local at:
 
 ```text
 local-data/dataset.xlsx
 ```
 
-The completed instructor solution also remains outside this repository and is only a later reference/check.
+The instructor solution is not committed.
 
-Tracked PBIP source artifacts include `.pbip`, `.pbir`, `.pbism`, `.tmdl`, `.platform`, report/model `definition/` and shared editor metadata. Local cache/settings, binary PBIX/PBIT files, `unappliedChanges.json` and the course workbook remain ignored.
+## Portability
 
-## Portability note
+Source expressions currently serialize an absolute local `File.Contents(...)` path. A different machine must repoint the workbook before refresh. This is a known local-development limitation, not a production ingestion design.
 
-The source queries use a local `File.Contents(...)` path. A different development machine must repoint the workbook path before refresh. The local development copy currently targets the ignored repository-local workbook under `local-data/`.
+## Current technical caveats
 
-## Evidence workflow — current position
+- Power BI Auto Date/Time `LocalDateTable_*` artifacts remain serialized alongside explicit `dim_date`.
+- the latest Unmapped Product change requires a clean Power BI refresh to prove the current source state;
+- runtime RLS evidence still needs `View As` tests;
+- final after-state screenshots are not yet committed.
 
-```text
-✅ Import Nightmare source
-✅ Capture/inspect starting model in working session
-✅ Organize Power Query workspace
-✅ Explore source/business objects
-✅ Build dim_customer
-✅ Build dim_product
-✅ Append yearly order headers → orders
-✅ Extract dim_order_flags
-✅ Add channels mapping
-▶ Polish dim_order_flags
-→ Reference order_line_items → fact_sales
-→ Record/protect baseline sales metric
-→ Merge header context safely
-→ Add dimension keys
-→ Build remaining facts/relationships
-→ Date + measures + RLS
-→ Reconcile and validate
-```
-
-## Current implementation rules
-
-- state grain before combining tables;
-- use Append only when event/grain/shape are compatible;
-- check merge cardinality so rows are not multiplied;
-- remove source attributes that do not earn a reporting role;
-- keep one authoritative analytical home for descriptive context;
-- document manually maintained mappings as an operational dependency;
-- do not claim a final star schema until facts, dimensional relationships and reconciliation evidence exist.
-
-## Next evidence to create
-
-1. finish the junk-dimension naming polish;
-2. create `fact_sales` from `order_line_items`;
-3. record the protected sales baseline before/after risky merges;
-4. commit the before-state Model View image to `screenshots/before/`;
-5. continue documenting fact grain and model-key lookups.
+See `../tests/final_validation.md` for the release gate.

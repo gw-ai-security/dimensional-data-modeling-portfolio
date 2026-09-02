@@ -1,58 +1,32 @@
 # Validation Evidence
 
-This directory will hold model validation and reconciliation evidence for the Nightmare capstone.
-
-The goal is to prove that structural changes preserve or intentionally change business results rather than relying on visual inspection alone.
+This directory separates recorded model evidence from release checks that still require Power BI Desktop runtime validation.
 
 ## Current status
 
-**Theory phase complete; capstone test results not started.**
+**Guided implementation built; validation partially complete.**
 
-Templates do not count as passed tests. A test becomes evidence only after it is executed against the actual Power BI model and the result is recorded.
+Recorded evidence includes protected metrics, a diagnosed order-process fan-out defect and source-controlled relationship/measure/RLS definitions. Final runtime smoke tests and the independent no-tutorial audit remain open.
 
 ## Validation categories
 
-1. **Baseline metrics** — known totals before remodeling.
-2. **Grain validation** — explicit table grain and important measure/column grain.
-3. **Dimension key validation** — uniqueness on intended `1` sides.
-4. **Relationship validation** — cardinality, filter direction, active/inactive state and ambiguity checks.
-5. **Multiple-fact reconciliation** — standalone fact totals vs combined shared-dimension visuals.
-6. **Semantic-measure validation** — aggregations respect measure grain.
-7. **RLS validation** — representative users/roles, allowed/forbidden scope and restricted totals.
-8. **Final validation** — release-style checklist and before/after reconciliation.
+1. [`baseline_metrics.md`](baseline_metrics.md) — recorded business/control values.
+2. [`relationship_validation.md`](relationship_validation.md) — final relationship inventory and open runtime checks.
+3. [`reconciliation_tests.md`](reconciliation_tests.md) — before/after QA findings.
+4. [`final_validation.md`](final_validation.md) — release gate.
 
-## Minimum workflow
+## Evidence rule
+
+A source-controlled definition proves implementation. It does **not** by itself prove Power BI runtime behavior.
 
 ```text
-Capture baseline
-→ change model
-→ test structural assumptions
-→ reconcile measures
-→ test security if applicable
-→ document result
+Implement
+→ inspect source
+→ refresh
+→ reconcile
+→ test interactions/security
+→ capture evidence
+→ release claim
 ```
 
-## Critical failure patterns to test for
-
-- duplicate dimension keys changing intended `1:*` relationships;
-- accidental many-to-many relationships;
-- bidirectional filters creating unexpected paths;
-- ambiguous active paths;
-- higher-grain measures double counted at lower-grain rows;
-- fan-out when combining different-grain facts;
-- multi-fact visuals that change standalone totals;
-- security filters that do not propagate to protected facts;
-- RLS user mappings that expose unauthorized rows.
-
-## Definition of valid evidence
-
-Each important test should record:
-
-- what was tested;
-- expected result;
-- actual result;
-- pass/fail;
-- evidence reference (model screenshot, metric table, query/check, or documented Power BI test);
-- remediation if failed.
-
-No capstone test is marked passed before implementation begins.
+The local source workbook is not in Git, so recorded numeric baselines include their provenance and are not presented as independently reproducible by GitHub alone.

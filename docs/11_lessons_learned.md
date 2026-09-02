@@ -1,97 +1,45 @@
 # 11 — Lessons Learned
 
-## Theory-phase lessons — completed
+## Theory lessons
 
-### 1. A working report is not proof of a correct model
+The theory phase established the core mental models: Star Schema by default, Dimension → Fact filtering, grain before aggregation, separate facts for different events, active/inactive role relationships, and requirements-driven RLS.
 
-Relationship mistakes can produce plausible output without obvious technical errors. Validation must focus on semantics and expected business results, not only on whether visuals render.
+The detailed misconception record remains in `learning/confusion_log.md`.
 
-### 2. Simplicity is a modeling feature
+## Capstone lessons
 
-The course favors a star schema by default because direct Dimension → Fact relationships are easier to reason about. Extra normalization, relationships or bidirectional filtering need a concrete reason.
+### 1. A successful Merge can still be wrong
 
-### 3. Data quality is part of relationship design
+Power Query can complete a join without error while silently changing business grain. The strongest example in this project was `fact_order_process`: a naive child-event merge yielded 97 rows for 80 Orders. The fix was not a visual/DAX workaround; child events were reduced to explicit milestones before joining.
 
-A duplicate key in a supposed dimension prevents a clean `1:*` relationship. Cardinality problems may originate upstream in the data rather than in the relationship dialog.
+### 2. Protect totals and row identity together
 
-### 4. Filter direction is a semantic decision
+Checking only Total Sales is insufficient. Row count, distinct business key count and metric totals answer different QA questions. A model can preserve a total while duplicating or losing row identity elsewhere.
 
-`Both` is not a generic fix for missing filtering. It can create unexpected propagation and ambiguous paths. The default mental model is Dimension → Fact.
+### 3. Date types are part of relationship semantics
 
-### 5. Inactive does not mean incorrect
+The first Business Overview could show Total Sales while Sales Trend was blank. The measure was correct; the Date relationship could not match DateTime values with time components to the shared Date key. Normalizing the fact date fixed the model path rather than the visual.
 
-An inactive relationship may be a deliberate alternative semantic path, especially for role-playing dimensions. The objective is one clear default path while still supporting alternative roles when needed.
+### 4. Do not hide orphaned dimension values in the report
 
-### 6. Dimensions should carry analytical context
+An unexplained `(Blank)` Product Category is a referential-integrity signal. Filtering the visual would conceal the issue. The latest design uses an explicit Unmapped Product member so fact rows remain visible and totals stay reconcilable.
 
-Descriptive attributes embedded in a fact should be reviewed. Coherent attributes can form a normal dimension; suitable low-level heterogeneous flags can be bundled into a Junk Dimension.
+### 5. TMDL improves reviewability but does not replace runtime validation
 
-### 7. Grain comes before aggregation
+PBIP/TMDL makes Power Query, measures, roles and relationships inspectable in Git. It also makes direct source edits possible. Those edits still require Power BI Desktop Refresh/Model View/`View As` smoke tests before release claims are made.
 
-The key question is: **What does exactly one row represent?**
+### 6. RLS source code is not security proof
 
-A table can be at one grain while a measure is recorded at another. Higher-grain values repeated across lower-grain rows can produce silent double counting.
+A role can be syntactically present and still be semantically wrong. Security evidence requires representative user tests and restricted-total reconciliation.
 
-### 8. Grain comes before combining facts
+### 7. Cross-fact KPIs need common business grain
 
-The correct operation depends on business event, grain and shape:
+Sales Targets are period/global data. Regional RLS on Sales does not magically create region-level Targets. A KPI can be mathematically valid and still be semantically misleading if numerator and denominator do not share the same business scope.
 
-```text
-Same event + same grain + compatible shape → Append
-Same grain + 1:1 complementary data       → Merge when justified
-Different grain / event                    → Keep separate + Shared Dimensions
-```
+### 8. Simple reporting is enough to validate a strong model
 
-### 9. Shared context is preferable to direct fact coupling
+The Business Overview is deliberately small. Its purpose is to demonstrate that dimensions filter measures predictably and that cross-fact/date paths work. More visuals would not increase the core modeling evidence.
 
-When multiple facts need common analytical context, shared dimensions provide the connection rather than direct fact-to-fact many-to-many relationships.
+## Current release lesson
 
-### 10. Cross-fact comparison is limited by the coarser source
-
-A measure cannot truthfully be displayed at a lower/finer grain than the level at which it was recorded. Daily Sales can be rolled up to monthly Budget; monthly Budget cannot become daily without an explicit allocation assumption.
-
-### 11. Security is part of model topology
-
-Dynamic RLS depends on a valid filter path:
-
-```text
-Current User
-→ Security Mapping
-→ Dimension
-→ Fact
-```
-
-A wrong relationship or filter direction can prevent the restriction from propagating and can become a security leak.
-
-### 12. `USERPRINCIPALNAME()` identifies the user; it is not the whole security model
-
-Dynamic RLS requires identity + role/filter rule + security mapping + valid relationship propagation.
-
-### 13. Access filtering and analytical filtering are different
-
-```text
-RLS           = what the user is allowed to see
-Report filter = what the user chooses to analyze inside allowed data
-```
-
-### 14. Security must be requirements-driven and tested
-
-Do not randomly apply access rules. Understand the requirement, choose the correct attachment point in the model, and test representative users/roles against expected restricted rows and totals.
-
-## Corrections that improved the mental model
-
-The Active Recall process corrected several useful misconceptions:
-
-- Bidirectional filtering ≠ ambiguity.
-- Inactive relationship ≠ broken relationship or snowflake split.
-- Multiple Date roles ≠ many-to-many.
-- `Junk Dimension`, not `Chunk Dimension`.
-- Order-Line grain is finer than Order grain.
-- Security levels are Table / Column / Row.
-- `USERPRINCIPALNAME()` identifies identity; it does not directly filter every fact by itself.
-
-See `learning/confusion_log.md` for the complete record.
-
-## Capstone lessons — pending
-
-The next entries must come from actual Nightmare-project implementation evidence: concrete failures, debugging traces, trade-offs, validation results and fixes. Theory-derived claims should not be duplicated here as if they were implementation experience.
+The guided project is built, but the final evidence gate is intentionally still open until the latest PBIP refresh, RLS runtime tests, final screenshots and no-tutorial audit are complete. Keeping that distinction explicit is part of the engineering evidence.

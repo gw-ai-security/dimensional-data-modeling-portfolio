@@ -1,43 +1,27 @@
 # Baseline Metrics
 
-> **Status: next active validation artifact.** Populate this file before structural changes to the Nightmare model.
+> **Status: populated from the local 2026-09-02 model/source audit.**
 
-The purpose is to protect known business results while the model is being redesigned. A model that looks cleaner but changes important totals without explanation is not validated.
+The source workbook is intentionally local-only. These values are recorded validation references, not hard-coded targets that the model should be manipulated to match.
 
-## Baseline table
-
-| Metric | Business definition | Grain / aggregation rule | Baseline value | Source / method | Notes |
+| Metric | Business definition | Grain / aggregation | Recorded value | Evidence / method | Status |
 |---|---|---|---:|---|---|
-| Total Sales | TBD after source assessment | TBD | | | |
-| Total Orders | TBD after source assessment | TBD | | | |
-| Total Customers | TBD after source assessment | TBD | | | |
+| Order Lines | detail rows in sales source/fact | count Order-Line rows | 200 | local dataset/model audit | recorded |
+| Total Orders | unique sales Orders | `DISTINCTCOUNT(order_id)` | 80 | local model + Business Overview | recorded |
+| Total Sales | sum of line sales | `SUM(line_total)` at Order-Line grain | 526,643.91 | local model + Business Overview | recorded |
+| Active Customers | customers with Sales | `DISTINCTCOUNT(customer_id)` | 47 | Business Overview | recorded |
+| Base Customers | rows in `dim_customer` | one row per customer | 60 | local model audit | recorded |
+| Total Target Revenue | sum of period targets | target fact period grain | 552,000.00 | local audit | recorded |
+| Target Attainment | Sales / Target | common report time context | ~95.4% | Business Overview | recorded |
+| Order Process rows | one process row per Order | row count | 80 intended | hardened design/local audit | final runtime recheck pending |
+| Distinct Process Orders | unique `order_id` | distinct count | 80 | local audit | final runtime recheck pending |
+| Orders with Payment | Orders with non-null Pay Date | Order grain | 60 | local audit | recorded |
+| Average Order → Pay | average day difference | Order grain | ~32.93 days | local audit | recorded |
 
-Add all business-critical measures discovered during the source-model audit. Do not assume the three starter metrics above are sufficient.
+## Diagnostic control
 
-## Baseline rules
+A naive Order Process merge produced **97 rows for 80 Orders**. That number is not a valid business baseline; it is a recorded failure signal used to prove the final merge design needed to change.
 
-- define the metric before recording its number;
-- note the grain/aggregation logic, especially for counts and repeated higher-grain measures;
-- capture the value before remodeling;
-- record how the value was obtained so it can be reproduced;
-- if the original model is already wrong, document that explicitly rather than treating a bad number as truth.
+## Release rule
 
-## Reconciliation workflow
-
-```text
-Original model / source
-→ record baseline and definition
-→ remodel
-→ recompute same metric
-→ compare
-→ explain any intentional difference
-```
-
-## Minimum evidence before major remodeling
-
-- [ ] key business measures identified
-- [ ] definitions written
-- [ ] grain/aggregation assumptions documented
-- [ ] baseline values recorded
-- [ ] source/method recorded
-- [ ] known source-model errors separated from trusted baselines
+If a final Power BI refresh returns a different core metric, investigate the transformation/relationship path. Do not alter data merely to force these reference values.

@@ -1,129 +1,89 @@
 # 10 — Architecture and Modeling Decisions
 
-This log captures actual capstone decisions that require modeling judgment. It is synchronized with the committed PBIP/TMDL state.
+This log captures the main capstone decisions synchronized with the current PBIP/TMDL model.
 
 ## ADR-001 — Separate staging, dimensions, facts and support queries
 
-**Status:** Accepted
+**Decision:** organize Power Query into `01_Stage`, `02_Dimensions`, `03_Facts`, `04_Support`.  
+**Reason:** clearer lineage and responsibility.  
+**Trade-off:** more explicit project structure.  
+**Validation:** query groups exist in the semantic model.
 
-**Context**  
-The imported Nightmare project mixes source-oriented objects and analytical concerns. Power Query will be used extensively for shaping the model.
+## ADR-002 — Append yearly Orders
 
-**Decision**  
-Organize queries into `01_Stage`, `02_Dimensions`, `03_Facts` and `04_Support`.
+**Decision:** `ORDERS_2025` + `ORDERS_2026` → `orders`.  
+**Reason:** same event, same Order grain, compatible shape.  
+**Rejected alternative:** duplicate yearly analytical models.  
+**Validation:** `Table.Combine` is source-controlled.
 
-**Trade-off**  
-Adds explicit project structure, but makes lineage and object purpose easier to understand as the model grows.
+## ADR-003 — Consolidate customer context
 
-**Validation**  
-The query groups exist in the committed PBIP/TMDL model.
+**Decision:** build one `dim_customer` from customer master/contact/user/address/city context.  
+**Reason:** report-friendly Star-schema context rather than source fragmentation.  
+**Control:** primary contacts are filtered before merge so customer grain is protected.
 
----
+## ADR-004 — Flatten product/category context and add model key
 
-## ADR-002 — Append yearly order headers into one `orders` staging query
+**Decision:** `dim_product` combines product and category context and creates `product_key`.  
+**Reason:** avoid unnecessary analytical snowflake; separate model key from source code.
 
-**Status:** Accepted
+## ADR-005 — Use a Junk Dimension for order flags
 
-**Context**  
-`ORDERS_2025` and `ORDERS_2026` are source-system splits of the same business event. Both use Order grain.
+**Decision:** channel/status/priority combinations → `dim_order_flags`.  
+**Reason:** avoid repetitive descriptors in Sales and several tiny dimensions.
 
-**Decision**  
-Append them into one `orders` staging query and remove source-only legacy/note fields that do not earn an analytical role.
+## ADR-006 — Manual channel mapping only for the guided case
 
-**Alternatives considered**  
-Keep separate yearly tables and maintain duplicate modeling logic.
+**Decision:** use local `channels` lookup.  
+**Trade-off:** simple for the controlled project but creates ownership/maintenance risk.  
+**Preferred production alternative:** authoritative upstream mapping.
 
-**Trade-off**  
-The unified object is simpler for downstream modeling; the original source split remains traceable in the staging definitions/Git history rather than becoming two analytical tables.
+## ADR-007 — Sales fact at Order-Line grain
 
-**Validation**  
-The committed `orders` query uses `Table.Combine({ORDERS_2025, ORDERS_2026})` and retains one-order row semantics.
+**Decision:** build `fact_sales` from `order_line_items`; remove Order-level `OrderTotal`.  
+**Reason:** additive Sales must follow the detail grain; repeated Order-level totals would double count.  
+**Validation:** `total_sales` uses `line_total`; Orders use `DISTINCTCOUNT(order_id)`.
 
----
+## ADR-008 — Shared Geo dimension with role-playing geography
 
-## ADR-003 — Consolidate customer context into `dim_customer`
+**Decision:** reuse `dim_geo` for Ship-To and Bill-To; Ship-To is active and Bill-To inactive.  
+**Reason:** one geography entity, multiple business roles, one clear default filter path.
 
-**Status:** Accepted
+## ADR-009 — Keep different business events as separate facts
 
-**Context**  
-Customer context is fragmented across customer master, contacts, user details, address and geography tables.
+**Decision:** Sales, Inventory, Campaign Spend, Promotion Coverage, Order Process and Sales Targets remain separate facts.  
+**Reason:** they have different grains/events; direct fact coupling would create ambiguous or many-to-many semantics.  
+**Validation:** relationships file contains no direct fact-to-fact relationship.
 
-**Decision**  
-Create one consumer-friendly `dim_customer` using controlled left merges and remove technical/unnecessary source columns.
+## ADR-010 — Harden the Order Process as one row per Order
 
-**Alternatives considered**  
-Preserve the fragmented source shape as a snowflake.
+**Context:** naive merges of Shipments/Invoices/Payments created recorded fan-out (97 rows for 80 Orders).  
+**Decision:** aggregate lifecycle child records into milestone tables before joining to the Order spine.  
+**Reason:** preserve the declared accumulating-snapshot grain.  
+**Trade-off:** milestone semantics (earliest/latest) must be explicit.  
+**Validation:** final M query groups child events before merge; runtime 80/80 confirmation remains a release check.
 
-**Trade-off**  
-The analytical model becomes easier to filter and understand, while Power Query carries more transformation logic. Merge cardinality must be controlled so customer rows are not duplicated.
+## ADR-011 — Shared Date dimension and role-playing process dates
 
-**Validation**  
-`dim_customer` exists in TMDL and contains the merged customer, contact, phone, address, city and region attributes.
+**Decision:** use `dim_date` as the analytical calendar. `fact_order_process[order_date]` is active; Ship/Delivery/Invoice/Pay relationships are inactive alternatives.  
+**Reason:** one clear default time path plus explicit alternative roles.  
+**Caveat:** Power BI Auto Date/Time local tables remain serialized and are technical debt.
 
----
+## ADR-012 — Dynamic regional RLS at Customer context
 
-## ADR-004 — Flatten product/category context and add a model key
+**Decision:** role `regional access` filters `dim_customer[region]` from the `security` mapping using `USERPRINCIPALNAME()`.  
+**Reason:** user-dependent regional access without one static role per Region.  
+**Validation boundary:** implementation is source-controlled; runtime `View As` tests remain open.
 
-**Status:** Accepted
+## ADR-013 — Preserve unmapped Product facts explicitly
 
-**Context**  
-The product source uses `ProductCode` as a business identifier and category context is split into a separate subcategory mapping.
+**Context:** Business Overview exposed an unexplained blank Product Category.  
+**Decision:** introduce `product_key = 0` / `Unmapped Product` and map null Product lookups to that key.  
+**Reason:** preserve sales rows and surface source-quality exceptions instead of filtering them away.  
+**Validation boundary:** latest Power BI refresh still required.
 
-**Decision**  
-Build `dim_product`, merge the required category context into it and create a model-generated `product_key`.
+## ADR-014 — Keep the report intentionally simple
 
-**Trade-off**  
-This avoids an unnecessary analytical snowflake and gives the semantic model a stable model-side key. The generated index is a model artifact rather than a source-system identity.
-
-**Validation**  
-The committed `dim_product` query contains the category merge and index-to-`product_key` transformation.
-
----
-
-## ADR-005 — Extract order flags into a junk dimension
-
-**Status:** Accepted
-
-**Context**  
-Order channel, status and priority are small, repetitive descriptors embedded in order-header data and do not justify separate tiny dimensions.
-
-**Decision**  
-Create `dim_order_flags` at the grain of one unique channel/status/priority combination and assign a model-generated `flag_key`.
-
-**Trade-off**  
-Reduces repetitive descriptors in the later fact and avoids several tiny dimensions. Users must understand that `flag_key` identifies a combination, not a source business entity.
-
-**Validation**  
-`dim_order_flags` exists in the committed TMDL and uses `Table.Distinct` plus an index key.
-
----
-
-## ADR-006 — Use a manual channel lookup only as guided-project support
-
-**Status:** Accepted with production caveat
-
-**Context**  
-The source order channel is coded and the project needs a friendly descriptive value. The guided project creates the mapping manually in Power Query.
-
-**Decision**  
-Use the local `channels` lookup for the course implementation and explicitly document its ownership/maintenance risk.
-
-**Preferred production alternative**  
-Have the source/data-product owner provide the authoritative mapping so new channel codes arrive through the automated source contract.
-
-**Trade-off**  
-Manual data is fast and clear for this controlled project but can become stale. New source values can produce null/unmapped outputs if nobody updates the lookup.
-
-**Validation**  
-`channels` and its merge into `dim_order_flags` are present in the committed model. The project documentation records the operational caveat.
-
----
-
-## Next decisions to capture
-
-- header/detail treatment while creating `fact_sales`;
-- protected baseline and merge-safety strategy;
-- dimension-key lookup strategy inside the fact;
-- final fact separation/shared dimensions;
-- date/role-playing relationship design;
-- RLS security filter path.
+**Decision:** maintain `Business Overview` + `Model Validation`, using a small set of business KPIs/charts.  
+**Reason:** this portfolio proves semantic-model quality, not dashboard-design specialization.  
+**Trade-off:** visual design is intentionally secondary to grain, relationships, reconciliation and security.
