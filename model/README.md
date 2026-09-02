@@ -1,10 +1,10 @@
 # Power BI Model Artifacts
 
-This directory contains the guided Nightmare Data Modeling capstone in Power BI Project (PBIP) format.
+This directory contains the finalized Nightmare Data Modeling capstone in Power BI Project (PBIP) format.
 
-## Current status
+## Status
 
-**Guided semantic-model implementation complete and source-controlled. Final runtime validation remains open.**
+**COMPLETE — semantic model, report, runtime refresh and representative RLS validation passed.**
 
 ## Project structure
 
@@ -50,17 +50,20 @@ The staging/source expressions remain available for lineage and transformation l
 - `Business Overview`
 - `Model Validation`
 
+Both pages were revalidated after the final model refresh.
+
 ## Key modeling characteristics
 
 - Order-Line Sales fact
 - Product-Month Inventory fact
 - Campaign Spend and Campaign-Product coverage facts
-- Order-level accumulating process fact
-- period Sales Target fact
+- Order-level process fact hardened against child-event fan-out
+- Period Sales Target fact
 - shared Customer/Product/Campaign/Geo/Date context
 - active/inactive role-playing Date and Geo relationships
-- dynamic regional RLS role
-- centralized measures
+- explicit Unmapped Product member
+- Dynamic regional RLS
+- centralized semantic measures
 
 ## Source data policy
 
@@ -74,13 +77,12 @@ The instructor solution is not committed.
 
 ## Portability
 
-Source expressions currently serialize an absolute local `File.Contents(...)` path. A different machine must repoint the workbook before refresh. This is a known local-development limitation, not a production ingestion design.
+Source expressions serialize an absolute local `File.Contents(...)` path. A different machine must repoint the workbook before refresh. This is a local-development limitation, not a production ingestion design.
 
-## Current technical caveats
+## Technical caveats
 
 - Power BI Auto Date/Time `LocalDateTable_*` artifacts remain serialized alongside explicit `dim_date`.
-- the latest Unmapped Product change requires a clean Power BI refresh to prove the current source state;
-- runtime RLS evidence still needs `View As` tests;
-- final after-state screenshots are not yet committed.
+- the manual `channels` mapping would preferably be sourced upstream in production.
+- the project does not include deployment pipelines, Power BI Service administration or enterprise-scale performance/SLA evidence.
 
-See `../tests/final_validation.md` for the release gate.
+These caveats do not block the finalized portfolio scope. See `../tests/final_validation.md` and `../docs/12_final_audit.md`.
