@@ -13,17 +13,19 @@ Repository-native Mermaid diagrams make theory and implementation states inspect
 - [`lesson-06-multiple-facts.md`](lesson-06-multiple-facts.md)
 - [`lesson-07-security-rls.md`](lesson-07-security-rls.md)
 
-## Capstone diagram
+## Final capstone diagram
 
-- [`capstone-progress.md`](capstone-progress.md) — current final guided star/galaxy map, role-playing relationships, RLS path and the order-process fan-out QA finding.
+- [`capstone-progress.md`](capstone-progress.md) — finalized star/galaxy semantic model, role-playing relationships, Dynamic RLS path and grain-hardening QA.
 
-## Binary evidence
+## Evidence strategy
 
-The starting Model View is committed at `../screenshots/before/before.png`. Final model/report screenshots remain part of the release gate and must be captured from the refreshed final PBIP.
+The original chaotic Model View is committed at `../screenshots/before/before.png`. The final state is represented by the source-controlled PBIP/TMDL/PBIR, the final Mermaid model and the completed validation artifacts in `../tests/`.
 
-## Diagram rules
+A duplicate after-state PNG is optional presentation evidence, not a project-closure requirement.
 
-- project diagrams must match committed TMDL;
-- business dimensions/facts are distinguished from Power BI Auto Date technical artifacts;
-- inactive role relationships are shown as alternatives rather than default paths;
-- do not infer runtime validation from a Mermaid diagram.
+## Rules
+
+- diagrams must match committed TMDL;
+- technical Auto Date artifacts are not presented as business dimensions;
+- inactive role relationships are shown as alternatives;
+- runtime correctness is proven by validation evidence, not by a diagram alone.
