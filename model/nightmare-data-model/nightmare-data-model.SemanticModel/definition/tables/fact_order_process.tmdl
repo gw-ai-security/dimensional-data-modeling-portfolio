@@ -20,12 +20,14 @@ table fact_order_process
 
 	column order_date
 		dataType: dateTime
-		formatString: yyyy-mm-dd hh:nn
+		formatString: yyyy-mm-dd
 		lineageTag: 11746200-4529-415b-b3f6-7d99840a70d8
 		summarizeBy: none
 		sourceColumn: order_date
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
@@ -116,11 +118,11 @@ table fact_order_process
 				    InvoiceJoin = Table.NestedJoin(ShipmentExpanded, {"OrderID"}, InvoiceMilestones, {"OrderID"}, "invoice", JoinKind.LeftOuter),
 				    InvoiceExpanded = Table.ExpandTableColumn(InvoiceJoin, "invoice", {"invoice_date", "pay_date"}, {"invoice_date", "pay_date"}),
 				    Renamed = Table.RenameColumns(InvoiceExpanded,{{"OrderID", "order_id"}, {"OrderDate", "order_date"}}),
-				    Reordered = Table.ReorderColumns(Renamed,{"order_id", "customer_id", "order_date", "ship_date", "delivery_date", "invoice_date", "pay_date"})
+				    Reordered = Table.ReorderColumns(Renamed,{"order_id", "customer_id", "order_date", "ship_date", "delivery_date", "invoice_date", "pay_date"}),
+				    NormalizedOrderDate = Table.TransformColumnTypes(Reordered,{{"order_date", type date}})
 				in
-				    Reordered
+				    NormalizedOrderDate
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-
