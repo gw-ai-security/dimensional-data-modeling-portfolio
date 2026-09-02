@@ -1,6 +1,6 @@
 # 06 — Dimension Design
 
-> **Status: all guided dimensions implemented in PBIP/TMDL.** Runtime refresh of the latest Unmapped Product change remains a final release check.
+> **Status: COMPLETE — all guided dimensions implemented and runtime-validated in Power BI.**
 
 ## Dimension catalog
 
@@ -17,7 +17,7 @@
 
 The dimension consolidates fragmented B2B customer context. The source staging query `customer_contacts` is filtered to `IsPrimary = true` before it is merged, protecting the one-customer grain. Final analytical fields include customer identity, segment, account manager, payment terms, primary contact, credit/phone and address/region context.
 
-A redundant Address merge sequence remains in the generated Power Query steps. It does not change the documented output shape but is technical debt that could be simplified in a later refactor; it is not hidden as if the query were perfectly minimal.
+A redundant Address merge sequence remains in the generated Power Query steps. It does not change the documented output shape but is retained as low-priority technical debt rather than hidden.
 
 ## `dim_product`
 
@@ -25,9 +25,9 @@ The dimension flattens product + category/subcategory context, removes technical
 
 The source contains guided problem/dummy rows (`ZZZ-000`, `ELE-901`, `HOM-902`) that are handled during transformation.
 
-### Unmapped-member design
+### Explicit Unmapped member
 
-The first Business Overview exposed sales without a matching Product Category as `(Blank)`. The latest source-controlled design adds:
+The first Business Overview exposed sales without a matching Product Category as `(Blank)`. The final design uses:
 
 ```text
 product_key = 0
@@ -36,9 +36,7 @@ product_name = Unmapped Product
 category = Unmapped
 ```
 
-and maps null product lookups in `fact_sales` to key `0`. This preserves fact rows instead of filtering sales out of the model.
-
-**Validation boundary:** this latest source change still requires a clean Power BI refresh/runtime confirmation before it is marked release-validated.
+Null product lookups in `fact_sales` are mapped to key `0`. This preserves fact rows and makes the referential-integrity exception visible. The final Power BI refresh confirmed this behavior.
 
 ## `dim_order_flags`
 
@@ -64,17 +62,17 @@ Built from distinct city/region mappings with model-generated `geo_key`. It is r
 
 ## `dim_date`
 
-A shared calendar dimension is created with `CALENDARAUTO()` and date attributes. It is used across Sales, Inventory, Campaign Spend, Sales Targets and the Order Process.
+A shared calendar dimension created with `CALENDARAUTO()` is used across Sales, Inventory, Campaign Spend, Sales Targets and the Order Process.
 
-Power BI Auto Date/Time artifacts (`LocalDateTable_*`) are still serialized in the model. The explicit `dim_date` is the intended analytical date dimension; Auto Date tables are documented as a remaining technical-polish limitation rather than silently presented as part of the target architecture.
+Power BI Auto Date/Time artifacts (`LocalDateTable_*`) remain serialized. The explicit `dim_date` is the intended analytical calendar; the local Auto Date artifacts are documented technical polish, not business dimensions.
 
-## Dimension status
+## Final validation
 
-- [x] final guided dimensions exist in TMDL
-- [x] grains documented
-- [x] keys documented
+- [x] all six dimensions exist in TMDL
+- [x] grains and keys documented
+- [x] dimension-side behavior validated in the final model
 - [x] junk-dimension naming polished
-- [x] shared Geo/Date roles documented
+- [x] shared Geo/Date roles validated
 - [x] manual mapping caveat documented
-- [x] unmapped-product handling source-controlled
-- [ ] latest product change verified by clean Power BI refresh
+- [x] Unmapped Product handling refresh-tested
+- [x] final report shows dimension filters behaving as intended
