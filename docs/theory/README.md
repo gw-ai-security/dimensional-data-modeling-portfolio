@@ -14,7 +14,7 @@
 | [06](lesson_06_multiple_facts.md) | 01:41:28–02:08:57 | Multiple facts, append/merge decisions, shared dimensions | ✅ Completed |
 | [07](lesson_07_security_rls.md) | 02:08:58–02:40:07 | Table/column/row security; static and dynamic RLS | ✅ Completed |
 
-The guided Nightmare project begins after this theory block. The theory files remain historical learning evidence; they are not rewritten to pretend the later implementation was independently derived.
+The guided Nightmare project begins after this theory block. These files remain historical learning evidence and are intentionally separated from the later implementation evidence.
 
 ## Learning method
 
@@ -29,21 +29,22 @@ Watch
 
 Detailed recall evidence is in `../../learning/active_recall.md` and `../../learning/confusion_log.md`.
 
-## Current project context
+## Final project context
 
-The guided Nightmare implementation has now been built and source-controlled. The current project gate is no longer “start the capstone”; it is:
+The complete learning sequence is now:
 
 ```text
 Theory complete
 → guided implementation complete
-→ final Power BI runtime validation
-→ representative RLS tests
-→ final screenshots
-→ independent no-tutorial audit
+→ Power BI runtime validation complete
+→ Dynamic RLS tests complete
+→ business report validated
+→ independent no-tutorial audit complete
+→ project finalized
 ```
 
-See [`../../PROJECT_PLAN.md`](../../PROJECT_PLAN.md).
+See [`../../PROJECT_PLAN.md`](../../PROJECT_PLAN.md) and [`../12_final_audit.md`](../12_final_audit.md).
 
 ## Claim boundary
 
-These theory files prove structured study and Active Recall. Practical implementation/validation evidence lives in `../`, `../../model/`, `../../tests/` and `../../screenshots/`.
+These theory files prove structured study and Active Recall. Practical implementation and validation evidence lives in `../`, `../../model/`, `../../tests/` and the final semantic-model diagram under `../../diagrams/`.
