@@ -1,6 +1,6 @@
 # 04 — Source Model Assessment
 
-> **Status: complete source/business assessment.** The source-shaped Nightmare model has been replaced by the guided dimensional implementation.
+> **Status: COMPLETE — source/business assessment and final redesign traceability are closed.**
 
 ## Environment evidence
 
@@ -24,8 +24,8 @@
 | `CAMPAIGN_LOG` | campaign metadata + dated activity | split into `dim_campaign` + `fact_campaign_spend` |
 | `campaign_skus` | campaign-to-product membership | reshaped into `fact_promotion_coverage` |
 | `sales_targets` | period target | `fact_sales_targets` |
-| `security` | user/region access mapping | dynamic RLS support |
-| `exchange_rates` | currency/date lookup source | retained as source/support, not promoted into the final analytical model because no implemented project measure requires it |
+| `security` | user/region access mapping | Dynamic RLS support |
+| `exchange_rates` | currency/date lookup source | retained as support; no implemented measure requires it |
 | `dim_order` | contextless source object | not used as a final analytical dimension |
 
 ## Structural risks identified
@@ -41,15 +41,14 @@
 
 ## Important diagnostic result
 
-`fact_order_process` is intended to be one row per order. A naive child-table merge produced a recorded **97 rows for 80 distinct orders**. The final query aggregates shipment/invoice/payment milestones before joining to the order spine, preserving the intended order grain.
+`fact_order_process` is intended to be one row per Order. A naive child-table merge produced **97 rows for 80 distinct Orders**. The final query aggregates shipment/invoice/payment milestones before joining to the Order spine. Final runtime validation confirmed **80 rows / 80 Orders**.
 
 ## Evidence
 
 - starting model: `screenshots/before/before.png`
-- final PBIP/TMDL: `model/nightmare-data-model/`
+- final PBIP/TMDL/PBIR: `model/nightmare-data-model/`
 - grains: `docs/05_grain_analysis.md`
 - reconciliation: `tests/reconciliation_tests.md`
+- final closure: `docs/12_final_audit.md`
 
-## Remaining release distinction
-
-The source assessment itself is complete. Final Power BI Desktop runtime validation of the latest `main` state belongs to `tests/final_validation.md` and Issue #10.
+The source assessment, redesign decisions and final runtime validation now form a complete trace from the chaotic source model to the validated semantic model.
