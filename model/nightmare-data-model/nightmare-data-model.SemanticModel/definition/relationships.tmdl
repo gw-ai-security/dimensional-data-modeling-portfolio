@@ -60,16 +60,12 @@ relationship 07e1dc9b-c4b5-44ac-bbe3-7b6224fe5337
 	toColumn: LocalDateTable_3941b863-5528-41c6-90c9-d9619718ea8e.Date
 
 relationship e47a5436-a019-43c3-8f36-90227071e532
-	crossFilteringBehavior: bothDirections
-	fromCardinality: one
-	fromColumn: fact_sales_targets.period
-	toColumn: dim_date.Date
+	fromColumn: dim_date.Date
+	toColumn: fact_sales_targets.period
 
 relationship 75274206-4322-e49f-f8fc-e304be588cbb
-	crossFilteringBehavior: bothDirections
-	fromCardinality: one
-	fromColumn: fact_campaign_spend.date
-	toColumn: dim_date.Date
+	fromColumn: dim_date.Date
+	toColumn: fact_campaign_spend.date
 
 relationship 65a4c8c5-c201-d26b-72c8-6a0ed1350c39
 	fromColumn: fact_sales.order_date

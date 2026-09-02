@@ -83,11 +83,13 @@ table dim_product
 				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Umbenannte Spalten",{"product_key", "ProductCode", "ProductName", "Brand", "SubcategoryName", "UnitPrice", "PrimarySupplier", "ProductDescription", "hash_key", "source_id", "subcategories.category"}),
 				    #"Entfernte Spalten" = Table.RemoveColumns(#"Neu angeordnete Spalten",{"ProductDescription", "hash_key", "source_id"}),
 				    #"Neu angeordnete Spalten1" = Table.ReorderColumns(#"Entfernte Spalten",{"product_key", "ProductCode", "ProductName", "Brand", "SubcategoryName", "subcategories.category", "UnitPrice", "PrimarySupplier"}),
-				    #"Umbenannte Spalten1" = Table.RenameColumns(#"Neu angeordnete Spalten1",{{"ProductCode", "product_code"}, {"Brand", "brand"}, {"ProductName", "product_name"}, {"SubcategoryName", "subcategory"}, {"subcategories.category", "category"}, {"UnitPrice", "price"}, {"PrimarySupplier", "supplier"}})
+				    #"Umbenannte Spalten1" = Table.RenameColumns(#"Neu angeordnete Spalten1",{{"ProductCode", "product_code"}, {"Brand", "brand"}, {"ProductName", "product_name"}, {"SubcategoryName", "subcategory"}, {"subcategories.category", "category"}, {"UnitPrice", "price"}, {"PrimarySupplier", "supplier"}}),
+				    UnknownProduct = #table(type table [product_key = Int64.Type, product_code = text, product_name = text, brand = text, subcategory = text, category = text, price = nullable number, supplier = text], {{0, "UNMAPPED", "Unmapped Product", "Unknown", "Unknown", "Unmapped", null, "Source-quality exception"}}),
+				    Result = Table.Combine({UnknownProduct, #"Umbenannte Spalten1"})
 				in
-				    #"Umbenannte Spalten1"
+				    Result
 
 	annotation PBI_NavigationStepName = Navigation
 
-	annotation PBI_ResultType = Table
+	annotation PBI_ResultType = Exception
 
