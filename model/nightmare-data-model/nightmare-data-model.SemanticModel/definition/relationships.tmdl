@@ -24,10 +24,6 @@ relationship 17629c2f-17c0-4394-b370-b7294f38a226
 	fromColumn: fact_inventory.month
 	toColumn: LocalDateTable_519245d9-b4bc-473b-98b4-553acb1592bf.Date
 
-relationship d82e27a6-2aeb-48de-8091-a4468596adb9
-	fromColumn: fact_inventory.month
-	toColumn: dim_date.Date
-
 relationship AutoDetected_5a62c35a-835a-47c0-9d90-884202c6ca47
 	fromColumn: fact_inventory.product_key
 	toColumn: dim_product.product_key
@@ -106,4 +102,8 @@ relationship b16aaa72-fa78-e750-836e-015e0253280d
 relationship e896668f-4fd3-7d01-a6bd-5e7dc97d81ce
 	fromColumn: dim_customer.region
 	toColumn: security.region
+
+relationship d82e27a6-2aeb-48de-8091-a4468596adb9
+	fromColumn: fact_inventory.month
+	toColumn: dim_date.Date
 

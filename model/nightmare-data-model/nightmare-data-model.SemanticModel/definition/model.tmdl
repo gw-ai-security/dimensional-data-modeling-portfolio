@@ -47,6 +47,7 @@ ref table fact_sales_targets
 ref table dim_date
 ref table LocalDateTable_3941b863-5528-41c6-90c9-d9619718ea8e
 ref table _measures
+
 ref role 'regional access'
 
 ref cultureInfo de-DE

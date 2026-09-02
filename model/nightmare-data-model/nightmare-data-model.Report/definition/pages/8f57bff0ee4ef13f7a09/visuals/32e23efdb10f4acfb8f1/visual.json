@@ -1,10 +1,38 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "32e23efdb10f4acfb8f1",
-  "position": {"x": 955, "y": 35, "z": 3, "height": 115, "width": 270, "tabOrder": 3},
+  "position": {
+    "x": 955,
+    "y": 35,
+    "z": 3,
+    "height": 115,
+    "width": 270,
+    "tabOrder": 3
+  },
   "visual": {
     "visualType": "cardVisual",
-    "query": {"queryState": {"Data": {"projections": [{"field": {"Measure": {"Expression": {"SourceRef": {"Entity": "_measures"}}, "Property": "target_attainment_pct"}}, "queryRef": "_measures.target_attainment_pct", "nativeQueryRef": "target_attainment_pct"}]}}},
+    "query": {
+      "queryState": {
+        "Data": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "target_attainment_pct"
+                }
+              },
+              "queryRef": "_measures.target_attainment_pct",
+              "nativeQueryRef": "target_attainment_pct"
+            }
+          ]
+        }
+      }
+    },
     "drillFilterOtherVisuals": true
   }
 }

@@ -2,3 +2,6 @@ role 'regional access'
 	modelPermission: read
 
 	tablePermission dim_customer = dim_customer[region] IN CALCULATETABLE(VALUES(security[region]), security[user_email] = USERPRINCIPALNAME())
+
+	annotation PBI_Id = a9a296c827ec4bb098d75b28f20e239b
+

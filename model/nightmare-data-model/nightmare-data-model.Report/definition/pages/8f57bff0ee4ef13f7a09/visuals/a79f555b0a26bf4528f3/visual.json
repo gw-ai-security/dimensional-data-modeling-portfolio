@@ -1,17 +1,97 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
   "name": "a79f555b0a26bf4528f3",
-  "position": {"x": 825, "y": 180, "z": 5, "height": 230, "width": 400, "tabOrder": 5},
+  "position": {
+    "x": 825,
+    "y": 180,
+    "z": 5,
+    "height": 230,
+    "width": 400,
+    "tabOrder": 5
+  },
   "visual": {
     "visualType": "clusteredColumnChart",
     "query": {
       "queryState": {
-        "Category": {"projections": [{"field": {"Column": {"Expression": {"SourceRef": {"Entity": "dim_product"}}, "Property": "category"}}, "queryRef": "dim_product.category", "nativeQueryRef": "category", "active": true}]},
-        "Y": {"projections": [{"field": {"Measure": {"Expression": {"SourceRef": {"Entity": "_measures"}}, "Property": "total_sales"}}, "queryRef": "_measures.total_sales", "nativeQueryRef": "total_sales"}]}
+        "Category": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "dim_product"
+                    }
+                  },
+                  "Property": "category"
+                }
+              },
+              "queryRef": "dim_product.category",
+              "nativeQueryRef": "category",
+              "active": true
+            }
+          ]
+        },
+        "Y": {
+          "projections": [
+            {
+              "field": {
+                "Measure": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "_measures"
+                    }
+                  },
+                  "Property": "total_sales"
+                }
+              },
+              "queryRef": "_measures.total_sales",
+              "nativeQueryRef": "total_sales"
+            }
+          ]
+        }
       },
-      "sortDefinition": {"sort": [{"field": {"Measure": {"Expression": {"SourceRef": {"Entity": "_measures"}}, "Property": "total_sales"}}, "direction": "Descending"}], "isDefaultSort": true}
+      "sortDefinition": {
+        "sort": [
+          {
+            "field": {
+              "Measure": {
+                "Expression": {
+                  "SourceRef": {
+                    "Entity": "_measures"
+                  }
+                },
+                "Property": "total_sales"
+              }
+            },
+            "direction": "Descending"
+          }
+        ],
+        "isDefaultSort": true
+      }
     },
-    "visualContainerObjects": {"title": [{"properties": {"show": {"expr": {"Literal": {"Value": "true"}}}, "text": {"expr": {"Literal": {"Value": "'Sales by Product Category'"}}}}}]},
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "text": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Sales by Product Category'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
     "drillFilterOtherVisuals": true
   }
 }
