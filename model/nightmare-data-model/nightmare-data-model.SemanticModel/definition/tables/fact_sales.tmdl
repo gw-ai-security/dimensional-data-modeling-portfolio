@@ -75,9 +75,9 @@ table fact_sales
 
 		annotation SummarizationSetBy = Automatic
 
-		annotation UnderlyingDateTimeDataType = Date
-
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+		annotation UnderlyingDateTimeDataType = Date
 
 	column customer_id
 		dataType: int64
@@ -89,7 +89,7 @@ table fact_sales
 		annotation SummarizationSetBy = Automatic
 
 	column product_key
-		dataType: int64
+		dataType: double
 		formatString: 0
 		lineageTag: ed3c9073-7243-4d7d-a31f-a714e0bfa6b3
 		summarizeBy: none
@@ -137,7 +137,8 @@ table fact_sales
 				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Erweiterte dim_customer",{"LineID", "OrderID", "ProductName", "dim_customer.customer_id", "Quantity", "UnitPrice", "UnitCost", "DiscountPct", "LineTotal", "orders.CustomerName", "orders.CustomerCity", "orders.RegionName", "orders.ShipToCity", "orders.BillToCity", "orders.OrderDate", "orders.OrderChannel", "orders.Status", "orders.Priority", "orders.OrderTotal"}),
 				    #"Zusammengeführte Abfragen2" = Table.NestedJoin(#"Neu angeordnete Spalten", {"ProductName"}, dim_product, {"product_name"}, "dim_product", JoinKind.LeftOuter),
 				    #"Erweiterte dim_product" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen2", "dim_product", {"product_key"}, {"dim_product.product_key"}),
-				    #"Neu angeordnete Spalten1" = Table.ReorderColumns(#"Erweiterte dim_product",{"LineID", "OrderID", "ProductName", "dim_customer.customer_id", "dim_product.product_key", "Quantity", "UnitPrice", "UnitCost", "DiscountPct", "LineTotal", "orders.CustomerName", "orders.CustomerCity", "orders.RegionName", "orders.ShipToCity", "orders.BillToCity", "orders.OrderDate", "orders.OrderChannel", "orders.Status", "orders.Priority", "orders.OrderTotal"}),
+				    #"Mapped unmatched product keys" = Table.ReplaceValue(#"Erweiterte dim_product", null, 0, Replacer.ReplaceValue, {"dim_product.product_key"}),
+				    #"Neu angeordnete Spalten1" = Table.ReorderColumns(#"Mapped unmatched product keys",{"LineID", "OrderID", "ProductName", "dim_customer.customer_id", "dim_product.product_key", "Quantity", "UnitPrice", "UnitCost", "DiscountPct", "LineTotal", "orders.CustomerName", "orders.CustomerCity", "orders.RegionName", "orders.ShipToCity", "orders.BillToCity", "orders.OrderDate", "orders.OrderChannel", "orders.Status", "orders.Priority", "orders.OrderTotal"}),
 				    #"Zusammengeführte Abfragen3" = Table.NestedJoin(#"Neu angeordnete Spalten1", {"orders.OrderChannel", "orders.Status", "orders.Priority"}, dim_order_flags, {"channel_code", "status", "priority"}, "dim_order_flags", JoinKind.LeftOuter),
 				    #"Erweiterte dim_order_flags" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen3", "dim_order_flags", {"flag_key"}, {"dim_order_flags.flag_key"}),
 				    #"Neu angeordnete Spalten2" = Table.ReorderColumns(#"Erweiterte dim_order_flags",{"LineID", "OrderID", "ProductName", "dim_customer.customer_id", "dim_product.product_key", "dim_order_flags.flag_key", "Quantity", "UnitPrice", "UnitCost", "DiscountPct", "LineTotal", "orders.CustomerName", "orders.CustomerCity", "orders.RegionName", "orders.ShipToCity", "orders.BillToCity", "orders.OrderDate", "orders.OrderChannel", "orders.Status", "orders.Priority", "orders.OrderTotal"}),
@@ -161,3 +162,4 @@ table fact_sales
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
+
