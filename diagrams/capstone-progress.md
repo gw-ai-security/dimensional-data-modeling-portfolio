@@ -1,6 +1,6 @@
-# Capstone Implementation Map — Current Model
+# Final Semantic Model — Validated Capstone
 
-> Repository-native summary of the current source-controlled guided implementation. Final runtime validation remains separate.
+> Repository-native summary of the finalized PBIP/TMDL model. Runtime validation and the independent no-tutorial audit are complete.
 
 ```mermaid
 flowchart LR
@@ -40,7 +40,9 @@ flowchart LR
     DD -.->|Ship / Delivery / Invoice / Pay inactive| FOP
 ```
 
-## Security path
+The final analytical model contains no direct fact-to-fact relationship. Different business events remain separate facts and are compared through shared dimensions at compatible grains.
+
+## Dynamic RLS path
 
 ```mermaid
 flowchart LR
@@ -52,6 +54,8 @@ flowchart LR
     DC --> FOP[fact_order_process]
 ```
 
+Representative `View As` scenarios validated the expected Region-scoped behavior.
+
 ## Grain-safety QA
 
 ```mermaid
@@ -59,9 +63,25 @@ flowchart LR
     O[orders<br/>80 distinct Orders] --> J[Naive child merges]
     J --> BAD[97 rows<br/>grain violation]
     O --> M[Aggregate milestones first]
-    M --> GOOD[fact_order_process<br/>1 row per Order]
+    M --> GOOD[fact_order_process<br/>80 rows / 80 Orders]
 ```
 
-## Known technical limitation
+## Report proof
 
-Power BI Auto Date/Time local tables are still serialized. `dim_date` is the intended analytical calendar; Auto Date artifacts are not represented as business dimensions in this diagram.
+```text
+Semantic model
+→ _measures
+→ Business Overview
+   ├── Total Sales
+   ├── Total Orders
+   ├── Active Customers
+   ├── Target Attainment
+   ├── Sales Trend
+   ├── Sales by Product Category
+   ├── Sales by Customer Region
+   └── Sales vs Target
+```
+
+## Technical note
+
+Power BI Auto Date/Time local tables remain serialized. They are technical artifacts, not the intended business calendar. `dim_date` is the explicit analytical date dimension.
