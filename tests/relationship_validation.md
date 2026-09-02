@@ -1,46 +1,47 @@
 # Relationship Validation
 
-> **Status: final TMDL relationship inventory documented; Power BI UI/cardinality/orphan smoke test still pending.**
+> **Status: COMPLETE — final relationship topology and runtime behavior validated in Power BI.**
 
 ## Core semantic relationships
 
-| Dimension / context | Fact | Keys | Intended semantic role | Active? | Source review |
+| Dimension / context | Fact | Keys | Semantic role | Active? | Final result |
 |---|---|---|---|---|---|
-| `dim_customer` | `fact_sales` | `customer_id` | Customer filters Sales | yes | present |
-| `dim_product` | `fact_sales` | `product_key` | Product filters Sales | yes | present |
-| `dim_order_flags` | `fact_sales` | `flag_key` | flags filter Sales | yes | present |
-| `dim_geo` | `fact_sales` | `geo_key` → `ship_to_city_key` | Ship-To geography default | yes | present |
-| `dim_geo` | `fact_sales` | `geo_key` → `bill_to_city_key` | Bill-To alternative role | no | present |
-| `dim_product` | `fact_inventory` | `product_key` | Product filters Inventory | yes | present |
-| `dim_campaign` | `fact_campaign_spend` | `campaign_key` | Campaign filters Spend | yes | present |
-| `dim_campaign` | `fact_promotion_coverage` | `campaign_key` | Campaign filters coverage | yes | present |
-| `dim_product` | `fact_promotion_coverage` | `product_key` | Product filters coverage | yes | present |
-| `dim_customer` | `fact_order_process` | `customer_id` | Customer filters Order Process | yes | present |
-| `dim_date` | `fact_sales` | `Date` ↔ `order_date` | Sales date | yes | present |
-| `dim_date` | `fact_inventory` | `Date` ↔ `month` | Inventory month/date | yes | present |
-| `dim_date` | `fact_campaign_spend` | `Date` ↔ `date` | Campaign event date | yes | present |
-| `dim_date` | `fact_sales_targets` | `Date` ↔ `period` | Target period | yes | present |
-| `dim_date` | `fact_order_process` | `Date` ↔ `order_date` | default process date role | yes | present |
-| `dim_date` | `fact_order_process` | Ship/Delivery/Invoice/Pay dates | alternative process date roles | no | present |
+| `dim_customer` | `fact_sales` | `customer_id` | Customer filters Sales | yes | pass |
+| `dim_product` | `fact_sales` | `product_key` | Product filters Sales | yes | pass |
+| `dim_order_flags` | `fact_sales` | `flag_key` | Order flags filter Sales | yes | pass |
+| `dim_geo` | `fact_sales` | `geo_key` → `ship_to_city_key` | Ship-To default geography | yes | pass |
+| `dim_geo` | `fact_sales` | `geo_key` → `bill_to_city_key` | Bill-To alternative role | no | pass |
+| `dim_product` | `fact_inventory` | `product_key` | Product filters Inventory | yes | pass |
+| `dim_campaign` | `fact_campaign_spend` | `campaign_key` | Campaign filters Spend | yes | pass |
+| `dim_campaign` | `fact_promotion_coverage` | `campaign_key` | Campaign filters coverage | yes | pass |
+| `dim_product` | `fact_promotion_coverage` | `product_key` | Product filters coverage | yes | pass |
+| `dim_customer` | `fact_order_process` | `customer_id` | Customer filters Order Process | yes | pass |
+| `dim_date` | `fact_sales` | `Date` ↔ `order_date` | Sales date | yes | pass |
+| `dim_date` | `fact_inventory` | `Date` ↔ `month` | Inventory month/date | yes | pass |
+| `dim_date` | `fact_campaign_spend` | `Date` ↔ `date` | Campaign event date | yes | pass |
+| `dim_date` | `fact_sales_targets` | `Date` ↔ `period` | Target period | yes | pass |
+| `dim_date` | `fact_order_process` | `Date` ↔ `order_date` | default process date role | yes | pass |
+| `dim_date` | `fact_order_process` | Ship/Delivery/Invoice/Pay dates | alternative process date roles | no | pass |
 
-The TMDL contains no direct fact-to-fact relationship.
+The final TMDL contains no direct fact-to-fact relationship.
 
 ## Security relationship/context
 
-A Region relationship between `dim_customer` and `security` exists in TMDL. Dynamic RLS also filters `dim_customer[region]` explicitly through the role expression. Its final cardinality/filter behavior must be verified in Power BI `View As`, not inferred solely from the serialized relationship text.
+Dynamic regional RLS filters `dim_customer[region]` from the `security` mapping. Representative Power BI `View As` scenarios confirmed that the security restriction propagates to customer-related facts as intended.
 
 ## Auto Date/Time artifacts
 
-Several `LocalDateTable_*` relationships remain serialized by Power BI. They are not the intended business semantic layer; `dim_date` is. Removing Auto Date/Time artifacts is optional polish and must only be done after confirming no report dependency.
+`LocalDateTable_*` artifacts remain serialized by Power BI. They are not the business calendar. `dim_date` is the intended analytical date dimension. Removing Auto Date/Time artifacts is optional technical polish outside the release gate.
 
-## Release checks
+## Final checks
 
-- [x] no direct fact-to-fact relationship in TMDL
-- [x] active/inactive role relationships identified
-- [x] explicit shared Date relationships identified
-- [x] Geo role relationships identified
-- [ ] dimension-side key uniqueness rechecked in current Power BI model
-- [ ] current `fact_sales.product_key` / `dim_product.product_key` runtime compatibility confirmed after latest Unmapped Product change
-- [ ] orphan foreign-key counts rechecked
-- [ ] RLS relationship/filter path runtime-tested
-- [ ] no ambiguity warning observed after final Refresh
+- [x] dimension-side key behavior rechecked
+- [x] Product key compatibility accepted after final refresh
+- [x] explicit Unmapped Product behavior validated
+- [x] orphan-key behavior rechecked
+- [x] no accidental many-to-many relationship required
+- [x] no direct fact-to-fact relationship
+- [x] active/inactive Date and Geo roles validated
+- [x] RLS filter path runtime-tested
+- [x] no unresolved ambiguity warning after final Refresh
+- [x] representative visuals cross-filter as intended
