@@ -5,7 +5,7 @@ table dim_product
 		dataType: int64
 		formatString: 0
 		lineageTag: 923a259d-dc75-4550-b851-b9d319d22b67
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: product_key
 
 		annotation SummarizationSetBy = Automatic

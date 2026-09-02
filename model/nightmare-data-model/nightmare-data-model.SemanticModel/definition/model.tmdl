@@ -24,45 +24,29 @@ queryGroup 04_Support
 
 annotation __PBI_TimeIntelligenceEnabled = 1
 
-annotation PBI_QueryOrder = ["CAMPAIGN_LOG","Address","campaign_skus","cities","CUST_MASTER","customer_contacts","dim_order","exchange_rates","inventory","invoice_lines","INVOICES","order_line_items","ORDERS_2025","ORDERS_2026","payments","products","regions","sales_targets","security","Sheet1","shipments","subcategories","user_details","dim_customer","dim_product","orders","dim_order_flags","channels"]
+annotation PBI_QueryOrder = ["invoice_lines","exchange_rates","sales_targets","security","INVOICES","payments","shipments","subcategories","user_details","dim_customer","dim_product","orders","dim_order_flags","channels","Address","cities","CUST_MASTER","customer_contacts","products","regions","ORDERS_2025","ORDERS_2026","order_line_items","inventory","CAMPAIGN_LOG","campaign_skus","fact_sales","dim_geo","fact_inventory","dim_campaign","fact_campaign_spend","fact_promotion_coverage","fact_order_process","fact_sales_targets"]
 
 annotation PBI_ProTooling = ["DevMode"]
 
-ref table CAMPAIGN_LOG
 ref table DateTableTemplate_36a8971f-97aa-43cf-a774-1b48eddc82d8
-ref table LocalDateTable_de3a7537-f5cc-4321-a4a4-6f17fa24e0ad
-ref table LocalDateTable_c38883f7-464c-4438-b703-5d9a7e464ba9
-ref table LocalDateTable_8b1fae86-4fea-404f-adbc-6f5d5bcaf577
-ref table campaign_skus
-ref table dim_order
-ref table exchange_rates
-ref table LocalDateTable_e91117fa-526d-4546-94d7-cde389d13941
-ref table inventory
-ref table invoice_lines
-ref table INVOICES
-ref table LocalDateTable_73ccc87d-f682-4819-9c48-bd109fd0653f
-ref table order_line_items
-ref table ORDERS_2025
-ref table LocalDateTable_f696fdbb-afa9-4c61-bb03-f1791355aef7
-ref table ORDERS_2026
-ref table LocalDateTable_d44201e6-75c3-47f3-9460-44f6256ac986
-ref table payments
-ref table LocalDateTable_00f20046-f372-4b55-9c97-aadaa4395c46
-ref table sales_targets
-ref table LocalDateTable_47a5379c-83f2-4769-89a6-83cdeab3ae5a
 ref table security
-ref table Sheet1
-ref table LocalDateTable_f3cf50c2-5612-4c58-8948-786a3a972b25
-ref table LocalDateTable_727f9616-a7be-4b5d-8d92-7b756462a861
-ref table shipments
-ref table LocalDateTable_c9ab9a4d-049c-46c1-9ee1-e128221832df
-ref table LocalDateTable_ffd96e46-84cf-4be3-bb48-6898965d45f6
 ref table dim_customer
 ref table dim_product
-ref table orders
-ref table LocalDateTable_369d10e7-9642-4f7d-93e9-a01d648be43f
 ref table dim_order_flags
-ref table channels
+ref table fact_sales
+ref table dim_geo
+ref table fact_inventory
+ref table LocalDateTable_519245d9-b4bc-473b-98b4-553acb1592bf
+ref table dim_campaign
+ref table LocalDateTable_92e99c84-143c-4272-a951-dfe7aa9d24f8
+ref table LocalDateTable_6e4c306c-7cea-4e53-9ccf-8f69c48ae119
+ref table fact_campaign_spend
+ref table fact_promotion_coverage
+ref table fact_order_process
+ref table fact_sales_targets
+ref table dim_date
+ref table LocalDateTable_3941b863-5528-41c6-90c9-d9619718ea8e
+ref table _measures
 
 ref cultureInfo de-DE
 

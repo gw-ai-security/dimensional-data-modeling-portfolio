@@ -7,9 +7,10 @@ expression Address =
 		in
 		    #"Geänderter Typ"
 	lineageTag: 69839807-61ce-47d5-9c32-6a45d99857e6
-	queryGroup: 01_Stage
 
 	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
 
 expression cities =
 		let
@@ -21,7 +22,6 @@ expression cities =
 		in
 		    #"Geänderter Typ1"
 	lineageTag: ce89a019-ce8c-4a0b-9d38-33dfa6ce2a25
-	queryGroup: 01_Stage
 
 	annotation PBI_NavigationStepName = Navigation
 
@@ -36,7 +36,6 @@ expression CUST_MASTER =
 		in
 		    #"Geänderter Typ"
 	lineageTag: a06732a9-f769-41bb-8bc6-8e86b5d1b971
-	queryGroup: 01_Stage
 
 	annotation PBI_NavigationStepName = Navigation
 
@@ -52,7 +51,6 @@ expression customer_contacts =
 		in
 		    #"Gefilterte Zeilen"
 	lineageTag: bdd0178b-ddbb-46e8-9594-4226ffc2a0ec
-	queryGroup: 01_Stage
 
 	annotation PBI_NavigationStepName = Navigation
 
@@ -66,7 +64,6 @@ expression regions =
 		in
 		    #"Geänderter Typ"
 	lineageTag: 351dde17-4b87-4d52-99b4-f7769643a58e
-	queryGroup: 01_Stage
 
 	annotation PBI_NavigationStepName = Navigation
 
@@ -81,7 +78,6 @@ expression user_details =
 		in
 		    #"Geänderter Typ"
 	lineageTag: c3b566af-35bb-4e01-9823-fc958a50b21c
-	queryGroup: 01_Stage
 
 	annotation PBI_NavigationStepName = Navigation
 
@@ -96,9 +92,10 @@ expression products =
 		in
 		    #"Geänderter Typ"
 	lineageTag: 13050b59-7695-4f0a-8de8-64117ec2b9ee
-	queryGroup: 01_Stage
 
 	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
 
 expression subcategories =
 		let
@@ -114,7 +111,196 @@ expression subcategories =
 		in
 		    #"Jedes Wort groß geschrieben"
 	lineageTag: fa1cc191-7eef-48aa-800d-ca6fc7f09d5b
-	queryGroup: 01_Stage
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression order_line_items =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    order_line_items_Sheet = Quelle{[Item="order_line_items",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(order_line_items_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"LineID", type text}, {"OrderID", type text}, {"ProductName", type text}, {"Quantity", Int64.Type}, {"UnitPrice", type number}, {"UnitCost", type number}, {"DiscountPct", type number}, {"LineTotal", type number}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: f189765b-0bea-4244-9356-7dc9f929061d
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression ORDERS_2025 =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    ORDERS_2025_Sheet = Quelle{[Item="ORDERS_2025",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(ORDERS_2025_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"OrderID", type text}, {"LegacyRef", type text}, {"CustomerName", type text}, {"CustomerCity", type text}, {"RegionName", type text}, {"ShipToCity", type text}, {"BillToCity", type text}, {"OrderDate", type datetime}, {"OrderChannel", Int64.Type}, {"Status", type text}, {"Priority", type text}, {"OrderTotal", type number}, {"OrderNotes", type text}, {"GiftMessage", type any}, {"SourceFile", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 7c3b5d13-4060-4b7c-928d-8653bb4b1bef
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression ORDERS_2026 =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    ORDERS_2026_Sheet = Quelle{[Item="ORDERS_2026",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(ORDERS_2026_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"OrderID", type text}, {"CustomerName", type text}, {"CustomerCity", type text}, {"RegionName", type text}, {"ShipToCity", type text}, {"BillToCity", type text}, {"OrderDate", type datetime}, {"OrderChannel", Int64.Type}, {"Status", type text}, {"Priority", type text}, {"OrderTotal", type number}, {"OrderNotes", type text}, {"GiftMessage", type any}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: c48fc704-f283-41e8-8844-477620c03257
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+
+expression inventory =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    inventory_Sheet = Quelle{[Item="inventory",Kind="Sheet"]}[Data],
+		    #"Geänderter Typ" = Table.TransformColumnTypes(inventory_Sheet,{{"Column1", type text}, {"Column2", type any}, {"Column3", type any}, {"Column4", type any}, {"Column5", type any}, {"Column6", type any}, {"Column7", type any}, {"Column8", type any}, {"Column9", type any}, {"Column10", type any}, {"Column11", type any}, {"Column12", type any}, {"Column13", type any}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 94a9004d-c956-4dc4-a906-63ab4f00976a
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression orders =
+		let
+		    Quelle = Table.Combine({ORDERS_2025, ORDERS_2026}),
+		    #"Entfernte Spalten" = Table.RemoveColumns(Quelle,{"LegacyRef", "SourceFile", "GiftMessage", "OrderNotes"})
+		in
+		    #"Entfernte Spalten"
+	lineageTag: 531c5143-3760-44b6-a749-2de9bbc81566
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression channels =
+		let
+		    Quelle = Table.FromRows(Json.Document(Binary.Decompress(Binary.FromText("i45WMjRQ0lHyz8vJzEtVCC7JL0pVitWJVjICiQalliRm5igEJBaV5KUWgcWNQeLhGfk5qcWJORClJiAht8zUnBSFYLBYLAA=", BinaryEncoding.Base64), Compression.Deflate)), let _t = ((type nullable text) meta [Serialized.Text = true]) in type table [channel_code = _t, channel_name = _t]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(Quelle,{{"channel_code", Int64.Type}, {"channel_name", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: c3b9cd29-2f19-41b7-9f35-a653f030551a
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression CAMPAIGN_LOG =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    CAMPAIGN_LOG_Sheet = Quelle{[Item="CAMPAIGN_LOG",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(CAMPAIGN_LOG_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"CampaignName", type text}, {"Channel", type text}, {"StartDate", type date}, {"EndDate", type date}, {"Budget", Int64.Type}, {"Date", type date}, {"Impressions", Int64.Type}, {"Clicks", Int64.Type}, {"Spend", type number}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 9e42dfef-d697-4517-b33d-6b3a18bb5182
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression campaign_skus =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    campaign_skus_Sheet = Quelle{[Item="campaign_skus",Kind="Sheet"]}[Data],
+		    #"Geänderter Typ" = Table.TransformColumnTypes(campaign_skus_Sheet,{{"Column1", type text}, {"Column2", type text}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 1663cb50-c8e9-4767-a043-04df8f53caaa
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression invoice_lines =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    invoice_lines_Sheet = Quelle{[Item="invoice_lines",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(invoice_lines_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"InvoiceLineID", type text}, {"InvoiceID", type text}, {"ProductName", type text}, {"Amount", type number}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: c96c500d-41e6-45ed-88d1-a2ea6d026b25
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression INVOICES =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    INVOICES_Sheet = Quelle{[Item="INVOICES",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(INVOICES_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"InvoiceID", type text}, {"OrderID", type text}, {"CustomerName", type text}, {"InvoiceDate", type date}, {"Amount", type number}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 740901b9-9f50-4d36-a2e7-a8649af86076
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression payments =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    payments_Sheet = Quelle{[Item="payments",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(payments_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"PaymentID", type text}, {"InvoiceID", type text}, {"CustomerName", type text}, {"PayDate", type date}, {"Amount", type number}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 20eba2bb-2f1a-40d6-a156-6e7d07385206
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression shipments =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    shipments_Sheet = Quelle{[Item="shipments",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(shipments_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"ShipmentID", type text}, {"OrderID", type text}, {"ShipMode", type text}, {"ShipDate", type date}, {"DeliveryDate", type date}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: b03b9109-d302-4cc8-a5c5-f4fdd78d2118
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression exchange_rates =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    exchange_rates_Sheet = Quelle{[Item="exchange_rates",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(exchange_rates_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"Currency", type text}, {"Rate", type number}, {"Date", type date}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 29b47126-6847-4b6a-be16-dab636d62e25
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
+expression sales_targets =
+		let
+		    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
+		    sales_targets_Sheet = Quelle{[Item="sales_targets",Kind="Sheet"]}[Data],
+		    #"Höher gestufte Header" = Table.PromoteHeaders(sales_targets_Sheet, [PromoteAllScalars=true]),
+		    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"Period", type date}, {"TargetRevenue", Int64.Type}})
+		in
+		    #"Geänderter Typ"
+	lineageTag: 8eca6ad0-aae9-40fb-b633-dd850886b1c4
 
 	annotation PBI_NavigationStepName = Navigation
 

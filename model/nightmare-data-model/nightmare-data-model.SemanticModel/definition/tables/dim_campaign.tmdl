@@ -1,0 +1,91 @@
+table dim_campaign
+	lineageTag: ce0472fe-7e25-4b2b-a8a0-9a6ca5cfb39b
+
+	column campaign_key
+		dataType: int64
+		formatString: 0
+		lineageTag: a3de16cf-b371-4efc-952c-6416a4db138b
+		summarizeBy: none
+		sourceColumn: campaign_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column campaign_name
+		dataType: string
+		lineageTag: b3dac23e-0c8d-4a7e-8454-019f0783bedc
+		summarizeBy: none
+		sourceColumn: campaign_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel
+		dataType: string
+		lineageTag: 539e4ab3-6d0c-4d40-956f-0d66225022e9
+		summarizeBy: none
+		sourceColumn: channel
+
+		annotation SummarizationSetBy = Automatic
+
+	column start_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 097ce508-60ca-4058-aea4-710f0d6fd0bb
+		summarizeBy: none
+		sourceColumn: start_date
+
+		variation Variation
+			isDefault
+			relationship: 7c0aa911-4a7e-47fb-9adf-53db3444fba5
+			defaultHierarchy: LocalDateTable_92e99c84-143c-4272-a951-dfe7aa9d24f8.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column end_date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: 161f4e6b-d27d-47b7-9b14-d1819dfd7c03
+		summarizeBy: none
+		sourceColumn: end_date
+
+		variation Variation
+			isDefault
+			relationship: 9f7625dd-2f7f-457f-9725-aff7afdbdd0a
+			defaultHierarchy: LocalDateTable_6e4c306c-7cea-4e53-9ccf-8f69c48ae119.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column budget
+		dataType: int64
+		formatString: 0
+		lineageTag: 66a103b4-21ff-47a7-a516-316a5152de68
+		summarizeBy: sum
+		sourceColumn: budget
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_campaign = m
+		mode: import
+		queryGroup: 02_Dimensions
+		source =
+				let
+				    Quelle = CAMPAIGN_LOG,
+				    #"Entfernte Spalten" = Table.RemoveColumns(Quelle,{"Date", "Impressions", "Clicks", "Spend"}),
+				    #"Entfernte Duplikate" = Table.Distinct(#"Entfernte Spalten"),
+				    #"Hinzugefügter Index" = Table.AddIndexColumn(#"Entfernte Duplikate", "Index", 1, 1, Int64.Type),
+				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Hinzugefügter Index",{"Index", "CampaignName", "Channel", "StartDate", "EndDate", "Budget"}),
+				    #"Umbenannte Spalten" = Table.RenameColumns(#"Neu angeordnete Spalten",{{"Index", "campaign_key"}, {"CampaignName", "campaign_name"}, {"Channel", "channel"}, {"StartDate", "start_date"}, {"EndDate", "end_date"}, {"Budget", "budget"}})
+				in
+				    #"Umbenannte Spalten"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,61 @@
+table fact_inventory
+	lineageTag: 0b8516d2-7e48-4bc2-9f68-e438bfa30c26
+
+	column product_key
+		dataType: int64
+		formatString: 0
+		lineageTag: f5024c14-34e8-42f1-ab94-bebdb8b77776
+		summarizeBy: none
+		sourceColumn: product_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: bc39d77a-1e93-4e0f-8170-eddd8421cc86
+		summarizeBy: none
+		sourceColumn: month
+
+		variation Variation
+			isDefault
+			relationship: 17629c2f-17c0-4394-b370-b7294f38a226
+			defaultHierarchy: LocalDateTable_519245d9-b4bc-473b-98b4-553acb1592bf.Datumshierarchie
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column units
+		dataType: int64
+		formatString: 0
+		lineageTag: b2a41801-819b-4fc9-8093-5885495914ec
+		summarizeBy: sum
+		sourceColumn: units
+
+		annotation SummarizationSetBy = Automatic
+
+	partition fact_inventory = m
+		mode: import
+		queryGroup: 03_Facts
+		source =
+				let
+				    Quelle = inventory,
+				    #"Höher gestufte Header" = Table.PromoteHeaders(Quelle, [PromoteAllScalars=true]),
+				    #"Geänderter Typ" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"ProductName", type text}, {"2025-01", Int64.Type}, {"2025-02", Int64.Type}, {"2025-03", Int64.Type}, {"2025-04", Int64.Type}, {"2025-05", Int64.Type}, {"2025-06", Int64.Type}, {"2025-07", Int64.Type}, {"2025-08", Int64.Type}, {"2025-09", Int64.Type}, {"2025-10", Int64.Type}, {"2025-11", Int64.Type}, {"2025-12", Int64.Type}}),
+				    #"Entpivotierte Spalten" = Table.UnpivotOtherColumns(#"Geänderter Typ", {"ProductName"}, "Attribut", "Wert"),
+				    #"Geänderter Typ1" = Table.TransformColumnTypes(#"Entpivotierte Spalten",{{"Attribut", type date}}),
+				    #"Zusammengeführte Abfragen" = Table.NestedJoin(#"Geänderter Typ1", {"ProductName"}, dim_product, {"product_name"}, "dim_product", JoinKind.LeftOuter),
+				    #"Erweiterte dim_product" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen", "dim_product", {"product_key"}, {"dim_product.product_key"}),
+				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Erweiterte dim_product",{"dim_product.product_key", "ProductName", "Attribut", "Wert"}),
+				    #"Entfernte Spalten" = Table.RemoveColumns(#"Neu angeordnete Spalten",{"ProductName"}),
+				    #"Umbenannte Spalten" = Table.RenameColumns(#"Entfernte Spalten",{{"dim_product.product_key", "product_key"}, {"Attribut", "month"}, {"Wert", "units"}})
+				in
+				    #"Umbenannte Spalten"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

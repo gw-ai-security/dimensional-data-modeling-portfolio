@@ -1,0 +1,71 @@
+table fact_campaign_spend
+	lineageTag: 0c52da2c-dcba-43a3-baba-5642043ae4ed
+
+	column campaign_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 4781bac1-a370-41d0-863a-292f366574dd
+		summarizeBy: none
+		sourceColumn: campaign_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column date
+		dataType: dateTime
+		formatString: yyyy-mm-dd
+		lineageTag: ea36daa1-9217-4966-80cb-a83aed34502d
+		summarizeBy: none
+		sourceColumn: date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column impressions
+		dataType: int64
+		formatString: 0
+		lineageTag: f97743cf-5389-4eff-bce5-f9e5f0eb4e98
+		summarizeBy: sum
+		sourceColumn: impressions
+
+		annotation SummarizationSetBy = Automatic
+
+	column clicks
+		dataType: int64
+		formatString: 0
+		lineageTag: 346ad0de-2d36-4f77-9d1f-8a2f7bc91af8
+		summarizeBy: sum
+		sourceColumn: clicks
+
+		annotation SummarizationSetBy = Automatic
+
+	column spend
+		dataType: double
+		lineageTag: 8d491dbd-5e03-4498-b9de-903c8d90d7fd
+		summarizeBy: sum
+		sourceColumn: spend
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition fact_campaign_spend = m
+		mode: import
+		queryGroup: 03_Facts
+		source =
+				let
+				    Quelle = CAMPAIGN_LOG,
+				    #"Zusammengeführte Abfragen" = Table.NestedJoin(Quelle, {"CampaignName"}, dim_campaign, {"campaign_name"}, "dim_campaign", JoinKind.LeftOuter),
+				    #"Erweiterte dim_campaign" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen", "dim_campaign", {"campaign_key"}, {"dim_campaign.campaign_key"}),
+				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Erweiterte dim_campaign",{"dim_campaign.campaign_key", "CampaignName", "Channel", "StartDate", "EndDate", "Budget", "Date", "Impressions", "Clicks", "Spend"}),
+				    #"Entfernte Spalten" = Table.RemoveColumns(#"Neu angeordnete Spalten",{"CampaignName", "Channel", "StartDate", "EndDate", "Budget"}),
+				    #"Umbenannte Spalten" = Table.RenameColumns(#"Entfernte Spalten",{{"dim_campaign.campaign_key", "campaign_key"}, {"Date", "date"}, {"Impressions", "impressions"}, {"Clicks", "clicks"}, {"Spend", "spend"}})
+				in
+				    #"Umbenannte Spalten"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -5,32 +5,41 @@ table dim_order_flags
 		dataType: int64
 		formatString: 0
 		lineageTag: c01b00dc-53ab-4ccf-a36a-243b0b9ab715
-		summarizeBy: sum
+		summarizeBy: none
 		sourceColumn: flag_key
 
 		annotation SummarizationSetBy = Automatic
 
-	column 'channels.channel_name'
+	column channel_name
 		dataType: string
 		lineageTag: c81265ef-6d79-4d1f-9035-2db3aa86b8c4
 		summarizeBy: none
-		sourceColumn: channels.channel_name
+		sourceColumn: channel_name
 
 		annotation SummarizationSetBy = Automatic
 
-	column Status
+	column status
 		dataType: string
 		lineageTag: d6c705aa-dde8-47f3-beec-f9d0f5bd00e4
 		summarizeBy: none
-		sourceColumn: Status
+		sourceColumn: status
 
 		annotation SummarizationSetBy = Automatic
 
-	column Priority
+	column priority
 		dataType: string
 		lineageTag: 093552e5-6c7f-4063-9112-38aca8f5a53b
 		summarizeBy: none
-		sourceColumn: Priority
+		sourceColumn: priority
+
+		annotation SummarizationSetBy = Automatic
+
+	column channel_code
+		dataType: int64
+		formatString: 0
+		lineageTag: 8f86f225-1c72-4acd-925c-a6e55da91408
+		summarizeBy: none
+		sourceColumn: channel_code
 
 		annotation SummarizationSetBy = Automatic
 
@@ -48,9 +57,9 @@ table dim_order_flags
 				    #"Zusammengeführte Abfragen" = Table.NestedJoin(#"Umbenannte Spalten", {"OrderChannel"}, channels, {"channel_code"}, "channels", JoinKind.LeftOuter),
 				    #"Erweiterte channels" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen", "channels", {"channel_name"}, {"channels.channel_name"}),
 				    #"Neu angeordnete Spalten1" = Table.ReorderColumns(#"Erweiterte channels",{"flag_key", "OrderChannel", "channels.channel_name", "Status", "Priority"}),
-				    #"Entfernte Spalten1" = Table.RemoveColumns(#"Neu angeordnete Spalten1",{"OrderChannel"})
+				    #"Umbenannte Spalten1" = Table.RenameColumns(#"Neu angeordnete Spalten1",{{"channels.channel_name", "channel_name"}, {"OrderChannel", "channel_code"}, {"Status", "status"}, {"Priority", "priority"}})
 				in
-				    #"Entfernte Spalten1"
+				    #"Umbenannte Spalten1"
 
 	annotation PBI_NavigationStepName = Navigation
 

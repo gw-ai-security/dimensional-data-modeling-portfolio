@@ -8,6 +8,8 @@ table dim_customer
 		summarizeBy: none
 		sourceColumn: customer_id
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column customer_name
@@ -15,6 +17,8 @@ table dim_customer
 		lineageTag: 282a0ecc-deef-495f-8cc4-1660ff8b312c
 		summarizeBy: none
 		sourceColumn: customer_name
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -24,6 +28,8 @@ table dim_customer
 		summarizeBy: none
 		sourceColumn: segment
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column account_manager
@@ -31,6 +37,8 @@ table dim_customer
 		lineageTag: 12854b18-1751-4e96-a372-ef9339a94094
 		summarizeBy: none
 		sourceColumn: account_manager
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -40,6 +48,8 @@ table dim_customer
 		summarizeBy: none
 		sourceColumn: payment_terms
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column contact_name
@@ -47,6 +57,8 @@ table dim_customer
 		lineageTag: 471581e7-f63c-4da4-b116-63a814cb70dd
 		summarizeBy: none
 		sourceColumn: contact_name
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -56,14 +68,18 @@ table dim_customer
 		summarizeBy: none
 		sourceColumn: contact_email
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column credit_limit
 		dataType: int64
 		formatString: 0
 		lineageTag: d842e910-d93a-4a6a-af29-bb443a7b7af4
-		summarizeBy: none
+		summarizeBy: sum
 		sourceColumn: credit_limit
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -73,6 +89,8 @@ table dim_customer
 		summarizeBy: none
 		sourceColumn: phone
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column street
@@ -80,6 +98,8 @@ table dim_customer
 		lineageTag: 90598d05-2ced-4107-a6cd-c99c1a803d34
 		summarizeBy: none
 		sourceColumn: street
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -89,6 +109,8 @@ table dim_customer
 		summarizeBy: none
 		sourceColumn: city
 
+		changedProperty = IsHidden
+
 		annotation SummarizationSetBy = Automatic
 
 	column region
@@ -96,6 +118,8 @@ table dim_customer
 		lineageTag: 15227a5a-caf3-4730-999c-5f58ae2c6c5c
 		summarizeBy: none
 		sourceColumn: region
+
+		changedProperty = IsHidden
 
 		annotation SummarizationSetBy = Automatic
 
@@ -121,6 +145,8 @@ table dim_customer
 				    #"Umbenannte Spalten" = Table.RenameColumns(#"Entfernte Spalten1",{{"Address.CityName", "city"}, {"Address.Street", "street"}, {"user_details.Phone", "phone"}, {"user_details.CreditLimit", "credit_limit"}, {"customer_contacts.Email", "contact_email"}, {"CustomerID", "customer_id"}, {"CustomerName", "customer_name"}, {"cities.RegionName", "region"}, {"Segment", "segment"}, {"AccountManager", "account_manager"}, {"PaymentTerms", "payment_terms"}, {"customer_contacts.ContactName", "contact_name"}})
 				in
 				    #"Umbenannte Spalten"
+
+	changedProperty = IsHidden
 
 	annotation PBI_NavigationStepName = Navigation
 

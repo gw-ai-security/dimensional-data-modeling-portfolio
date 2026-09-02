@@ -1,0 +1,46 @@
+table dim_geo
+	lineageTag: b0f90e24-2246-4fa5-9622-86afc2b0e55a
+
+	column geo_key
+		dataType: int64
+		formatString: 0
+		lineageTag: 4dc3fe9d-c3d6-42e0-a47c-205d3088a924
+		summarizeBy: none
+		sourceColumn: geo_key
+
+		annotation SummarizationSetBy = Automatic
+
+	column city
+		dataType: string
+		lineageTag: f549fd05-2528-483a-830f-6c23c24ade2c
+		summarizeBy: none
+		sourceColumn: city
+
+		annotation SummarizationSetBy = Automatic
+
+	column region
+		dataType: string
+		lineageTag: acd610e0-5898-4892-a2e4-4527ad669193
+		summarizeBy: none
+		sourceColumn: region
+
+		annotation SummarizationSetBy = Automatic
+
+	partition dim_geo = m
+		mode: import
+		queryGroup: 02_Dimensions
+		source =
+				let
+				    Quelle = cities,
+				    #"Entfernte Duplikate" = Table.Distinct(Quelle),
+				    #"Umbenannte Spalten" = Table.RenameColumns(#"Entfernte Duplikate",{{"CityName", "city_name"}, {"RegionName", "region_name"}}),
+				    #"Hinzugefügter Index" = Table.AddIndexColumn(#"Umbenannte Spalten", "Index", 1, 1, Int64.Type),
+				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Hinzugefügter Index",{"Index", "city_name", "region_name"}),
+				    #"Umbenannte Spalten1" = Table.RenameColumns(#"Neu angeordnete Spalten",{{"Index", "geo_key"}, {"city_name", "city"}, {"region_name", "region"}})
+				in
+				    #"Umbenannte Spalten1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,32 +1,37 @@
 table security
 	lineageTag: d908208e-e825-4cf5-b81f-debaf45f9781
 
-	column Column1
+	column user_email
 		dataType: string
-		lineageTag: e9c56c0c-af3b-48d1-89fc-44d9a46b294a
+		lineageTag: 2dfa9d21-235a-4941-9d14-7a93757ed39d
 		summarizeBy: none
-		sourceColumn: Column1
+		sourceColumn: user_email
 
 		annotation SummarizationSetBy = Automatic
 
-	column Column2
+	column region
 		dataType: string
-		lineageTag: 9989acb5-84a8-48b8-bcda-16ee5ddba698
+		lineageTag: d3183eb4-d0f7-4d18-84ad-1994a7942452
 		summarizeBy: none
-		sourceColumn: Column2
+		sourceColumn: region
 
 		annotation SummarizationSetBy = Automatic
 
 	partition security = m
 		mode: import
-		queryGroup: 01_Stage
+		queryGroup: 04_Support
 		source =
 				let
 				    Quelle = Excel.Workbook(File.Contents("C:\dev\dimensional-data-modeling-portfolio\local-data\dataset.xlsx"), null, true),
 				    security_Sheet = Quelle{[Item="security",Kind="Sheet"]}[Data],
-				    #"Geänderter Typ" = Table.TransformColumnTypes(security_Sheet,{{"Column1", type text}, {"Column2", type text}})
+				    #"Geänderter Typ" = Table.TransformColumnTypes(security_Sheet,{{"Column1", type text}, {"Column2", type text}}),
+				    #"Höher gestufte Header" = Table.PromoteHeaders(#"Geänderter Typ", [PromoteAllScalars=true]),
+				    #"Geänderter Typ1" = Table.TransformColumnTypes(#"Höher gestufte Header",{{"UserEmail", type text}, {"Region", type text}}),
+				    #"Umbenannte Spalten" = Table.RenameColumns(#"Geänderter Typ1",{{"UserEmail", "user_email"}, {"Region", "region"}})
 				in
-				    #"Geänderter Typ"
+				    #"Umbenannte Spalten"
 
 	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
 
