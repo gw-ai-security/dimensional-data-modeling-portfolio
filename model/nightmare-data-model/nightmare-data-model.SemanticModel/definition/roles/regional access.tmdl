@@ -1,0 +1,4 @@
+role 'regional access'
+	modelPermission: read
+
+	tablePermission dim_customer = dim_customer[region] IN CALCULATETABLE(VALUES(security[region]), security[user_email] = USERPRINCIPALNAME())

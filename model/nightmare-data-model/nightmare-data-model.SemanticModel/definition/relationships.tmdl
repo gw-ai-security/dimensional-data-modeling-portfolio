@@ -24,6 +24,10 @@ relationship 17629c2f-17c0-4394-b370-b7294f38a226
 	fromColumn: fact_inventory.month
 	toColumn: LocalDateTable_519245d9-b4bc-473b-98b4-553acb1592bf.Date
 
+relationship d82e27a6-2aeb-48de-8091-a4468596adb9
+	fromColumn: fact_inventory.month
+	toColumn: dim_date.Date
+
 relationship AutoDetected_5a62c35a-835a-47c0-9d90-884202c6ca47
 	fromColumn: fact_inventory.product_key
 	toColumn: dim_product.product_key

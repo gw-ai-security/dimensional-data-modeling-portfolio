@@ -18,14 +18,21 @@ table _measures
 		lineageTag: c978ac8f-6646-4e4a-baeb-cae91bd240d4
 
 	measure avg_order_to_pay = AVERAGE(fact_order_process[order_to_pay])
+		formatString: 0.0
 		lineageTag: 4a907b07-4d55-4439-baa3-dc3cbfe357e3
 
-		annotation PBI_FormatHint = {"isGeneralNumber":true}
+	measure total_target_revenue = SUM(fact_sales_targets[target_revenue])
+		formatString: #,0.00
+		lineageTag: 90428de5-6996-4833-8d2a-7a3ae322f806
+
+	measure target_attainment_pct = DIVIDE([total_sales], [total_target_revenue])
+		formatString: 0.0%
+		lineageTag: aaf6e2f3-30d3-499e-ac10-e1315fdc9bd7
 
 	column Column
 		formatString: 0
 		lineageTag: aab0896e-5940-4804-9012-00877c5dea7d
-		summarizeBy: sum
+		summarizeBy: none
 		isNameInferred
 		sourceColumn: [Column]
 

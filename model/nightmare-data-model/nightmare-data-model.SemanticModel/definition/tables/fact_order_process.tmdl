@@ -84,7 +84,7 @@ table fact_order_process
 	column order_to_pay = DATEDIFF(fact_order_process[order_date], fact_order_process[pay_date], DAY)
 		formatString: 0
 		lineageTag: b08a06de-8725-4db7-a439-26b32a7d5bb7
-		summarizeBy: sum
+		summarizeBy: none
 
 		annotation SummarizationSetBy = Automatic
 
@@ -93,22 +93,32 @@ table fact_order_process
 		queryGroup: 03_Facts
 		source =
 				let
-				    Quelle = orders,
-				    #"Entfernte Spalten" = Table.RemoveColumns(Quelle,{"CustomerCity", "RegionName", "ShipToCity", "BillToCity", "OrderChannel", "Status", "Priority", "OrderTotal"}),
-				    #"Zusammengeführte Abfragen" = Table.NestedJoin(#"Entfernte Spalten", {"CustomerName"}, dim_customer, {"customer_name"}, "dim_customer", JoinKind.LeftOuter),
-				    #"Erweiterte dim_customer" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen", "dim_customer", {"customer_id"}, {"dim_customer.customer_id"}),
-				    #"Neu angeordnete Spalten" = Table.ReorderColumns(#"Erweiterte dim_customer",{"OrderID", "dim_customer.customer_id", "CustomerName", "OrderDate"}),
-				    #"Entfernte Spalten1" = Table.RemoveColumns(#"Neu angeordnete Spalten",{"CustomerName"}),
-				    #"Zusammengeführte Abfragen1" = Table.NestedJoin(#"Entfernte Spalten1", {"OrderID"}, shipments, {"OrderID"}, "shipments", JoinKind.LeftOuter),
-				    #"Erweiterte shipments" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen1", "shipments", {"ShipDate", "DeliveryDate"}, {"shipments.ShipDate", "shipments.DeliveryDate"}),
-				    #"Zusammengeführte Abfragen2" = Table.NestedJoin(#"Erweiterte shipments", {"OrderID"}, INVOICES, {"OrderID"}, "INVOICES", JoinKind.LeftOuter),
-				    #"Erweiterte INVOICES1" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen2", "INVOICES", {"InvoiceID", "InvoiceDate"}, {"INVOICES.InvoiceID", "INVOICES.InvoiceDate"}),
-				    #"Zusammengeführte Abfragen3" = Table.NestedJoin(#"Erweiterte INVOICES1", {"INVOICES.InvoiceID"}, payments, {"InvoiceID"}, "payments", JoinKind.LeftOuter),
-				    #"Erweiterte payments" = Table.ExpandTableColumn(#"Zusammengeführte Abfragen3", "payments", {"PayDate"}, {"payments.PayDate"}),
-				    #"Entfernte Spalten2" = Table.RemoveColumns(#"Erweiterte payments",{"INVOICES.InvoiceID"}),
-				    #"Umbenannte Spalten" = Table.RenameColumns(#"Entfernte Spalten2",{{"OrderID", "order_id"}, {"dim_customer.customer_id", "customer_id"}, {"OrderDate", "order_date"}, {"shipments.ShipDate", "ship_date"}, {"shipments.DeliveryDate", "delivery_date"}, {"INVOICES.InvoiceDate", "invoice_date"}, {"payments.PayDate", "pay_date"}})
+				    SourceOrders = orders,
+				    OrderSpine = Table.RemoveColumns(SourceOrders,{"CustomerCity", "RegionName", "ShipToCity", "BillToCity", "OrderChannel", "Status", "Priority", "OrderTotal"}),
+				    CustomerLookup = Table.NestedJoin(OrderSpine, {"CustomerName"}, dim_customer, {"customer_name"}, "dim_customer", JoinKind.LeftOuter),
+				    CustomerExpanded = Table.ExpandTableColumn(CustomerLookup, "dim_customer", {"customer_id"}, {"customer_id"}),
+				    CustomerClean = Table.RemoveColumns(CustomerExpanded,{"CustomerName"}),
+				    ShipmentMilestones = Table.Group(shipments, {"OrderID"}, {
+				        {"ship_date", each try List.Min(List.RemoveNulls([ShipDate])) otherwise null, type nullable date},
+				        {"delivery_date", each try List.Max(List.RemoveNulls([DeliveryDate])) otherwise null, type nullable date}
+				    }),
+				    PaymentMilestones = Table.Group(payments, {"InvoiceID"}, {
+				        {"pay_date", each try List.Max(List.RemoveNulls([PayDate])) otherwise null, type nullable date}
+				    }),
+				    InvoicePaymentBase = Table.NestedJoin(INVOICES, {"InvoiceID"}, PaymentMilestones, {"InvoiceID"}, "payment", JoinKind.LeftOuter),
+				    InvoicePaymentExpanded = Table.ExpandTableColumn(InvoicePaymentBase, "payment", {"pay_date"}, {"pay_date"}),
+				    InvoiceMilestones = Table.Group(InvoicePaymentExpanded, {"OrderID"}, {
+				        {"invoice_date", each try List.Min(List.RemoveNulls([InvoiceDate])) otherwise null, type nullable date},
+				        {"pay_date", each try List.Max(List.RemoveNulls([pay_date])) otherwise null, type nullable date}
+				    }),
+				    ShipmentJoin = Table.NestedJoin(CustomerClean, {"OrderID"}, ShipmentMilestones, {"OrderID"}, "shipment", JoinKind.LeftOuter),
+				    ShipmentExpanded = Table.ExpandTableColumn(ShipmentJoin, "shipment", {"ship_date", "delivery_date"}, {"ship_date", "delivery_date"}),
+				    InvoiceJoin = Table.NestedJoin(ShipmentExpanded, {"OrderID"}, InvoiceMilestones, {"OrderID"}, "invoice", JoinKind.LeftOuter),
+				    InvoiceExpanded = Table.ExpandTableColumn(InvoiceJoin, "invoice", {"invoice_date", "pay_date"}, {"invoice_date", "pay_date"}),
+				    Renamed = Table.RenameColumns(InvoiceExpanded,{{"OrderID", "order_id"}, {"OrderDate", "order_date"}}),
+				    Reordered = Table.ReorderColumns(Renamed,{"order_id", "customer_id", "order_date", "ship_date", "delivery_date", "invoice_date", "pay_date"})
 				in
-				    #"Umbenannte Spalten"
+				    Reordered
 
 	annotation PBI_NavigationStepName = Navigation
 
