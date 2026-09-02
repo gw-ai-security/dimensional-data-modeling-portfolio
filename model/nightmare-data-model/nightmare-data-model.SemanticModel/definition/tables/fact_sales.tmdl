@@ -68,12 +68,14 @@ table fact_sales
 
 	column order_date
 		dataType: dateTime
-		formatString: yyyy-mm-dd hh:nn:ss
+		formatString: yyyy-mm-dd
 		lineageTag: 6ef15afb-b722-4d7f-9572-5bca9520f775
 		summarizeBy: none
 		sourceColumn: order_date
 
 		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
 
 		annotation PBI_FormatHint = {"isDateTimeCustom":true}
 
@@ -151,11 +153,11 @@ table fact_sales
 				    #"Umbenannte Spalten" = Table.RenameColumns(#"Erweiterte dim_geo1",{{"dim_geo.geo_key", "ship_to_city_key"}, {"dim_geo.geo_key.1", "bill_to_city_key"}}),
 				    #"Neu angeordnete Spalten5" = Table.ReorderColumns(#"Umbenannte Spalten",{"LineID", "OrderID", "dim_customer.customer_id", "dim_product.product_key", "dim_order_flags.flag_key", "bill_to_city_key", "ship_to_city_key", "orders.ShipToCity", "orders.BillToCity", "orders.OrderDate", "Quantity", "UnitPrice", "UnitCost", "DiscountPct", "LineTotal"}),
 				    #"Entfernte Spalten3" = Table.RemoveColumns(#"Neu angeordnete Spalten5",{"orders.ShipToCity", "orders.BillToCity"}),
-				    #"Umbenannte Spalten1" = Table.RenameColumns(#"Entfernte Spalten3",{{"LineID", "line_id"}, {"OrderID", "order_id"}, {"dim_customer.customer_id", "customer_id"}, {"dim_product.product_key", "product_key"}, {"dim_order_flags.flag_key", "flag_key"}, {"orders.OrderDate", "order_date"}, {"Quantity", "quantity"}, {"UnitPrice", "price"}, {"UnitCost", "cost"}, {"LineTotal", "line_total"}, {"DiscountPct", "discount"}})
+				    #"Umbenannte Spalten1" = Table.RenameColumns(#"Entfernte Spalten3",{{"LineID", "line_id"}, {"OrderID", "order_id"}, {"dim_customer.customer_id", "customer_id"}, {"dim_product.product_key", "product_key"}, {"dim_order_flags.flag_key", "flag_key"}, {"orders.OrderDate", "order_date"}, {"Quantity", "quantity"}, {"UnitPrice", "price"}, {"UnitCost", "cost"}, {"LineTotal", "line_total"}, {"DiscountPct", "discount"}}),
+				    #"Normalized order date" = Table.TransformColumnTypes(#"Umbenannte Spalten1",{{"order_date", type date}})
 				in
-				    #"Umbenannte Spalten1"
+				    #"Normalized order date"
 
 	annotation PBI_NavigationStepName = Navigation
 
 	annotation PBI_ResultType = Table
-
