@@ -1,34 +1,32 @@
 # Screenshot Evidence
 
-## Current status
+## Final status
 
-The starting Nightmare model is committed:
+The original Nightmare Model View is committed at:
 
 ```text
 screenshots/before/before.png
 ```
 
-This proves the source-model state before dimensional redesign.
+It provides visual evidence of the chaotic source state before dimensional redesign.
 
-## Still required for final release evidence
+## Final-state evidence strategy
 
-Create and commit locally after the current PBIP passes its final Power BI smoke test:
+The finalized model is represented primarily through inspectable source-controlled artifacts:
 
-```text
-screenshots/after/final-model.png
-screenshots/after/business-overview.png
-screenshots/after/rls-validation.png   # optional but preferred; synthetic identity only
-```
+- PBIP/TMDL semantic model;
+- PBIR report definition;
+- `diagrams/capstone-progress.md` final Mermaid model;
+- completed validation files in `tests/`;
+- final audit in `docs/12_final_audit.md`.
 
-The final Model View screenshot should show the complete star/galaxy structure and readable relationships. The Business Overview screenshot should show all critical visuals without errors or unexplained blanks.
+An additional after-state PNG is optional presentation evidence, not a release requirement. This avoids treating screenshots as stronger evidence than the actual model source and validation record.
 
 ## Rules
 
-- screenshots prove meaningful model/test states, not individual clicks;
+- screenshots prove meaningful states, not individual clicks;
 - prefer readable evidence over full-screen clutter;
-- do not include credentials or private identities;
+- never include credentials, private identities or confidential mappings;
 - use synthetic RLS identities in public evidence;
 - screenshots must match the committed PBIP state;
-- do not use screenshots to claim a test that was not executed.
-
-Chat/uploaded images are not automatically repository files; binary evidence must be committed from the local working copy.
+- screenshots supplement, but do not replace, runtime validation and source-controlled model evidence.
