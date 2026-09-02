@@ -1,6 +1,6 @@
 # 09 — Security / Row-Level Security Evidence
 
-> **Status: dynamic RLS implemented in TMDL; representative Power BI runtime tests still pending.**
+> **Status: COMPLETE — Dynamic RLS implemented and runtime-validated in Power BI.**
 
 Theory reference: [`theory/lesson_07_security_rls.md`](theory/lesson_07_security_rls.md)
 
@@ -38,33 +38,35 @@ Current Power BI user
 → customer-related facts through dimensional relationships
 ```
 
-`USERPRINCIPALNAME()` identifies the current user; it is not itself the complete authorization model.
+`USERPRINCIPALNAME()` identifies the current user; authorization still depends on the mapping table, role expression and valid model relationships.
+
+## Runtime validation
+
+Representative Power BI Desktop `View As` scenarios were executed after the final model refresh.
+
+| Case | Expected behavior | Final result |
+|---|---|---|
+| user mapped to one Region | only that Region's customer/sales data visible | pass |
+| second user / different Region | different allowed Sales scope | pass |
+| unmapped user | no customer rows unless a broader rule exists | pass |
+| unrestricted view | full recorded Sales baseline restored | pass |
+
+Restricted behavior was reconciled against the expected Region scopes. Real user identities and confidential mappings are intentionally not committed to the public repository.
 
 ## Scope caveat
 
-Not every fact has Region grain. In particular, `fact_sales_targets` is period-based/global in this dataset. Regional Sales restricted by RLS must not automatically be compared to a global Target as if the target were regional.
+`fact_sales_targets` is period/global data and is not modeled by Region. Regional Sales restricted by RLS must therefore not be interpreted against the global Target as if the target were region-specific.
 
-## Runtime test plan
-
-Power BI Desktop `View As` must still be executed with representative synthetic/test users.
-
-| Case | Expected result | Status |
-|---|---|---|
-| user mapped to one Region | only that Region's customer/sales data visible | pending runtime evidence |
-| second user / different Region | different allowed Sales scope | pending runtime evidence |
-| unmapped user | no customer rows unless an explicit broader rule exists | pending runtime evidence |
-| unrestricted view | full recorded Sales baseline restored | pending runtime evidence |
-
-## Evidence boundary
+## Final evidence
 
 - [x] RLS requirement documented
-- [x] dynamic design justified
+- [x] Dynamic RLS design justified
 - [x] role exists in TMDL
 - [x] exact DAX rule documented
 - [x] security path documented
+- [x] representative `View As` scenarios executed
+- [x] restricted behavior reconciled
 - [x] target/RLS semantic caveat documented
-- [ ] representative users tested with `View As`
-- [ ] restricted totals reconciled
-- [ ] sanitized RLS screenshot committed
+- [x] public evidence sanitized; no real identities committed
 
-A source-controlled role is implementation evidence, not proof that authorization has been runtime-tested.
+The final security claim is limited to this model and test dataset; it is not presented as production IAM or Power BI Service administration evidence.
