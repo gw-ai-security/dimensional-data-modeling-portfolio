@@ -17,7 +17,7 @@
 - URL: https://www.youtube.com/watch?v=0A2k62YEbfI
 - Role: guided hands-on capstone implementation.
 - Documentation basis: the user-provided project transcript plus the PBIP/TMDL artifacts created while working through the project.
-- Status: guided implementation completed and source-controlled; final runtime validation and independent no-tutorial audit remain separate evidence gates.
+- Status: guided implementation, runtime validation and independent no-tutorial audit completed.
 
 ## Nightmare source assets
 
@@ -29,7 +29,7 @@ The workbook is part of the Data with Baraa project materials and is intentional
 local-data/dataset.xlsx
 ```
 
-The repository versions the resulting PBIP/TMDL model, original documentation, diagrams, screenshots and validation evidence instead.
+The repository versions the resulting PBIP/TMDL/PBIR model, original documentation, diagrams, screenshots and validation evidence instead.
 
 ### Instructor solution
 
@@ -37,7 +37,7 @@ The completed instructor Power BI solution is not committed and is not presented
 
 ## Source hierarchy
 
-For course-specific claims, the supplied transcripts remain the primary source. Implementation claims are grounded in the committed PBIP/TMDL state.
+For course-specific claims, the supplied transcripts remain the primary source. Implementation claims are grounded in the committed PBIP/TMDL/PBIR state and final runtime validation.
 
 ```text
 Course transcript
@@ -45,7 +45,8 @@ Course transcript
 → Active Recall / corrections
 → guided Power BI implementation
 → QA / reconciliation
-→ independent audit
+→ RLS runtime tests
+→ independent no-tutorial audit
 ```
 
 ## Original contribution in this repository
@@ -57,12 +58,13 @@ Course transcript
 - explicit grain/fact/dimension documentation;
 - validation and reconciliation records;
 - architecture decisions and trade-off analysis;
-- debugging evidence, including merge fan-out and date-key failures;
-- a simple report used as semantic-model proof;
-- independent audit/reflection when completed.
+- debugging evidence, including merge fan-out, date-key and unmapped-dimension failures;
+- a focused business report used as semantic-model proof;
+- Dynamic RLS runtime validation;
+- independent final audit and reflection.
 
-## Claim boundary
+## Final claim boundary
 
-The guided model implementation now exists in source control. Final Power BI runtime checks and the independent no-tutorial gate remain explicitly open; the repository does not equate tutorial completion with independent production competence.
+The repository demonstrates a **completed and validated guided dimensional-modeling project plus an independent no-tutorial audit**. It does not present the Data with Baraa scenario, dataset or course structure as independently invented, and it does not claim production Power BI administration, enterprise performance engineering, deployment pipelines or production SLA ownership.
 
 Third-party course material and datasets remain subject to their original authors' terms.
