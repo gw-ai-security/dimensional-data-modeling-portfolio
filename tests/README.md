@@ -1,32 +1,31 @@
 # Validation Evidence
 
-This directory separates recorded model evidence from release checks that still require Power BI Desktop runtime validation.
+> **Status: COMPLETE — final Power BI runtime, reconciliation and security checks passed.**
 
-## Current status
+This directory contains the release-style evidence for the finalized Nightmare dimensional-modeling project.
 
-**Guided implementation built; validation partially complete.**
+## Validation set
 
-Recorded evidence includes protected metrics, a diagnosed order-process fan-out defect and source-controlled relationship/measure/RLS definitions. Final runtime smoke tests and the independent no-tutorial audit remain open.
-
-## Validation categories
-
-1. [`baseline_metrics.md`](baseline_metrics.md) — recorded business/control values.
-2. [`relationship_validation.md`](relationship_validation.md) — final relationship inventory and open runtime checks.
-3. [`reconciliation_tests.md`](reconciliation_tests.md) — before/after QA findings.
-4. [`final_validation.md`](final_validation.md) — release gate.
+1. [`baseline_metrics.md`](baseline_metrics.md) — protected business/control values.
+2. [`relationship_validation.md`](relationship_validation.md) — final relationship inventory and runtime checks.
+3. [`reconciliation_tests.md`](reconciliation_tests.md) — failure states, fixes and final results.
+4. [`final_validation.md`](final_validation.md) — completed project closure checklist.
 
 ## Evidence rule
 
-A source-controlled definition proves implementation. It does **not** by itself prove Power BI runtime behavior.
+A source-controlled definition proves implementation; final claims additionally require runtime validation.
 
 ```text
 Implement
 → inspect source
 → refresh
 → reconcile
-→ test interactions/security
-→ capture evidence
+→ test relationships/interactions
+→ test RLS
+→ independent audit
 → release claim
 ```
 
-The local source workbook is not in Git, so recorded numeric baselines include their provenance and are not presented as independently reproducible by GitHub alone.
+All stages above are complete for this project.
+
+The local source workbook is intentionally excluded from Git, so numeric references are recorded with provenance rather than presented as values GitHub can independently recompute.
