@@ -1,0 +1,17 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.7.0/schema.json",
+  "name": "5136e61e84b63ff9619e",
+  "position": {"x": 40, "y": 180, "z": 4, "height": 230, "width": 760, "tabOrder": 4},
+  "visual": {
+    "visualType": "lineChart",
+    "query": {
+      "queryState": {
+        "Category": {"projections": [{"field": {"Column": {"Expression": {"SourceRef": {"Entity": "dim_date"}}, "Property": "Date"}}, "queryRef": "dim_date.Date", "nativeQueryRef": "Date", "active": true}]},
+        "Y": {"projections": [{"field": {"Measure": {"Expression": {"SourceRef": {"Entity": "_measures"}}, "Property": "total_sales"}}, "queryRef": "_measures.total_sales", "nativeQueryRef": "total_sales"}]}
+      },
+      "sortDefinition": {"sort": [{"field": {"Column": {"Expression": {"SourceRef": {"Entity": "dim_date"}}, "Property": "Date"}}, "direction": "Ascending"}], "isDefaultSort": true}
+    },
+    "visualContainerObjects": {"title": [{"properties": {"show": {"expr": {"Literal": {"Value": "true"}}}, "text": {"expr": {"Literal": {"Value": "'Sales Trend'"}}}}}]},
+    "drillFilterOtherVisuals": true
+  }
+}
